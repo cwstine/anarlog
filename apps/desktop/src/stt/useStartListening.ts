@@ -24,7 +24,6 @@ import {
 import { useSessionParticipantHumanIds } from "~/stt/queries";
 
 export {
-  CLOUDSYNC_CAPTURE_LEASE_ATTEMPTS,
   getPostCaptureAction,
   getPostCaptureRepairReasons,
   type PostCaptureRepairReason,
@@ -72,20 +71,6 @@ export function useStartListeningState(sessionId: string) {
     }
     await stopMeetingChatTasks();
     const lifecycle = createCaptureLifecycle();
-    // A fresh note or a just-focused window starts listening right as a sync
-    // round begins; waiting for that round to yield made the start feel slow
-    // and sometimes refused to record at all.
-    void lifecycle.deferCloudsync();
-    const releaseCloudsyncDeferral = async () => {
-      try {
-        await lifecycle.releaseCloudsyncLease();
-      } catch (error) {
-        console.error(
-          "[listener] failed to release capture CloudSync deferral",
-          error,
-        );
-      }
-    };
     const [keywords, liveTranscriptionConfig] = await Promise.all([
       import("./useKeywords").then(({ getSessionKeywords }) =>
         getSessionKeywords({ sessionId, dictionaryTerms }),
@@ -98,7 +83,6 @@ export function useStartListeningState(sessionId: string) {
       lifecycle.ready,
     ]);
     if (!canStartLiveSession(sessionId)) {
-      await releaseCloudsyncDeferral();
       return;
     }
 
@@ -120,7 +104,6 @@ export function useStartListeningState(sessionId: string) {
           cleanupError,
         );
       }
-      await releaseCloudsyncDeferral();
       sonnerToast.error(
         "Anarlog could not safely start recording. Please try again.",
         { id: "capture-state-persist-failed" },
@@ -161,8 +144,6 @@ export function useStartListeningState(sessionId: string) {
           "[listener] failed to clean up capture state",
           cleanupError,
         );
-      } finally {
-        await releaseCloudsyncDeferral();
       }
       sonnerToast.error(
         "Anarlog could not safely start recording. Please try again.",
@@ -184,8 +165,6 @@ export function useStartListeningState(sessionId: string) {
           "Anarlog could not safely start recording. Please try again.",
           { id: "capture-state-persist-failed" },
         );
-      } finally {
-        await releaseCloudsyncDeferral();
       }
       return;
     }

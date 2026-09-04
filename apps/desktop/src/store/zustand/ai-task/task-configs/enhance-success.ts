@@ -1,5 +1,4 @@
 import { md2json } from "@anlg/editor/markdown";
-import { beginCloudsyncActivity } from "@anlg/plugin-db";
 import { commands as localApiCommands } from "@anlg/plugin-local-api";
 
 import { createTaskId, type TaskConfig } from ".";
@@ -13,7 +12,6 @@ import {
 } from "./title-success";
 
 import { runNoteEnhancedAutomations } from "~/automations/engine";
-import { releaseCloudsyncActivityEventually } from "~/db/cloudsync-activity";
 import { retryDatabaseLock } from "~/db/retry";
 import {
   constrainSummaryLength,
@@ -25,7 +23,6 @@ import { persistGeneratedEnhancedNote } from "~/session/content-mutations";
 import { loadSessionContentSnapshot } from "~/session/content-queries";
 import { ensureMarkdownFirstLineTitle } from "~/session/title-content";
 import { requestAppAttention } from "~/shared/app-attention";
-import { id } from "~/shared/utils";
 import { hasLiveSessionTitleDraft } from "~/store/zustand/live-title";
 
 type EnhanceSuccessParams = Parameters<
@@ -36,7 +33,6 @@ type EnhanceSuccessParams = Parameters<
 
 export const runEnhanceSuccess = async ({
   text,
-  taskId,
   args,
   transformedArgs,
   model,
@@ -56,7 +52,6 @@ export const runEnhanceSuccess = async ({
     return;
   }
 
-  const cloudsyncLeaseKey = `${taskId}:${id()}`;
   const tagNames = extractEnhanceTagNames(constrainedText, transformedArgs);
   const textWithTags = appendTagLineToMarkdown(constrainedText, tagNames);
   const initialSnapshot = await loadSessionContentSnapshot(args.sessionId);
@@ -94,8 +89,7 @@ export const runEnhanceSuccess = async ({
     }
   }
 
-  await beginCloudsyncActivity("enhance", cloudsyncLeaseKey);
-  try {
+  {
     const snapshot = await loadSessionContentSnapshot(args.sessionId);
     if (!snapshot) {
       throw new Error(`Session ${args.sessionId} no longer exists`);
@@ -181,8 +175,6 @@ export const runEnhanceSuccess = async ({
       void showSummaryReadyNotification(args.sessionId, trimmedTitle);
       void requestAppAttention();
     }
-  } finally {
-    await releaseCloudsyncActivityEventually("enhance", cloudsyncLeaseKey);
   }
 };
 

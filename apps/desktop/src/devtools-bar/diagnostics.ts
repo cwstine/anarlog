@@ -1,6 +1,5 @@
 import { getIdentifier, getVersion } from "@tauri-apps/api/app";
 
-import { getCloudsyncStatus } from "@anlg/plugin-db";
 import { commands as miscCommands } from "@anlg/plugin-misc";
 
 import { getTopIpcCommands, useDevtoolsMetrics } from "./metrics";
@@ -37,7 +36,6 @@ export async function buildDiagnostics() {
     const result = await miscCommands.getDeviceInfo(navigator.language);
     return result.status === "ok" ? result.data : null;
   });
-  const cloudsync = await attempt(() => getCloudsyncStatus());
 
   return {
     capturedAt: new Date().toISOString(),
@@ -74,7 +72,6 @@ export async function buildDiagnostics() {
     },
     topIpcCommands: getTopIpcCommands(),
     topRenderedComponents: getTopRenderedComponents(),
-    cloudsync,
   };
 }
 

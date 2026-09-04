@@ -1,10 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@anlg/plugin-opener2", () => ({
-  commands: { openUrl: vi.fn() },
-}));
-
 vi.mock("~/chat/hooks/use-chat-appearance", () => ({
   useChatAppearance: () => ({
     isDarkAppearance: false,
@@ -14,10 +10,6 @@ vi.mock("~/chat/hooks/use-chat-appearance", () => ({
     elevatedSurfaceClassName: "",
     inputEditorClassName: "",
   }),
-}));
-
-vi.mock("~/env", () => ({
-  env: { VITE_APP_URL: "http://localhost:3000" },
 }));
 
 import { ErrorMessage, getChatErrorText } from "./error";
@@ -41,11 +33,6 @@ describe("ErrorMessage", () => {
     expect(screen.getByText("cloudsync_activity_drain_timeout")).toBeTruthy();
   });
 
-  it("shows context-length help for a string error too", () => {
-    render(<ErrorMessage error="prompt exceeds context length" />);
-
-    expect(screen.getByText("Learn how to fix this")).toBeTruthy();
-  });
 });
 
 describe("getChatErrorText", () => {

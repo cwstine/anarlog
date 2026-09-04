@@ -10,10 +10,6 @@ vi.mock("~/ai/hooks", () => ({
   useLLMConnection: () => ({ conn: null }),
 }));
 
-vi.mock("~/auth/cloudsync-keychain-repair", () => ({
-  CloudsyncKeychainRepairToast: () => null,
-}));
-
 vi.mock("~/calendar/queries", () => ({ searchCalendarEvents: vi.fn() }));
 vi.mock("~/chat/components/use-session-tab", () => ({
   useSessionTab: () => ({

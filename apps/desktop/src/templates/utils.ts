@@ -11,7 +11,6 @@ import {
 
 import { useHumans } from "~/contacts/queries";
 import { useOwnerUserId } from "~/shared/owner-user";
-import { useWebResources } from "~/shared/ui/resource-list";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
 
 export const AUTO_TEMPLATE_ID = "__auto__";
@@ -128,8 +127,8 @@ export function useTemplateTab(tab: Extract<Tab, { type: "templates" }>) {
   const createTemplate = useCreateTemplate();
   const deleteTemplate = useDeleteTemplate();
   const toggleTemplateFavorite = useToggleTemplateFavorite();
-  const { data: rawWebTemplates = [], isLoading: isWebLoading } =
-    useWebResources<Record<string, unknown>>("templates");
+  const rawWebTemplates: Record<string, unknown>[] = [];
+  const isWebLoading = false;
   const webTemplates = useMemo(
     () =>
       filterWebTemplatesAgainstUserTemplates({

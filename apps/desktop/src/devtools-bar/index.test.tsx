@@ -7,16 +7,6 @@ const mocks = vi.hoisted(() => ({
   identifier: "com.hyprnote.staging",
   outlinesEnabled: true,
   topComponents: [] as Array<{ name: string; count: number }>,
-  session: { user: { id: "user-1" } } as object | null,
-  billing: {
-    isReady: true,
-    plan: "trial" as "free" | "trial" | "pro",
-    isLite: false,
-    trialDaysRemaining: 12 as number | null,
-    subscriptionStatus: "trialing",
-    hasPaymentMethod: false,
-    entitlements: ["pro"],
-  },
   setRenderOutlinesEnabled: vi.fn(),
   runAction: vi.fn(),
   copyDiagnostics: vi.fn(),
@@ -87,14 +77,6 @@ vi.mock("./menu", () => ({
     description: string;
     children: React.ReactNode;
   }) => <div data-hint={description}>{children}</div>,
-}));
-
-vi.mock("~/auth", () => ({
-  useAuth: () => ({ session: mocks.session }),
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => mocks.billing,
 }));
 
 vi.mock("./actions", () => ({
@@ -172,9 +154,6 @@ describe("DevtoolsStatusBar", () => {
     );
     mocks.outlinesEnabled = true;
     mocks.topComponents = [];
-    mocks.session = { user: { id: "user-1" } };
-    mocks.billing.plan = "trial";
-    mocks.billing.trialDaysRemaining = 12;
     vi.mocked(commands.showDevtool).mockResolvedValue(true);
     resetDevtoolsMetrics();
     useDevtoolsMetrics.setState({
@@ -224,14 +203,13 @@ describe("DevtoolsStatusBar", () => {
     expect(bar.textContent).toContain("staging");
   });
 
-  it("shows build, plan and live metrics with threshold tones", async () => {
+  it("shows build and live metrics with threshold tones", async () => {
     renderBar();
 
     const bar = await screen.findByTestId("devtools-status-bar");
     await screen.findByText("1.2.3 abcdef1");
 
     expect(bar.textContent).toContain("staging");
-    expect(bar.textContent).toContain("trial 12d");
     expect(bar.textContent).toContain("FPS60");
     expect(bar.textContent).toContain("Jank4%");
     expect(bar.textContent).toContain("Delay250ms");
@@ -244,27 +222,6 @@ describe("DevtoolsStatusBar", () => {
     expect(screen.getByText("60").className).toContain("text-neutral-100");
     expect(screen.getByTestId("devtools-dialogs")).toBeTruthy();
     expect(mocks.startDevtoolsMetrics).toHaveBeenCalledTimes(1);
-  });
-
-  it("labels the plan badge from billing state", async () => {
-    mocks.billing.plan = "pro";
-    mocks.billing.trialDaysRemaining = null;
-
-    renderBar();
-
-    const bar = await screen.findByTestId("devtools-status-bar");
-    expect(bar.textContent).toContain("pro");
-    expect(bar.textContent).not.toContain("trial");
-  });
-
-  it("shows signed out instead of a plan without a session", async () => {
-    mocks.session = null;
-
-    renderBar();
-
-    const bar = await screen.findByTestId("devtools-status-bar");
-    expect(bar.textContent).toContain("signed out");
-    expect(bar.textContent).not.toContain("trial");
   });
 
   it("runs devtools actions and exposes quick settings from the channel menu", async () => {

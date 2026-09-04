@@ -348,42 +348,6 @@ describe("ContextBar", () => {
     });
   });
 
-  it("opens account and device chips in settings", () => {
-    render(
-      <ContextBar
-        entities={[
-          {
-            kind: "account",
-            key: "account:current",
-            source: "auto-current",
-            userId: "user-1",
-            email: "user@example.com",
-            pending: false,
-          },
-          {
-            kind: "device",
-            key: "device:current",
-            source: "auto-current",
-            platform: "linux",
-            pending: false,
-          },
-        ]}
-      />,
-    );
-
-    fireEvent.click(screen.getByText("Account"));
-    fireEvent.click(screen.getByText("Device"));
-
-    expect(openNewMock).toHaveBeenNthCalledWith(1, {
-      type: "settings",
-      state: { tab: "account" },
-    });
-    expect(openNewMock).toHaveBeenNthCalledWith(2, {
-      type: "settings",
-      state: { tab: "sync" },
-    });
-  });
-
   it("opens a calendar event chip on its linked session when present", () => {
     render(
       <ContextBar

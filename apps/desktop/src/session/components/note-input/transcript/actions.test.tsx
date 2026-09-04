@@ -1,8 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { beginCloudsyncActivity, endCloudsyncActivity } from "@anlg/plugin-db";
-
 const mocks = vi.hoisted(() => ({
   audioPath: vi.fn(),
   handleBatchFailed: vi.fn(),
@@ -68,7 +66,7 @@ describe("useRegenerateTranscript", () => {
     });
   });
 
-  it("keeps CloudSync deferred until summary scheduling settles", async () => {
+  it("waits for summary scheduling to settle", async () => {
     let finishSummaryScheduling: (() => void) | undefined;
     mocks.runBatch.mockResolvedValue(undefined);
     mocks.queueAutoEnhanceIfSummaryEmpty.mockReturnValueOnce(
@@ -85,19 +83,10 @@ describe("useRegenerateTranscript", () => {
       );
     });
 
-    expect(beginCloudsyncActivity).toHaveBeenCalledWith(
-      "transcription",
-      expect.stringMatching(/^session-1:retranscription:/),
-    );
-    expect(endCloudsyncActivity).not.toHaveBeenCalled();
-
     finishSummaryScheduling?.();
     await act(async () => {
       await regeneration;
     });
-    expect(endCloudsyncActivity).toHaveBeenCalledWith(
-      "transcription",
-      vi.mocked(beginCloudsyncActivity).mock.calls[0]?.[1],
-    );
+    expect(mocks.queueAutoEnhanceIfSummaryEmpty).toHaveBeenCalledOnce();
   });
 });

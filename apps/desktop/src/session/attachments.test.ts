@@ -4,7 +4,7 @@ const mocks = vi.hoisted(() => ({
   audioDelete: vi.fn(),
   audioMetadata: vi.fn(),
   execute: vi.fn(),
-  executeTransaction: vi.fn().mockResolvedValue([0, 0, 1, 1, 0]),
+  executeTransaction: vi.fn().mockResolvedValue([0, 1, 1]),
   enqueueDatabaseWrite: vi.fn(
     async (_key: string, write: () => Promise<number[]>) => write(),
   ),
@@ -33,14 +33,13 @@ import {
   deleteLocalSessionAudio,
   deleteSessionAudio,
   markSessionAudioTranscriptionComplete,
-  setAttachmentCloudSyncEnabled,
   sha256Hex,
 } from "./attachments";
 
 describe("attachment catalog", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.executeTransaction.mockResolvedValue([0, 0, 1, 1, 0]);
+    mocks.executeTransaction.mockResolvedValue([0, 1, 1]);
     mocks.execute.mockResolvedValue([{ is_deleted: 1 }]);
     mocks.audioDelete.mockResolvedValue({ status: "ok", data: true });
     mocks.audioMetadata.mockResolvedValue({
@@ -69,18 +68,13 @@ describe("attachment catalog", () => {
       expect.any(Function),
     );
     const statements = mocks.executeTransaction.mock.calls[0]![0];
-    expect(statements).toHaveLength(5);
-    expect(statements[2].sql).toContain("session.workspace_id");
-    expect(statements[2].sql).toContain("session.deleted_at IS NULL");
-    expect(statements[2].sql).not.toContain("/vault/");
-    expect(statements[1].sql).toMatch(
-      /WHEN session_attachments\.sha256 = \?\s+AND session_attachments\.size_bytes = \? THEN storage_kind/,
-    );
-    expect(statements[0].sql).toContain(
-      "attachment.sha256 <> ? OR attachment.size_bytes <> ?",
-    );
-    expect(statements[0].params.slice(-2)).toEqual(["a".repeat(64), 42]);
-    expect(statements[2].params).toEqual([
+    expect(statements).toHaveLength(3);
+    expect(statements[1].sql).toContain("session.workspace_id");
+    expect(statements[1].sql).toContain("session.deleted_at IS NULL");
+    expect(statements[1].sql).not.toContain("/vault/");
+    expect(statements[0].sql).toContain("storage_kind = 'local_file'");
+    expect(statements[0].sql).toContain("cloud_object_key = ''");
+    expect(statements[1].params).toEqual([
       expect.stringMatching(
         /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
       ),
@@ -93,18 +87,18 @@ describe("attachment catalog", () => {
       "session-1",
       "attachments/diagram 1.png",
     ]);
-    expect(statements[3].sql).toContain("attachment_local_state");
-    expect(statements[3].sql).toContain("'present'");
-    expect(statements[3].sql).toContain("ON CONFLICT(attachment_id)");
-    expect(statements[3].params).toEqual([
+    expect(statements[2].sql).toContain("attachment_local_state");
+    expect(statements[2].sql).toContain("'present'");
+    expect(statements[2].sql).toContain("ON CONFLICT(attachment_id)");
+    expect(statements[2].params).toEqual([
       "session-1",
       "attachments/diagram 1.png",
     ]);
-    expect(statements[3].expectedRowsAffected).toBe(1);
+    expect(statements[2].expectedRowsAffected).toBe(1);
   });
 
   it("updates an existing physical attachment without creating a duplicate", async () => {
-    mocks.executeTransaction.mockResolvedValue([0, 1, 0, 1, 0]);
+    mocks.executeTransaction.mockResolvedValue([1, 0, 1]);
 
     await expect(
       catalogLocalNoteAttachment({
@@ -117,13 +111,9 @@ describe("attachment catalog", () => {
       }),
     ).resolves.toBeUndefined();
 
-    expect(mocks.executeTransaction.mock.calls[0]![0][1].params).toEqual([
+    expect(mocks.executeTransaction.mock.calls[0]![0][0].params).toEqual([
       "diagram.png",
       "image/png",
-      42,
-      "b".repeat(64),
-      42,
-      "b".repeat(64),
       42,
       "b".repeat(64),
       "diagram.png",
@@ -133,7 +123,7 @@ describe("attachment catalog", () => {
   });
 
   it("fails cataloging when local presence cannot be recorded", async () => {
-    mocks.executeTransaction.mockResolvedValue([0, 0, 1, 0, 0]);
+    mocks.executeTransaction.mockResolvedValue([0, 1, 0]);
 
     await expect(
       catalogLocalNoteAttachment({
@@ -148,7 +138,7 @@ describe("attachment catalog", () => {
   });
 
   it("rejects missing or deleted sessions and unsafe attachment IDs", async () => {
-    mocks.executeTransaction.mockResolvedValue([0, 0, 0, 0, 0]);
+    mocks.executeTransaction.mockResolvedValue([0, 0, 0]);
     await expect(
       catalogLocalNoteAttachment({
         sessionId: "missing-session",
@@ -184,39 +174,11 @@ describe("attachment catalog", () => {
   });
 
   it("computes a stable lowercase SHA-256 checksum", async () => {
-    const bytes = new TextEncoder().encode("hello").buffer;
+    const bytes = new TextEncoder().encode("hello").buffer as ArrayBuffer;
 
     await expect(sha256Hex(bytes)).resolves.toBe(
       "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
     );
-  });
-
-  it("persists private-cloud intent and enqueues upload or download atomically", async () => {
-    mocks.executeTransaction.mockResolvedValue([1, 0, 1, 0]);
-
-    await setAttachmentCloudSyncEnabled("session-1", "attachment-1", true);
-
-    const statements = mocks.executeTransaction.mock.calls[0]![0];
-    expect(statements[0].sql).toContain("SET cloud_sync_enabled = ?");
-    expect(statements[0].params[0]).toBe(1);
-    expect(statements[2].sql).toContain("'upload'");
-    expect(statements[3].sql).toContain("'download'");
-  });
-
-  it("preserves cloud-only bytes locally before queuing a cloud delete", async () => {
-    mocks.executeTransaction.mockResolvedValue([1, 0, 1, 0]);
-
-    await setAttachmentCloudSyncEnabled("session-1", "attachment-1", false);
-
-    const statements = mocks.executeTransaction.mock.calls[0]![0];
-    expect(statements[0].sql).not.toContain("cloud_object_key = ''");
-    expect(statements[2].sql).toContain("'download'");
-    expect(statements[2].sql).toContain(
-      "COALESCE(local.availability, 'absent') <> 'present'",
-    );
-    expect(statements[2].sql).toContain("attachment.cloud_object_key");
-    expect(statements[3].sql).toContain("'delete'");
-    expect(statements[3].sql).toContain("local.availability = 'present'");
   });
 
   it("catalogs primary audio with a stable logical identity and root-relative path", async () => {
@@ -224,17 +186,15 @@ describe("attachment catalog", () => {
 
     expect(mocks.audioMetadata).toHaveBeenCalledWith("session-1");
     const statements = mocks.executeTransaction.mock.calls[0]![0];
-    expect(statements).toHaveLength(5);
-    expect(statements[1].sql).toMatch(
-      /WHEN session_attachments\.sha256 = \?\s+AND session_attachments\.size_bytes = \?/,
-    );
-    expect(statements[1].sql).toContain("source_type = 'session_audio'");
-    expect(statements[1].sql).toContain("'$.transcript_status'");
-    expect(statements[2].sql).toContain(
+    expect(statements).toHaveLength(3);
+    expect(statements[0].sql).toContain("storage_kind = 'local_file'");
+    expect(statements[0].sql).toContain("source_type = 'session_audio'");
+    expect(statements[0].sql).toContain("'$.transcript_status'");
+    expect(statements[1].sql).toContain(
       "json_object('transcript_status', 'processing')",
     );
-    expect(statements[2].sql).toContain("session.workspace_id");
-    expect(statements[2].params).toEqual([
+    expect(statements[1].sql).toContain("session.workspace_id");
+    expect(statements[1].params).toEqual([
       "session-audio:session-1",
       "audio.mp3",
       "audio.mp3",
@@ -244,13 +204,13 @@ describe("attachment catalog", () => {
       "session-1",
       "session-audio:session-1",
     ]);
-    expect(statements[3].sql).toContain("attachment_local_state");
-    expect(statements[3].sql).toContain("'present'");
-    expect(statements[3].expectedRowsAffected).toBe(1);
+    expect(statements[2].sql).toContain("attachment_local_state");
+    expect(statements[2].sql).toContain("'present'");
+    expect(statements[2].expectedRowsAffected).toBe(1);
   });
 
   it("updates the same audio row when the finalized format changes", async () => {
-    mocks.executeTransaction.mockResolvedValue([0, 1, 0, 1, 0]);
+    mocks.executeTransaction.mockResolvedValue([1, 0, 1]);
     mocks.audioMetadata.mockResolvedValue({
       status: "ok",
       data: {
@@ -263,15 +223,11 @@ describe("attachment catalog", () => {
 
     await catalogLocalSessionAudio("session-1");
 
-    const update = mocks.executeTransaction.mock.calls[0]![0][1];
+    const update = mocks.executeTransaction.mock.calls[0]![0][0];
     expect(update.params).toEqual([
       "audio.wav",
       "audio.wav",
       "audio/wav",
-      128,
-      "e".repeat(64),
-      128,
-      "e".repeat(64),
       128,
       "e".repeat(64),
       "session-audio:session-1",

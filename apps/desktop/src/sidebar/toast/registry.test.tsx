@@ -7,12 +7,8 @@ import {
 } from "./registry";
 
 const baseParams = {
-  isAuthenticated: true,
-  isAuthLoading: false,
   hasLLMConfigured: true,
   hasSttConfigured: true,
-  hasProSttConfigured: false,
-  hasProLlmConfigured: false,
   isAiTranscriptionTabActive: false,
   isAiIntelligenceTabActive: false,
   isBatchTranscribingInActiveTranscriptTab: false,
@@ -32,7 +28,6 @@ const baseParams = {
     downloadUpdate: vi.fn(),
     installUpdate: vi.fn(),
   },
-  onSignIn: vi.fn(),
   onOpenLLMSettings: vi.fn(),
   onOpenSTTSettings: vi.fn(),
 };
@@ -80,60 +75,6 @@ describe("sidebar toast registry", () => {
     expect(toast?.lifecycle).toEqual({ type: "condition-bound" });
   });
 
-  it("suggests signing in before provider setup", () => {
-    const toast = getToastToShow(
-      createToastRegistry({
-        ...baseParams,
-        isAuthenticated: false,
-        hasLLMConfigured: false,
-        hasSttConfigured: false,
-      }),
-      () => false,
-    );
-
-    expect(toast?.id).toBe("sign-in-benefits");
-    expect(toast?.description).toBe("Sign in to get the most out of Anarlog");
-    expect(toast?.primaryAction?.label).toBe("Sign in");
-  });
-
-  it("asks for a usable transcription provider after sign-in is dismissed", () => {
-    const toast = getToastToShow(
-      createToastRegistry({
-        ...baseParams,
-        isAuthenticated: false,
-        hasProSttConfigured: true,
-      }),
-      (toast) => toast.id === "sign-in-benefits",
-    );
-
-    expect(toast?.id).toBe("missing-stt");
-    expect(toast?.description).toBe("Transcription provider needed");
-  });
-
-  it("keeps Pro providers usable while authentication is loading", () => {
-    const proSttToast = getToastToShow(
-      createToastRegistry({
-        ...baseParams,
-        isAuthenticated: false,
-        isAuthLoading: true,
-        hasProSttConfigured: true,
-      }),
-      () => false,
-    );
-    const proLlmToast = getToastToShow(
-      createToastRegistry({
-        ...baseParams,
-        isAuthenticated: false,
-        isAuthLoading: true,
-        hasProLlmConfigured: true,
-      }),
-      () => false,
-    );
-
-    expect(proSttToast).toBeNull();
-    expect(proLlmToast).toBeNull();
-  });
-
   it("hides local STT loading while the active transcript tab shows batch progress", () => {
     const toast = getToastToShow(
       createToastRegistry({
@@ -160,41 +101,6 @@ describe("sidebar toast registry", () => {
 
     expect(toast?.id).toBe("local-stt-loading");
     expect(toast?.description).toBe("Starting transcription...");
-  });
-
-  it("renders the pro upgrade toast without an icon", () => {
-    const toast = getToastToShow(
-      createToastRegistry({
-        ...baseParams,
-        isAuthenticated: false,
-      }),
-      (toast) => toast.id === "sign-in-benefits",
-    );
-    const previewToast = createDevtoolsToastPreview({
-      preview: "pro",
-      onSignIn: vi.fn(),
-      onOpenLLMSettings: vi.fn(),
-      onOpenSTTSettings: vi.fn(),
-    });
-
-    expect(toast?.id).toBe("upgrade-to-pro");
-    expect(toast?.description).toBe("Pro features available");
-    expect(toast?.icon).toBeUndefined();
-    expect(previewToast.icon).toBeUndefined();
-  });
-
-  it("uses one permanent dismissal for sign-in and Pro promotions", () => {
-    const toast = getToastToShow(
-      createToastRegistry({
-        ...baseParams,
-        isAuthenticated: false,
-      }),
-      (candidate) =>
-        candidate.lifecycle.type === "persistent" &&
-        candidate.lifecycle.dismissalId === "auth-promotion",
-    );
-
-    expect(toast).toBeNull();
   });
 
   it("offers an available desktop update with a one-day snooze", () => {
@@ -335,13 +241,11 @@ describe("sidebar toast registry", () => {
   it("creates devtools previews with app toast content", () => {
     const languageModelToast = createDevtoolsToastPreview({
       preview: "language-model",
-      onSignIn: vi.fn(),
       onOpenLLMSettings: vi.fn(),
       onOpenSTTSettings: vi.fn(),
     });
     const downloadToast = createDevtoolsToastPreview({
       preview: "download",
-      onSignIn: vi.fn(),
       onOpenLLMSettings: vi.fn(),
       onOpenSTTSettings: vi.fn(),
     });
@@ -352,7 +256,6 @@ describe("sidebar toast registry", () => {
     expect(languageModelToast.lifecycle).toEqual({ type: "condition-bound" });
     const transcriptionModelToast = createDevtoolsToastPreview({
       preview: "transcription-model",
-      onSignIn: vi.fn(),
       onOpenLLMSettings: vi.fn(),
       onOpenSTTSettings: vi.fn(),
     });

@@ -25,16 +25,6 @@ vi.mock("./useNewNote", () => ({
   useNewNote: () => vi.fn(),
 }));
 
-vi.mock("~/auth", () => ({
-  AuthProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="auth-provider">{children}</div>
-  ),
-}));
-
-vi.mock("~/auth/billing", () => ({
-  BillingProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
-
 vi.mock("~/session/queries", () => ({
   getOrCreateSessionForEventId: vi.fn(),
 }));
@@ -61,11 +51,11 @@ describe("MainAppLayout", () => {
 
   afterEach(cleanup);
 
-  it("renders the local application content without import sync", () => {
+  it("does not require auth or billing providers", () => {
     render(<MainAppLayout />);
 
-    const authProvider = screen.getByTestId("auth-provider");
-    expect(authProvider.contains(screen.getByTestId("outlet"))).toBe(true);
+    expect(screen.getByTestId("outlet")).toBeTruthy();
+    expect(screen.queryByTestId("auth-provider")).toBeNull();
     expect(screen.queryByTestId("meeting-import-sync")).toBeNull();
   });
 

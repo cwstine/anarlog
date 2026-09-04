@@ -7,7 +7,6 @@ import {
 } from "./meeting-disclosure";
 import { getSessionKeywords } from "./useKeywords";
 import {
-  CLOUDSYNC_CAPTURE_LEASE_ATTEMPTS,
   getPostCaptureAction,
   getPostCaptureRepairReasons,
   sendMeetingRecordingDisclosure,
@@ -739,7 +738,7 @@ describe("useStartListening", () => {
     });
     await waitFor(() =>
       expect(beginCloudsyncActivityMock).toHaveBeenCalledTimes(
-        CLOUDSYNC_CAPTURE_LEASE_ATTEMPTS,
+        3,
       ),
     );
 

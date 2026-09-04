@@ -16,10 +16,10 @@ import {
   useChatContextPipeline,
 } from "~/chat/context/use-chat-context-pipeline";
 import {
-  createChatCloudsyncActivityController,
+  createChatPersistenceController,
   guardChatTransport,
   type GuardedChatPreflight,
-} from "~/chat/store/cloudsync-activity";
+} from "~/chat/store/persistence-activity";
 import {
   consumeFailedChatGroupCreate,
   hasPendingChatPersist,
@@ -146,11 +146,11 @@ function ChatSessionLifecycle({
   );
   const acceptFinishedChatPersistenceRef = useRef(true);
   const regenerateRequestInFlightRef = useRef(false);
-  const chatCloudsyncActivityRef = useRef<ReturnType<
-    typeof createChatCloudsyncActivityController
+  const chatPersistenceRef = useRef<ReturnType<
+    typeof createChatPersistenceController
   > | null>(null);
-  chatCloudsyncActivityRef.current ??= createChatCloudsyncActivityController();
-  const chatCloudsyncActivity = chatCloudsyncActivityRef.current;
+  chatPersistenceRef.current ??= createChatPersistenceController();
+  const chatPersistence = chatPersistenceRef.current;
   const takeTransportPreflight = useCallback((logicalKey: string) => {
     const queue = pendingTransportPreflightsRef.current.get(logicalKey);
     const preflight = queue?.shift();
@@ -218,7 +218,7 @@ function ChatSessionLifecycle({
         messages: initialMessagesRef.current,
         transport: guardChatTransport(
           transport ?? unavailableChatTransport,
-          chatCloudsyncActivity,
+          chatPersistence,
           { beforeSend: takeTransportPreflight },
         ),
         onFinish: ({ message, messages, isAbort, isError }) => {
@@ -276,12 +276,12 @@ function ChatSessionLifecycle({
 
           if (!currentUserId || (!submittedUserMessage && !persistAssistant)) {
             if (submittedUserMessage) {
-              chatCloudsyncActivity.finish(submittedUserMessage.id);
+              chatPersistence.finish(submittedUserMessage.id);
             }
             return;
           }
 
-          const finishedPersist = chatCloudsyncActivity.runWithLease(
+          const finishedPersist = chatPersistence.run(
             submittedUserMessage?.id ?? sanitizedMessage.id,
             async () => {
               // Outbound user writes may still be retrying; settle them first
@@ -385,7 +385,7 @@ function ChatSessionLifecycle({
           }
         },
       }),
-    [chatCloudsyncActivity, sessionId, takeTransportPreflight, transport],
+    [chatPersistence, sessionId, takeTransportPreflight, transport],
   );
 
   const {
@@ -404,7 +404,7 @@ function ChatSessionLifecycle({
 
   useMountEffect(() => {
     acceptFinishedChatPersistenceRef.current = true;
-    chatCloudsyncActivity.resume();
+    chatPersistence.resume();
     return () => {
       acceptFinishedChatPersistenceRef.current = false;
       const pendingChatGroupIds = new Set([
@@ -433,7 +433,7 @@ function ChatSessionLifecycle({
           console.error("Failed to flush chat writes during cleanup", error);
         }
       });
-      void chatCloudsyncActivity.dispose(cleanup);
+      void chatPersistence.dispose(cleanup);
       pendingTransportPreflightsRef.current.clear();
       pendingRegenerationTombstonesRef.current.clear();
     };
@@ -486,7 +486,7 @@ function ChatSessionLifecycle({
           },
         };
         chatSetMessages((current) => [...current, message, assistantMessage]);
-        const localResponse = chatCloudsyncActivity.runWithLease(
+        const localResponse = chatPersistence.run(
           message.id,
           async () => {
             try {
@@ -571,7 +571,7 @@ function ChatSessionLifecycle({
       });
     },
     [
-      chatCloudsyncActivity,
+      chatPersistence,
       chatSendMessage,
       chatSetMessages,
       isTranscriptUnavailable,

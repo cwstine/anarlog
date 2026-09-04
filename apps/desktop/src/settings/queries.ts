@@ -19,7 +19,6 @@ import {
 } from "~/settings/legacy-snapshots";
 import {
   SETTING_DEFINITIONS,
-  SYNCED_SETTING_KEYS,
   type SettingKey,
   type SettingValue,
   type SettingValues,
@@ -53,8 +52,8 @@ const LEGACY_SUMMARY_TEMPLATE_TOKEN = /\{\{\s*template\s*\}\}/g;
 const LEGACY_DEFAULT_SUMMARY_INSTRUCTION =
   "Use the selected summary template for the summary structure and section headings.";
 
-// Synced rows sort after device rows so parseSettingRows' last-write-wins map
-// prefers the synced value when a key exists in both tables.
+// Read the former replicated preferences as a legacy fallback so existing
+// installations retain local appearance choices after cloud sync is removed.
 const SETTING_ROWS_SQL = `
   SELECT id, value_json, 0 AS source_rank FROM app_settings
   UNION ALL
@@ -292,20 +291,7 @@ export function parseSettingRows(rows: AppSettingRow[]): StoredSettingValues {
 async function persistSettingValues(values: SettingValues): Promise<void> {
   const now = new Date().toISOString();
   const statements = Object.entries(values).map(([key, value]) => ({
-    sql: SYNCED_SETTING_KEYS.has(key as SettingKey)
-      ? `
-      INSERT INTO synced_preferences (id, workspace_id, value_json, updated_at)
-      VALUES (?, NULLIF((
-        SELECT json_extract(value_json, '$.workspace_id')
-        FROM app_settings
-        WHERE id = 'cloudsync_workspace_binding'
-      ), ''), ?, ?)
-      ON CONFLICT(id) DO UPDATE SET
-        workspace_id = excluded.workspace_id,
-        value_json = excluded.value_json,
-        updated_at = excluded.updated_at
-    `
-      : `
+    sql: `
       INSERT INTO app_settings (id, value_json, updated_at)
       VALUES (?, ?, ?)
       ON CONFLICT(id) DO UPDATE SET

@@ -17,7 +17,6 @@ import {
 } from "@anlg/ui/components/ui/popover";
 import { cn } from "@anlg/utils";
 
-import { useWebResources } from "~/shared/ui/resource-list";
 import {
   DEFAULT_TEMPLATE_ICON,
   filterWebTemplatesAgainstUserTemplates,
@@ -55,8 +54,7 @@ export function TemplatePickerPopover({
   const resultRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const userTemplates = useUserTemplates();
   const createTemplate = useCreateTemplate("session_note");
-  const { data: rawWebTemplates = [] } =
-    useWebResources<Record<string, unknown>>("templates");
+  const rawWebTemplates: Record<string, unknown>[] = [];
   const webTemplates = useMemo(
     () =>
       filterWebTemplatesAgainstUserTemplates({

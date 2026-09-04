@@ -1,14 +1,6 @@
 import { useCallback, useState } from "react";
 
 import { commands as notificationCommands } from "@anlg/plugin-notification";
-import { openUrlWithInstruction } from "@anlg/plugin-windows";
-import { sonnerToast } from "@anlg/ui/components/ui/toast";
-
-import { populateRecurringMeetingNotes } from "./recurring-notes";
-
-import { useBillingAccess } from "~/auth/billing-context";
-import { TrialEndedDialog } from "~/billing/trial-ended-dialog";
-import { TrialStartedDialog } from "~/billing/trial-started-dialog";
 import { executeTransaction } from "~/db";
 import { createSession, updateSession } from "~/session/queries";
 import { useOwnerUserId } from "~/shared/owner-user";
@@ -30,9 +22,6 @@ import {
 
 export type DevtoolsAction =
   | "navigation:onboarding"
-  | "instruction:sign-in"
-  | "instruction:billing"
-  | "instruction:integration"
   | `toasts:preview:${DevtoolsToastPreview}`
   | "toasts:clear"
   | `ota:${DevtoolsOtaPreviewStatus}`
@@ -43,13 +32,10 @@ export type DevtoolsAction =
   | "notifications:auto-stop"
   | "notifications:batch-done"
   | "notifications:clear"
-  | "billing:trial-started"
-  | "billing:trial-ended"
   | "countdown:note-60"
   | "countdown:note-300"
   | "countdown:zoom-60"
   | "countdown:zoom-300"
-  | "data:recurring-notes"
   | "error:trigger";
 
 export type DevtoolsMenuItem = {
@@ -74,24 +60,6 @@ export const DEVTOOLS_MENU: DevtoolsMenuGroup[] = [
         label: "Onboarding",
         description: "Open the onboarding tab as a first-time user sees it.",
         action: "navigation:onboarding",
-      },
-      {
-        label: "Instruction: sign-in",
-        description:
-          "Show the continue-in-browser instruction screen used for signing in.",
-        action: "instruction:sign-in",
-      },
-      {
-        label: "Instruction: billing",
-        description:
-          "Show the continue-in-browser instruction screen used for billing.",
-        action: "instruction:billing",
-      },
-      {
-        label: "Instruction: integration",
-        description:
-          "Show the continue-in-browser instruction screen used for integrations.",
-        action: "instruction:integration",
       },
     ],
   },
@@ -120,11 +88,6 @@ export const DEVTOOLS_MENU: DevtoolsMenuGroup[] = [
         label: "Download",
         description: "Preview the model download progress toast.",
         action: "toasts:preview:download",
-      },
-      {
-        label: "Pro",
-        description: "Preview the Pro upsell toast.",
-        action: "toasts:preview:pro",
       },
       {
         label: "Clear all toasts",
@@ -210,22 +173,6 @@ export const DEVTOOLS_MENU: DevtoolsMenuGroup[] = [
     ],
   },
   {
-    label: "Billing",
-    description: "Open the billing dialogs users see around a trial.",
-    items: [
-      {
-        label: "Trial started",
-        description: 'Open the "Your Pro trial just started" dialog.',
-        action: "billing:trial-started",
-      },
-      {
-        label: "Trial ended",
-        description: "Open the dialog shown when a trial ends without payment.",
-        action: "billing:trial-ended",
-      },
-    ],
-  },
-  {
     label: "Countdown",
     description:
       "Create a note for a meeting that starts soon, to exercise pre-meeting flows.",
@@ -255,18 +202,6 @@ export const DEVTOOLS_MENU: DevtoolsMenuGroup[] = [
     ],
   },
   {
-    label: "Data",
-    description: "Seed sample data into the local database.",
-    items: [
-      {
-        label: "Seed recurring meeting notes",
-        description:
-          "Create a recurring series with three past notes and key facts to exercise the Insights tab. Needs a CloudSync workspace.",
-        action: "data:recurring-notes",
-      },
-    ],
-  },
-  {
     label: "Error",
     description: "Break the UI on purpose to check error handling.",
     items: [
@@ -284,7 +219,6 @@ export const DEVTOOLS_MENU: DevtoolsMenuGroup[] = [
 export function useDevtoolsActions() {
   const openNew = useTabs((state) => state.openNew);
   const userId = useOwnerUserId() ?? undefined;
-  const { trialDaysRemaining, upgradeToPro } = useBillingAccess();
   const showToastPreview = useDevtoolsToastPreview(
     (state) => state.showPreview,
   );
@@ -293,21 +227,11 @@ export function useDevtoolsActions() {
   );
   const showOtaPreview = useDevtoolsOtaPreview((state) => state.showPreview);
   const clearOtaPreview = useDevtoolsOtaPreview((state) => state.clearPreview);
-  const [trialStartedOpen, setTrialStartedOpen] = useState(false);
-  const [trialEndedOpen, setTrialEndedOpen] = useState(false);
   const [shouldThrow, setShouldThrow] = useState(false);
 
   if (shouldThrow) {
     throw new Error("Test error triggered from devtools");
   }
-
-  const showInstruction = useCallback((type: string) => {
-    void openUrlWithInstruction(
-      `https://example.com/${type}`,
-      type,
-      async () => ({ status: "ok" as const }),
-    );
-  }, []);
 
   const clearNotifications = useCallback(async () => {
     try {
@@ -490,37 +414,16 @@ export function useDevtoolsActions() {
     [openNew, userId],
   );
 
-  const seedRecurringNotes = useCallback(async () => {
-    try {
-      const sessionId = await populateRecurringMeetingNotes({ userId });
-      openNew({ type: "sessions", id: sessionId });
-    } catch (error) {
-      sonnerToast.error(
-        error instanceof Error ? error.message : "Failed to seed notes",
-      );
-    }
-  }, [openNew, userId]);
-
   const run = useCallback(
     (action: DevtoolsAction) => {
       switch (action) {
         case "navigation:onboarding":
           openNew({ type: "onboarding" });
           return;
-        case "instruction:sign-in":
-          showInstruction("sign-in");
-          return;
-        case "instruction:billing":
-          showInstruction("billing");
-          return;
-        case "instruction:integration":
-          showInstruction("integration");
-          return;
         case "toasts:preview:language-model":
         case "toasts:preview:transcription-model":
         case "toasts:preview:transcription-error":
         case "toasts:preview:download":
-        case "toasts:preview:pro":
           showToastPreview(
             action.slice("toasts:preview:".length) as DevtoolsToastPreview,
           );
@@ -557,12 +460,6 @@ export function useDevtoolsActions() {
         case "notifications:clear":
           void clearNotifications();
           return;
-        case "billing:trial-started":
-          setTrialStartedOpen(true);
-          return;
-        case "billing:trial-ended":
-          setTrialEndedOpen(true);
-          return;
         case "countdown:note-60":
           void createWithCountdown(60);
           return;
@@ -575,9 +472,6 @@ export function useDevtoolsActions() {
         case "countdown:zoom-300":
           void createWithCountdown(300, "https://zoom.us/j/1234567890");
           return;
-        case "data:recurring-notes":
-          void seedRecurringNotes();
-          return;
         case "error:trigger":
           setShouldThrow(true);
           return;
@@ -589,10 +483,8 @@ export function useDevtoolsActions() {
       clearToastPreview,
       createWithCountdown,
       openNew,
-      seedRecurringNotes,
       showAutoStopNotification,
       showCalendarNotification,
-      showInstruction,
       showMicDetectedNotification,
       showMicOptionsNotification,
       showOtaPreview,
@@ -602,20 +494,6 @@ export function useDevtoolsActions() {
 
   return {
     run,
-    dialogs: (
-      <>
-        <TrialStartedDialog
-          open={trialStartedOpen}
-          onOpenChange={setTrialStartedOpen}
-          trialDaysRemaining={trialDaysRemaining}
-          hasPaymentMethod={false}
-        />
-        <TrialEndedDialog
-          open={trialEndedOpen}
-          onOpenChange={setTrialEndedOpen}
-          onUpgrade={upgradeToPro}
-        />
-      </>
-    ),
+    dialogs: null,
   };
 }

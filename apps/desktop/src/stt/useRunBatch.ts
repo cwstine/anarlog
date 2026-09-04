@@ -9,7 +9,6 @@ import { useListener } from "./contexts";
 import { persistTranscriptWrite } from "./persist-retry";
 import { useSTTConnection } from "./useSTTConnection";
 
-import { withCloudsyncActivity } from "~/db/cloudsync-activity";
 import {
   deleteProcessedAudioForRetention,
   normalizeAudioRetention,
@@ -702,11 +701,7 @@ export const useRunBatch = (sessionId: string) => {
           stagedHints.push(...newHints);
         });
 
-      const cloudsyncLeaseKey = `${sessionId}:${id()}`;
-      return withCloudsyncActivity(
-        "transcription",
-        cloudsyncLeaseKey,
-        async () => {
+      return (async () => {
           const params: TranscriptionParams = {
             session_id: sessionId,
             provider: target.provider,
@@ -801,8 +796,7 @@ export const useRunBatch = (sessionId: string) => {
             }
             throw new BatchResponseProcessingError(error);
           }
-        },
-      );
+      })();
     },
     [
       conn,

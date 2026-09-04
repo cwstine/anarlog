@@ -73,25 +73,21 @@ export const SETTING_DEFINITIONS = {
     type: "string",
     path: ["general", "theme"],
     default: "system" as string,
-    synced: true,
   },
   app_icon: {
     type: "string",
     path: ["general", "app_icon"],
     default: "default" as string,
-    synced: true,
   },
   sidebar_show_folder: {
     type: "boolean",
     path: ["general", "sidebar_show_folder"],
     default: true as boolean,
-    synced: true,
   },
   sidebar_show_tags: {
     type: "boolean",
     path: ["general", "sidebar_show_tags"],
     default: false as boolean,
-    synced: true,
   },
   save_recordings: {
     type: "boolean",
@@ -168,11 +164,6 @@ export const SETTING_DEFINITIONS = {
     type: "boolean",
     path: ["general", "capture_meeting_chat"],
     default: false as boolean,
-  },
-  cloud_sync_enabled: {
-    type: "boolean",
-    path: ["general", "cloud_sync_enabled"],
-    default: true as boolean,
   },
   ai_language: {
     type: "string",
@@ -257,27 +248,10 @@ export const SETTING_DEFINITIONS = {
   week_start: {
     type: "string",
     path: ["general", "week_start"],
-    synced: true,
   },
   selected_template_id: {
     type: "string",
     path: ["general", "selected_template_id"],
-  },
-  default_meeting_share_access: {
-    type: "string",
-    path: ["general", "default_meeting_share_access"],
-    default: "me" as string,
-    synced: true,
-  },
-  todo_linear_filter: {
-    type: "string",
-    path: ["todo", "linear_filter"],
-    default: "" as string,
-  },
-  todo_github_repository: {
-    type: "string",
-    path: ["todo", "github_repository"],
-    default: "" as string,
   },
   automation_draft_template: {
     type: "string",
@@ -304,77 +278,9 @@ export const SETTING_DEFINITIONS = {
     path: ["automations", "markdown_export_last_run"],
     default: "" as string,
   },
-  automation_slack_recap_enabled: {
-    type: "boolean",
-    path: ["automations", "slack_recap_enabled"],
-    default: false as boolean,
-  },
-  automation_slack_recap_channel: {
-    type: "string",
-    path: ["automations", "slack_recap_channel"],
-    default: "" as string,
-  },
-  automation_slack_recap_last_run: {
-    type: "string",
-    path: ["automations", "slack_recap_last_run"],
-    default: "" as string,
-  },
-  automation_slack_recap_processed: {
-    type: "string",
-    path: ["automations", "slack_recap_processed"],
-    default: "" as string,
-  },
-  automation_linear_issues_enabled: {
-    type: "boolean",
-    path: ["automations", "linear_issues_enabled"],
-    default: false as boolean,
-  },
-  automation_linear_issues_team: {
-    type: "string",
-    path: ["automations", "linear_issues_team"],
-    default: "" as string,
-  },
-  automation_linear_issues_last_run: {
-    type: "string",
-    path: ["automations", "linear_issues_last_run"],
-    default: "" as string,
-  },
-  automation_linear_issues_processed: {
-    type: "string",
-    path: ["automations", "linear_issues_processed"],
-    default: "" as string,
-  },
-  automation_notion_update_enabled: {
-    type: "boolean",
-    path: ["automations", "notion_update_enabled"],
-    default: false as boolean,
-  },
-  automation_notion_update_page: {
-    type: "string",
-    path: ["automations", "notion_update_page"],
-    default: "" as string,
-  },
-  automation_notion_update_last_run: {
-    type: "string",
-    path: ["automations", "notion_update_last_run"],
-    default: "" as string,
-  },
-  automation_notion_update_processed: {
-    type: "string",
-    path: ["automations", "notion_update_processed"],
-    default: "" as string,
-  },
 } as const;
 
 export type SettingKey = keyof typeof SETTING_DEFINITIONS;
-
-// Keys marked `synced` persist to the E2EE-replicated synced_preferences table
-// instead of the device-local app_settings table.
-export const SYNCED_SETTING_KEYS: ReadonlySet<SettingKey> = new Set(
-  (Object.keys(SETTING_DEFINITIONS) as SettingKey[]).filter(
-    (key) => "synced" in SETTING_DEFINITIONS[key],
-  ),
-);
 
 type SettingTypeMap = {
   boolean: boolean;

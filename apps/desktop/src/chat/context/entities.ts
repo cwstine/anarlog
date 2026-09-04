@@ -1,6 +1,3 @@
-import type { AccountInfo } from "@anlg/plugin-auth";
-import type { DeviceInfo } from "@anlg/plugin-misc";
-
 import type { AnlgUIMessage } from "../types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -74,17 +71,7 @@ export type ContextEntity =
   | (CalendarEventContextRef & {
       title?: string | null;
       removable?: boolean;
-    })
-  | ({
-      kind: "account";
-      key: string;
-      source?: ContextEntitySource;
-    } & Partial<AccountInfo>)
-  | ({
-      kind: "device";
-      key: string;
-      source?: ContextEntitySource;
-    } & Partial<DeviceInfo>);
+    });
 
 export type ContextEntityKind = ContextEntity["kind"];
 

@@ -2,7 +2,6 @@ import { useRouteContext } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef } from "react";
 
 import { useLanguageModel, useLLMConnection } from "~/ai/hooks";
-import { CloudsyncKeychainRepairToast } from "~/auth/cloudsync-keychain-repair";
 import { searchCalendarEvents } from "~/calendar/queries";
 import { useSessionTab } from "~/chat/components/use-session-tab";
 import { buildChatTools } from "~/chat/tools";
@@ -43,7 +42,6 @@ export function useClassicMainLifecycle() {
 export function ClassicMainServices() {
   return (
     <>
-      <CloudsyncKeychainRepairToast />
       <LiveCaptureRecovery />
       <ScheduledMeetingAutoStart />
       <MainListenerControlBridge />

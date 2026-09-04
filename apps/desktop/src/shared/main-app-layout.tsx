@@ -9,8 +9,6 @@ import {
   useNewNote,
 } from "./useNewNote";
 
-import { AuthProvider } from "~/auth";
-import { BillingProvider } from "~/auth/billing";
 import { getOrCreateSessionForEventId } from "~/session/queries";
 import { useMountEffect } from "~/shared/hooks/useMountEffect";
 import { UndoDeleteToast } from "~/sidebar/toast/undo-delete-toast";
@@ -19,13 +17,7 @@ import { isTabInputSupported, useTabs } from "~/store/zustand/tabs";
 export default function MainAppLayout() {
   useNavigationEvents();
 
-  return (
-    <AuthProvider>
-      <BillingProvider>
-        <MainAppContent />
-      </BillingProvider>
-    </AuthProvider>
-  );
+  return <MainAppContent />;
 }
 
 function MainAppContent() {

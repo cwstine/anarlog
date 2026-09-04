@@ -150,8 +150,7 @@ describe("SQLite settings", () => {
 
     const statements = mocks.executeTransaction.mock.calls[0][0];
     expect(statements).toHaveLength(2);
-    expect(statements[0].sql).toContain("INSERT INTO synced_preferences");
-    expect(statements[0].sql).toContain("cloudsync_workspace_binding");
+    expect(statements[0].sql).toContain("INSERT INTO app_settings");
     expect(statements[0].sql).toContain("ON CONFLICT(id) DO UPDATE");
     expect(statements[0].params.slice(0, 2)).toEqual([
       "theme",
@@ -164,13 +163,35 @@ describe("SQLite settings", () => {
     ]);
   });
 
-  it("prefers the synced row over a stale device-local row", () => {
+  it("imports the former synced row over a stale device-local row", () => {
     const result = parseSettingRows([
       { id: "theme", value_json: JSON.stringify("light") },
       { id: "theme", value_json: JSON.stringify("dark") },
     ]);
 
     expect(result.values.theme).toBe("dark");
+  });
+
+  it("ignores obsolete account and sharing settings", () => {
+    const result = parseSettingRows([
+      { id: "cloud_sync_enabled", value_json: JSON.stringify(true) },
+      {
+        id: "default_meeting_share_access",
+        value_json: JSON.stringify("workspace"),
+      },
+      {
+        id: "automation_slack_recap_enabled",
+        value_json: JSON.stringify(true),
+      },
+    ]);
+
+    expect(result.hasValues.has("cloud_sync_enabled" as never)).toBe(false);
+    expect(result.hasValues.has("default_meeting_share_access" as never)).toBe(
+      false,
+    );
+    expect(result.hasValues.has("automation_slack_recap_enabled" as never)).toBe(
+      false,
+    );
   });
 
   it("applies the automatic update policy when it changes", async () => {
