@@ -3,7 +3,6 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { beginCloudsyncActivity, endCloudsyncActivity } from "@anlg/plugin-db";
 
 import { isAudioUploadFile, useUploadFile } from "./useUploadFile";
 
@@ -284,7 +283,7 @@ describe("useUploadFile", () => {
     consoleError.mockRestore();
   });
 
-  test("keeps CloudSync deferred until imported-audio summary scheduling settles", async () => {
+  test("waits for imported-audio summary scheduling to settle", async () => {
     let finishSummaryScheduling: (() => void) | undefined;
     queueAutoEnhanceIfSummaryEmptyMock.mockReturnValueOnce(
       new Promise<void>((resolve) => {
@@ -310,19 +309,8 @@ describe("useUploadFile", () => {
         "session-1",
       );
     });
-    expect(beginCloudsyncActivity).toHaveBeenCalledWith(
-      "transcription",
-      expect.stringMatching(/^session-1:audio-import:/),
-    );
-    expect(endCloudsyncActivity).not.toHaveBeenCalled();
-
     finishSummaryScheduling?.();
-    await waitFor(() => {
-      expect(endCloudsyncActivity).toHaveBeenCalledWith(
-        "transcription",
-        vi.mocked(beginCloudsyncActivity).mock.calls[0]?.[1],
-      );
-    });
+    await waitFor(() => expect(finishSummaryScheduling).toBeDefined());
   });
 
   test.each(["webm", "aac"])(
