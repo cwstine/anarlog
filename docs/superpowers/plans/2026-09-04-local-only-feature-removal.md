@@ -650,10 +650,9 @@ git add apps/desktop/src-tauri plugins/db crates/db-core crates/db-change crates
 git commit -m "refactor: remove CloudSync from the desktop runtime"
 ```
 
-### Task 7: Add the permanent local-only dependency boundary and run full verification
+### Task 7: Verify the local-only dependency boundary
 
 **Files:**
-- Create: `apps/desktop/src/local-only-boundary.test.ts`
 - Modify: `apps/desktop/src/env.ts`
 - Create: `apps/desktop/src/env.test.ts`
 - Modify: `apps/desktop/package.json`
@@ -661,50 +660,50 @@ git commit -m "refactor: remove CloudSync from the desktop runtime"
 
 **Interfaces:**
 - Consumes: the finished local-only desktop source tree and package manifest.
-- Produces: an executable regression test that prevents account/cloud product dependencies from returning.
+- Produces: observable environment tests plus repeatable frontend/native dependency-audit commands.
 
-- [ ] **Step 1: Add the boundary regression test**
+- [ ] **Step 1: Remove obsolete required environment definitions with an observable test**
 
-Create `local-only-boundary.test.ts` using `node:fs` and `node:path`. Recursively inspect retained production `.ts`/`.tsx` files and assert that removed directories do not exist and forbidden package imports are absent:
+Create `env.test.ts` and import the actual `env` object without defining account variables:
 
 ```ts
-const removedDirectories = [
-  "auth",
-  "billing",
-  "attachment-sync",
-  "cloud-api",
-  "session-sharing",
-  "shared-notes",
-  "settings/sync",
-  "settings/team",
-];
+import { describe, expect, it } from "vitest";
+import { env } from "./env";
 
-const forbiddenImports = [
-  "@anlg/supabase",
-  "@supabase/supabase-js",
-  "@anlg/plugin-attachment-sync",
-  "~/auth",
-  "~/cloud-api",
-  "~/session-sharing",
-  "~/shared-notes",
-];
+describe("desktop environment", () => {
+  it("starts without account service configuration", () => {
+    expect("VITE_SUPABASE_URL" in env).toBe(false);
+    expect("VITE_SUPABASE_ANON_KEY" in env).toBe(false);
+    expect("VITE_PRO_PRODUCT_ID" in env).toBe(false);
+  });
+});
 ```
 
-For every removed directory, assert `existsSync(join(sourceRoot, path))` is false. For every retained source file, assert none of `forbiddenImports` occurs in its contents.
+Run it and confirm RED because the fields still exist. Delete Supabase and
+billing configuration from `env.ts`. Keep generic `VITE_APP_URL`/`VITE_API_URL`
+only if a retained direct feature uses them; otherwise remove them too.
 
-- [ ] **Step 2: Run the boundary test and fix only concrete stragglers**
+- [ ] **Step 2: Run explicit dependency audits**
+
+Require these commands to produce no output/status matches:
 
 ```bash
-corepack pnpm --filter @anlg/desktop test -- src/local-only-boundary.test.ts
+rg -n 'from "~/auth|useAuth|useBillingAccess|AuthProvider|BillingProvider' apps/desktop/src --glob '!**/*.test.*'
+rg -n '@anlg/supabase|@supabase/supabase-js|@anlg/plugin-attachment-sync' apps/desktop/src apps/desktop/package.json
+test ! -d apps/desktop/src/auth
+test ! -d apps/desktop/src/billing
+test ! -d apps/desktop/src/attachment-sync
+test ! -d apps/desktop/src/cloud-api
+test ! -d apps/desktop/src/session-sharing
+test ! -d apps/desktop/src/shared-notes
+test ! -d apps/desktop/src/settings/sync
+test ! -d apps/desktop/src/settings/team
 ```
 
-Expected: pass. If it fails, remove the reported import or obsolete module; do not add exceptions for production code.
+If a search reports a retained production import, remove that concrete
+consumer and rerun its nearest behavior test before repeating the audit.
 
-- [ ] **Step 3: Remove obsolete required environment definitions**
-
-Delete Supabase product configuration from `env.ts`. Keep generic `VITE_APP_URL`/`VITE_API_URL` only if a retained direct feature uses them; otherwise remove them too. Add `env.test.ts` assertions that importing the environment without account variables succeeds and exposes no Supabase fields.
-
-- [ ] **Step 4: Run frontend verification**
+- [ ] **Step 3: Run frontend verification**
 
 ```bash
 corepack pnpm --filter @anlg/desktop test
@@ -715,7 +714,7 @@ corepack pnpm fmt:check
 
 Expected: all commands exit zero with no new warnings.
 
-- [ ] **Step 5: Run native and repository-boundary verification**
+- [ ] **Step 4: Run native and repository-boundary verification**
 
 ```bash
 cargo test -p desktop
@@ -726,7 +725,7 @@ rg -n 'supabase|cloudsync|CloudSync|session-sharing|shared-notes|CloudApi|Billin
 
 Expected: Rust commands pass; `cargo tree` reports no CloudSync dependency; the final search contains only documented legacy compatibility strings or test fixtures, with no runtime account/cloud import.
 
-- [ ] **Step 6: Confirm local feature coverage**
+- [ ] **Step 5: Confirm local feature coverage**
 
 ```bash
 corepack pnpm --filter @anlg/desktop test -- src/session/source-apps.test.ts src/session/queries.test.ts src/stt/capabilities.test.ts src/imports/parser.test.ts src/calendar/queries.test.ts src/settings/providers.test.ts
@@ -734,7 +733,7 @@ corepack pnpm --filter @anlg/desktop test -- src/session/source-apps.test.ts src
 
 Expected: local note, meeting detection, STT, import, calendar, and provider tests pass.
 
-- [ ] **Step 7: Record verification and commit the completed removal**
+- [ ] **Step 6: Record verification and commit the completed removal**
 
 Mark each completed checkbox in this plan and append the exact command results under a `## Verification Results` heading. Then commit:
 
