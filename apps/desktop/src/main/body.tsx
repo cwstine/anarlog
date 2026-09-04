@@ -80,7 +80,6 @@ export function ClassicMainBody({
   const syncDefaultLeftSidebarPanelSizeRef = useRef<() => void>(() => {});
   const [showIgnoredTimelineEvents, setShowIgnoredTimelineEvents] =
     useState(false);
-  const noteFilter = useSidebarNotes((state) => state.noteFilter);
   const folderFilter = useSidebarNotes((state) => state.folderFilter);
   const showWindowControlsGutter = useWindowControlsGutter();
   const showSidebarToggleInBody = !usesWindowsStyleTitleBar();
@@ -518,7 +517,6 @@ export function ClassicMainBody({
               >
                 <ClassicMainSidebar
                   folderFilter={folderFilter}
-                  noteFilter={noteFilter}
                   timelineHeader={timelineHeader}
                   showIgnoredTimelineEvents={showIgnoredTimelineEvents}
                   onShowIgnoredTimelineEventsChange={

@@ -281,6 +281,7 @@ git commit -m "refactor: make local AI and desktop features account independent"
 - Delete: `apps/desktop/src/settings/team/`
 - Delete: `apps/desktop/src/session-sharing/`
 - Delete: `apps/desktop/src/shared-notes/`
+- Delete: `apps/desktop/src/enterprise-capture/`
 - Delete: `apps/desktop/src/sidebar/shared-notes.tsx`
 - Delete: `apps/desktop/src/settings/general/default-share-access.tsx`
 
@@ -288,7 +289,7 @@ git commit -m "refactor: make local AI and desktop features account independent"
 - Consumes: local `softDeleteSession`, `finalizeSessionDeletion`, undo-delete store, local session tabs, and ordinary note editor state.
 - Produces: local-only note deletion and tab/editor models with no shared-session variants.
 
-- [ ] **Step 1: Replace remote deletion tests with a local-only assertion and confirm RED**
+- [x] **Step 1: Replace remote deletion tests with a local-only assertion and confirm RED**
 
 In `useDeleteSession.test.tsx`, remove Supabase/share mocks and remote-revocation tests. Add:
 
@@ -313,7 +314,7 @@ corepack pnpm --filter @anlg/desktop test -- src/session/hooks/useDeleteSession.
 
 Expected: the old implementation still imports and invokes remote cleanup.
 
-- [ ] **Step 2: Make deletion entirely local**
+- [x] **Step 2: Make deletion entirely local**
 
 Remove Supabase, Cloud API, session-sharing, and shared-cache imports and helpers from `useDeleteSession.ts`. The main-window finalizer becomes:
 
@@ -329,7 +330,7 @@ const finalize = () =>
 
 Keep optimistic deletion, undo, meeting stop, ignored-event rollback, cross-window event delivery, and note-window closing unchanged.
 
-- [ ] **Step 3: Add a failing sidebar assertion for the removed shared-notes surface**
+- [x] **Step 3: Add a failing sidebar assertion for the removed shared-notes surface**
 
 In `sidebar/index.test.tsx`, retain the existing local timeline mocks and add:
 
@@ -342,11 +343,11 @@ it("does not render shared notes navigation", () => {
 
 Run the test and confirm it fails while `SharedNotesNav` is mounted.
 
-- [ ] **Step 4: Remove sharing UI, shared tabs, and feature directories**
+- [x] **Step 4: Remove sharing UI, shared tabs, and feature directories**
 
 Remove the share button and share/editor activity hooks from session headers and editors. Remove Shared Notes navigation, cache badges, tab rendering, width cases, open-note merging, and shared-note deep-link handling. Remove `shared_sessions` and `shared_note_preview` from TypeScript tab unions and delete their behavior tests from `store/zustand/tabs/basic.test.ts`. Delete the team, session-sharing, and shared-notes directories and their tests.
 
-- [ ] **Step 5: Prove Microsoft Teams capture remains**
+- [x] **Step 5: Prove Microsoft Teams capture remains**
 
 Run the pre-existing source-app and remote-meeting tests:
 
@@ -357,7 +358,7 @@ corepack pnpm --filter @anlg/desktop typecheck
 
 Expected: local deletion/tab tests pass and Microsoft Teams detection tests remain green.
 
-- [ ] **Step 6: Commit Task 3**
+- [x] **Step 6: Commit Task 3**
 
 ```bash
 git add apps/desktop/src/session apps/desktop/src/sidebar apps/desktop/src/shared apps/desktop/src/store/zustand/tabs apps/desktop/src/settings/team apps/desktop/src/session-sharing apps/desktop/src/shared-notes apps/desktop/src/settings/general/default-share-access.tsx

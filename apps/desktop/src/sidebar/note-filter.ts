@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type SidebarNoteFilter = "mine" | "shared";
+export type SidebarNoteFilter = "mine";
 export type SidebarNotesGroupBy = "date" | "folder";
 export type SidebarNotesSortOrder = "newest" | "oldest";
 
@@ -29,7 +29,7 @@ export const useSidebarNotes = create<SidebarNotesState>((set) => ({
   setView: (noteFilter, folderFilter) =>
     set({
       noteFilter,
-      folderFilter: noteFilter === "shared" ? null : (folderFilter ?? null),
+      folderFilter: folderFilter ?? null,
     }),
   setGroupBy: (groupBy) => set({ groupBy }),
   setSortOrder: (sortOrder) => set({ sortOrder }),
@@ -40,10 +40,10 @@ export function resetSidebarNotes() {
 }
 
 export function folderIdForNewNote(
-  noteFilter: SidebarNoteFilter,
+  _noteFilter: SidebarNoteFilter,
   folderFilter: string | null,
 ): string | undefined {
-  if (noteFilter !== "mine" || folderFilter === null) {
+  if (folderFilter === null) {
     return undefined;
   }
 
@@ -51,13 +51,9 @@ export function folderIdForNewNote(
 }
 
 export function encodeNotesView(
-  noteFilter: SidebarNoteFilter,
+  _noteFilter: SidebarNoteFilter,
   folderFilter: string | null,
 ): string {
-  if (noteFilter === "shared") {
-    return "shared";
-  }
-
   if (folderFilter !== null) {
     return `folder:${folderFilter}`;
   }
@@ -69,10 +65,6 @@ export function decodeNotesView(value: string): {
   noteFilter: SidebarNoteFilter;
   folderFilter: string | null;
 } {
-  if (value === "shared") {
-    return { noteFilter: "shared", folderFilter: null };
-  }
-
   if (value.startsWith("folder:")) {
     return { noteFilter: "mine", folderFilter: value.slice("folder:".length) };
   }

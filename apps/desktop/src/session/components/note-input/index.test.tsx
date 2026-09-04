@@ -113,9 +113,9 @@ vi.mock("~/session/components/shared", () => ({
   useCurrentNoteTab: () => ({ type: "raw" }),
 }));
 
-vi.mock("~/session-sharing/editor-activity", () => ({
-  registerCanonicalSessionEditor: hoisted.registerCanonicalSessionEditor,
-  unregisterCanonicalSessionEditor: hoisted.unregisterCanonicalSessionEditor,
+vi.mock("~/session/editor-activity", () => ({
+  registerSessionEditor: hoisted.registerCanonicalSessionEditor,
+  unregisterSessionEditor: hoisted.unregisterCanonicalSessionEditor,
 }));
 
 vi.mock("~/shared/hooks/useScrollPreservation", () => ({
