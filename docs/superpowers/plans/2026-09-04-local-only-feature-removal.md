@@ -44,7 +44,7 @@
 - Consumes: existing `SettingsTab`, `normalizeSettingsTab`, `OnboardingStep`, `getInitialStep`, `getNextStep`, and `getPrevStep` APIs.
 - Produces: a settings/navigation model with no `account`, `team`, or `sync` tab and an onboarding sequence with no `login` step or account-backed calendar handoff.
 
-- [ ] **Step 1: Change settings tests to describe the local-only menu**
+- [x] **Step 1: Change settings tests to describe the local-only menu**
 
 Replace the menu-label expectation in `sidebar/settings.test.tsx` with the retained labels and add explicit absence assertions:
 
@@ -74,7 +74,7 @@ it("normalizes removed settings tabs to General", () => {
 });
 ```
 
-- [ ] **Step 2: Run the focused settings tests and confirm RED**
+- [x] **Step 2: Run the focused settings tests and confirm RED**
 
 Run:
 
@@ -84,7 +84,7 @@ corepack pnpm --filter @anlg/desktop test -- src/sidebar/settings.test.tsx src/s
 
 Expected: failures because Account, Teams, Sync, and plan-lock UI still render.
 
-- [ ] **Step 3: Remove obsolete settings tabs and plan navigation state**
+- [x] **Step 3: Remove obsolete settings tabs and plan navigation state**
 
 In `sidebar/settings.tsx`, remove billing/workspace imports, `requiresPro`, Account/Teams/Sync items, and lock rendering. Retain Dictionary and Automations as ordinary entries. In `settings/index.tsx`, remove account/team/sync imports and switch cases. In `store/zustand/tabs/schema.ts`, remove these values from `SettingsTab` and normalize legacy strings to `"app"`:
 
@@ -97,7 +97,7 @@ case "sync":
 
 Remove exports for the deleted Account settings component from `settings/general/index.ts`.
 
-- [ ] **Step 4: Add an onboarding sequence test and confirm RED**
+- [x] **Step 4: Add an onboarding sequence test and confirm RED**
 
 Create `onboarding/config.test.ts`:
 
@@ -133,11 +133,11 @@ corepack pnpm --filter @anlg/desktop test -- src/onboarding/config.test.ts
 
 Expected: failure because `login` remains in the sequence.
 
-- [ ] **Step 5: Remove account onboarding and account-backed calendar handoff**
+- [x] **Step 5: Remove account onboarding and account-backed calendar handoff**
 
 Remove `login` from `OnboardingStep` and the ordered steps in `config.tsx`. Delete the account section and all `useAuth`, `didSkipLogin`, and `handleCalendarSignIn` logic from `onboarding/index.tsx`. Change the calendar section API so it offers only local Apple Calendar configuration or skip; remove the callback that starts application sign-in.
 
-- [ ] **Step 6: Rerun focused tests and typecheck**
+- [x] **Step 6: Rerun focused tests and typecheck**
 
 Run:
 
@@ -148,7 +148,7 @@ corepack pnpm --filter @anlg/desktop typecheck
 
 Expected: focused tests pass; typecheck has no errors introduced by Task 1.
 
-- [ ] **Step 7: Commit Task 1**
+- [x] **Step 7: Commit Task 1**
 
 ```bash
 git add apps/desktop/src/sidebar/settings.tsx apps/desktop/src/sidebar/settings.test.tsx apps/desktop/src/settings/index.tsx apps/desktop/src/settings/index.test.tsx apps/desktop/src/settings/general/index.ts apps/desktop/src/store/zustand/tabs/schema.ts apps/desktop/src/store/zustand/tabs/basic.test.ts apps/desktop/src/onboarding/config.tsx apps/desktop/src/onboarding/config.test.ts apps/desktop/src/onboarding/index.tsx apps/desktop/src/onboarding/calendar.tsx apps/desktop/src/onboarding/account apps/desktop/src/settings/general/account.tsx

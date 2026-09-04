@@ -8,7 +8,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { commands as sfxCommands } from "@anlg/plugin-sfx";
 import { cn } from "@anlg/utils";
 
-import { LoginSection } from "./account";
 import { CalendarSection } from "./calendar";
 import {
   getInitialStep,
@@ -23,7 +22,6 @@ import { PermissionsSection } from "./permissions";
 import { OnboardingSection } from "./shared";
 
 import { trackAnalyticsEvent } from "~/analytics";
-import { useAuth } from "~/auth";
 import { StandaloneWindowShell } from "~/shared/window-shell";
 import { type Tab, useTabs } from "~/store/zustand/tabs";
 
@@ -84,10 +82,8 @@ function OnboardingScreenContent({
   headerDragRegion?: boolean;
 }) {
   const queryClient = useQueryClient();
-  const auth = useAuth();
   const [isMuted, setIsMuted] = useState(false);
   const [currentStep, setCurrentStep] = useState(getInitialStep);
-  const [didSkipLogin, setDidSkipLogin] = useState(false);
   const onboardingVideoRef = useRef<HTMLVideoElement>(null);
   const currentPlatform = platform();
 
@@ -113,11 +109,6 @@ function OnboardingScreenContent({
     const prev = getPrevStep(currentStep);
     if (prev) setCurrentStep(prev);
   }, [currentStep]);
-
-  const handleCalendarSignIn = useCallback(() => {
-    setCurrentStep("login");
-    void auth.signIn();
-  }, [auth]);
 
   useEffect(() => {
     trackAnalyticsEvent("onboarding_step_viewed", {
@@ -247,44 +238,10 @@ function OnboardingScreenContent({
           </OnboardingSection>
 
           <OnboardingSection
-            title={<Trans>Create account</Trans>}
-            description={
-              <Trans>
-                Sign in to unlock powerful AI models, sync across devices, and
-                personalization.
-              </Trans>
-            }
-            completedTitle={
-              auth.session ? (
-                <Trans>Signed in</Trans>
-              ) : didSkipLogin ? (
-                <Trans>Skipped</Trans>
-              ) : (
-                <Trans>Account</Trans>
-              )
-            }
-            status={getStepStatus("login", currentStep)}
-            onBack={goBack}
-            onNext={goNext}
-            onSkip={() => {
-              setDidSkipLogin(true);
-              trackAnalyticsEvent("onboarding_login_skipped");
-              trackAnalyticsEvent("onboarding_step_skipped", {
-                step: "login",
-                platform: currentPlatform,
-              });
-              const next = getNextStep("login");
-              if (next) setCurrentStep(next);
-            }}
-          >
-            <LoginSection onContinue={goNext} />
-          </OnboardingSection>
-
-          <OnboardingSection
             title={<Trans>Connect calendar</Trans>}
             description={
               <Trans>
-                Anarlog will sync your calendar to get meeting reminders
+                Connect your local Apple Calendar for meeting reminders
               </Trans>
             }
             completedTitle={<Trans>Calendar connected</Trans>}
@@ -293,10 +250,7 @@ function OnboardingScreenContent({
             onNext={goNext}
             onSkip={skipCurrentStep}
           >
-            <CalendarSection
-              onContinue={goNext}
-              onSignIn={handleCalendarSignIn}
-            />
+            <CalendarSection onContinue={goNext} />
           </OnboardingSection>
 
           <OnboardingSection

@@ -1,4 +1,4 @@
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("~/settings/hydration-boundary", () => ({
@@ -7,8 +7,7 @@ vi.mock("~/settings/hydration-boundary", () => ({
 }));
 
 vi.mock("./general", () => ({
-  SettingsAccount: () => <div>Account settings</div>,
-  SettingsApp: () => null,
+  SettingsApp: () => <div>General settings</div>,
   SettingsMeetings: () => null,
   SettingsNotifications: () => null,
   SettingsPermissions: () => null,
@@ -22,8 +21,6 @@ vi.mock("~/settings/developers", () => ({ SettingsDevelopers: () => null }));
 vi.mock("~/settings/dictionary", () => ({ SettingsDictionary: () => null }));
 vi.mock("~/settings/imports", () => ({ SettingsImports: () => null }));
 vi.mock("~/settings/privacy", () => ({ SettingsPrivacy: () => null }));
-vi.mock("~/settings/sync", () => ({ SettingsSync: () => null }));
-vi.mock("~/settings/team", () => ({ SettingsTeam: () => null }));
 vi.mock("~/shared/main", () => ({
   StandardContentWrapper: ({ children }: { children: React.ReactNode }) =>
     children,
@@ -41,7 +38,7 @@ describe("TabContentSettings", () => {
       <TabContentSettings
         tab={createSettingsTab({
           active: true,
-          state: { tab: "account" },
+          state: { tab: "app" },
         })}
       />,
     );
@@ -54,5 +51,21 @@ describe("TabContentSettings", () => {
     expect(scroller?.className).toContain("min-h-0");
     expect(scroller?.className).toContain("min-w-0");
     expect(scroller?.className).toContain("overflow-x-hidden");
+  });
+
+  it("falls back from obsolete hosted settings pages to General", () => {
+    for (const tab of ["account", "sync", "team"] as const) {
+      const { unmount } = render(
+        <TabContentSettings
+          tab={createSettingsTab({
+            active: true,
+            state: { tab: tab as never },
+          })}
+        />,
+      );
+
+      expect(screen.getByText("General settings")).toBeTruthy();
+      unmount();
+    }
   });
 });
