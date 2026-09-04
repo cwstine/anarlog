@@ -1,6 +1,7 @@
 use anlg_calendar_interface::{
     CalendarEvent, CalendarListItem, CalendarProviderType, CreateEventInput, EventFilter,
 };
+#[cfg(feature = "account-auth")]
 use tauri::Manager;
 #[cfg(feature = "account-auth")]
 use tauri_plugin_auth::AuthPluginExt;
@@ -20,13 +21,16 @@ pub async fn is_provider_enabled<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
     provider: CalendarProviderType,
 ) -> Result<bool, Error> {
-    let config = app.state::<crate::PluginConfig>();
+    #[cfg(feature = "account-auth")]
+    let api_base_url = app.state::<crate::PluginConfig>().api_base_url.clone();
+    #[cfg(not(feature = "account-auth"))]
+    let api_base_url = String::new();
     let token = match provider {
         CalendarProviderType::Apple => None,
         _ => access_token(&app)?,
     };
     let apple = is_apple_authorized(&app).await?;
-    anlg_calendar::is_provider_enabled(&config.api_base_url, token.as_deref(), apple, provider)
+    anlg_calendar::is_provider_enabled(&api_base_url, token.as_deref(), apple, provider)
         .await
         .map_err(Into::into)
 }
@@ -36,10 +40,13 @@ pub async fn is_provider_enabled<R: tauri::Runtime>(
 pub async fn list_connection_ids<R: tauri::Runtime>(
     app: tauri::AppHandle<R>,
 ) -> Result<Vec<anlg_calendar::ProviderConnectionIds>, Error> {
-    let config = app.state::<crate::PluginConfig>();
+    #[cfg(feature = "account-auth")]
+    let api_base_url = app.state::<crate::PluginConfig>().api_base_url.clone();
+    #[cfg(not(feature = "account-auth"))]
+    let api_base_url = String::new();
     let token = access_token(&app)?;
     let apple = is_apple_authorized(&app).await?;
-    anlg_calendar::list_connection_ids(&config.api_base_url, token.as_deref(), apple)
+    anlg_calendar::list_connection_ids(&api_base_url, token.as_deref(), apple)
         .await
         .map_err(Into::into)
 }
@@ -51,12 +58,15 @@ pub async fn list_calendars<R: tauri::Runtime>(
     provider: CalendarProviderType,
     connection_id: String,
 ) -> Result<Vec<CalendarListItem>, Error> {
-    let config = app.state::<crate::PluginConfig>();
+    #[cfg(feature = "account-auth")]
+    let api_base_url = app.state::<crate::PluginConfig>().api_base_url.clone();
+    #[cfg(not(feature = "account-auth"))]
+    let api_base_url = String::new();
     let token = match provider {
         CalendarProviderType::Apple => String::new(),
         _ => require_access_token(&app)?,
     };
-    anlg_calendar::list_calendars(&config.api_base_url, &token, provider, &connection_id)
+    anlg_calendar::list_calendars(&api_base_url, &token, provider, &connection_id)
         .await
         .map_err(Into::into)
 }
@@ -69,20 +79,17 @@ pub async fn list_events<R: tauri::Runtime>(
     connection_id: String,
     filter: EventFilter,
 ) -> Result<Vec<CalendarEvent>, Error> {
-    let config = app.state::<crate::PluginConfig>();
+    #[cfg(feature = "account-auth")]
+    let api_base_url = app.state::<crate::PluginConfig>().api_base_url.clone();
+    #[cfg(not(feature = "account-auth"))]
+    let api_base_url = String::new();
     let token = match provider {
         CalendarProviderType::Apple => String::new(),
         _ => require_access_token(&app)?,
     };
-    anlg_calendar::list_events(
-        &config.api_base_url,
-        &token,
-        provider,
-        &connection_id,
-        filter,
-    )
-    .await
-    .map_err(Into::into)
+    anlg_calendar::list_events(&api_base_url, &token, provider, &connection_id, filter)
+        .await
+        .map_err(Into::into)
 }
 
 #[tauri::command]

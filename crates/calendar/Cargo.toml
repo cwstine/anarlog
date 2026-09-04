@@ -4,10 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
+default = ["account-api"]
+account-api = ["dep:anlg-api-client"]
 specta = ["dep:specta"]
 
 [dependencies]
-anlg-api-client = { workspace = true }
+anlg-api-client = { workspace = true, optional = true }
 anlg-apple-calendar = { workspace = true, features = ["specta"] }
 anlg-calendar-interface = { workspace = true }
 anlg-google-calendar = { workspace = true, features = ["specta"] }

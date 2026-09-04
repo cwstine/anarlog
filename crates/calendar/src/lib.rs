@@ -1,7 +1,10 @@
+#[cfg_attr(not(feature = "account-api"), allow(dead_code))]
 mod convert;
 mod error;
+#[cfg(feature = "account-api")]
 mod fetch;
 pub mod runtime;
+#[cfg_attr(not(feature = "account-api"), allow(dead_code))]
 mod windows_tz;
 
 pub use anlg_calendar_interface::{
@@ -33,15 +36,21 @@ pub struct ProviderConnectionIds {
 }
 
 pub fn available_providers() -> Vec<CalendarProviderType> {
-    #[cfg(target_os = "macos")]
+    #[cfg(all(target_os = "macos", feature = "account-api"))]
     let providers = vec![
         CalendarProviderType::Apple,
         CalendarProviderType::Google,
         CalendarProviderType::Outlook,
     ];
 
-    #[cfg(not(target_os = "macos"))]
+    #[cfg(all(target_os = "macos", not(feature = "account-api")))]
+    let providers = vec![CalendarProviderType::Apple];
+
+    #[cfg(all(not(target_os = "macos"), feature = "account-api"))]
     let providers = vec![CalendarProviderType::Google, CalendarProviderType::Outlook];
+
+    #[cfg(all(not(target_os = "macos"), not(feature = "account-api")))]
+    let providers = vec![];
 
     providers
 }
@@ -67,6 +76,7 @@ pub async fn list_connection_ids(
     #[cfg(not(target_os = "macos"))]
     let _ = apple_authorized;
 
+    #[cfg(feature = "account-api")]
     if let Some(token) = access_token.filter(|t| !t.is_empty()) {
         match fetch::list_all_connection_ids(api_base_url, token).await {
             Ok(all) => {
@@ -97,6 +107,9 @@ pub async fn list_connection_ids(
         }
     }
 
+    #[cfg(not(feature = "account-api"))]
+    let _ = (api_base_url, access_token);
+
     Ok(map
         .into_iter()
         .map(|(provider, connection_ids)| ProviderConnectionIds {
@@ -106,6 +119,7 @@ pub async fn list_connection_ids(
         .collect())
 }
 
+#[cfg(feature = "account-api")]
 fn is_local_api_base_url(api_base_url: &str) -> bool {
     reqwest::Url::parse(api_base_url)
         .ok()
@@ -140,14 +154,37 @@ pub async fn list_calendars(
             Ok(convert::convert_apple_calendars(calendars))
         }
         CalendarProviderType::Google => {
-            let calendars =
-                fetch::list_google_calendars(api_base_url, access_token, connection_id).await?;
-            Ok(convert::convert_google_calendars(calendars))
+            #[cfg(feature = "account-api")]
+            {
+                let calendars =
+                    fetch::list_google_calendars(api_base_url, access_token, connection_id).await?;
+                Ok(convert::convert_google_calendars(calendars))
+            }
+            #[cfg(not(feature = "account-api"))]
+            {
+                let _ = (api_base_url, access_token, connection_id);
+                Err(Error::UnsupportedOperation {
+                    operation: "list_calendars",
+                    provider,
+                })
+            }
         }
         CalendarProviderType::Outlook => {
-            let calendars =
-                fetch::list_outlook_calendars(api_base_url, access_token, connection_id).await?;
-            Ok(convert::convert_outlook_calendars(calendars))
+            #[cfg(feature = "account-api")]
+            {
+                let calendars =
+                    fetch::list_outlook_calendars(api_base_url, access_token, connection_id)
+                        .await?;
+                Ok(convert::convert_outlook_calendars(calendars))
+            }
+            #[cfg(not(feature = "account-api"))]
+            {
+                let _ = (api_base_url, access_token, connection_id);
+                Err(Error::UnsupportedOperation {
+                    operation: "list_calendars",
+                    provider,
+                })
+            }
         }
     }
 }
@@ -165,18 +202,40 @@ pub async fn list_events(
             Ok(convert::convert_apple_events(events))
         }
         CalendarProviderType::Google => {
-            let calendar_id = filter.calendar_tracking_id.clone();
-            let events =
-                fetch::list_google_events(api_base_url, access_token, connection_id, filter)
-                    .await?;
-            Ok(convert::convert_google_events(events, &calendar_id))
+            #[cfg(feature = "account-api")]
+            {
+                let calendar_id = filter.calendar_tracking_id.clone();
+                let events =
+                    fetch::list_google_events(api_base_url, access_token, connection_id, filter)
+                        .await?;
+                Ok(convert::convert_google_events(events, &calendar_id))
+            }
+            #[cfg(not(feature = "account-api"))]
+            {
+                let _ = (api_base_url, access_token, connection_id, filter);
+                Err(Error::UnsupportedOperation {
+                    operation: "list_events",
+                    provider,
+                })
+            }
         }
         CalendarProviderType::Outlook => {
-            let calendar_id = filter.calendar_tracking_id.clone();
-            let events =
-                fetch::list_outlook_events(api_base_url, access_token, connection_id, filter)
-                    .await?;
-            Ok(convert::convert_outlook_events(events, &calendar_id))
+            #[cfg(feature = "account-api")]
+            {
+                let calendar_id = filter.calendar_tracking_id.clone();
+                let events =
+                    fetch::list_outlook_events(api_base_url, access_token, connection_id, filter)
+                        .await?;
+                Ok(convert::convert_outlook_events(events, &calendar_id))
+            }
+            #[cfg(not(feature = "account-api"))]
+            {
+                let _ = (api_base_url, access_token, connection_id, filter);
+                Err(Error::UnsupportedOperation {
+                    operation: "list_events",
+                    provider,
+                })
+            }
         }
     }
 }
@@ -231,12 +290,19 @@ mod tests {
     use super::*;
 
     #[test]
+    #[cfg(feature = "account-api")]
     fn detects_local_api_base_urls() {
         assert!(is_local_api_base_url("http://localhost:3001"));
         assert!(is_local_api_base_url("http://127.0.0.1:3001"));
         assert!(is_local_api_base_url("http://[::1]:3001"));
         assert!(!is_local_api_base_url("https://api.example.com"));
         assert!(!is_local_api_base_url("not a url"));
+    }
+
+    #[test]
+    #[cfg(all(target_os = "macos", not(feature = "account-api")))]
+    fn local_build_only_exposes_apple_calendar() {
+        assert_eq!(available_providers(), vec![CalendarProviderType::Apple]);
     }
 
     #[test]

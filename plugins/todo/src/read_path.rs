@@ -14,16 +14,20 @@ pub enum ReadPathResult {
 
 pub enum ReadPath<'a> {
     Apple(&'a str),
+    #[cfg(feature = "account-auth")]
     LinearTeams {
         connection_id: &'a str,
     },
+    #[cfg(feature = "account-auth")]
     LinearTickets {
         connection_id: &'a str,
         team_id: &'a str,
     },
+    #[cfg(feature = "account-auth")]
     GithubRepos {
         connection_id: &'a str,
     },
+    #[cfg(feature = "account-auth")]
     GithubTickets {
         connection_id: &'a str,
         owner: &'a str,
@@ -42,17 +46,21 @@ impl<'a> ReadPath<'a> {
         match segments.as_slice() {
             ["apple"] => Ok(Self::Apple("")),
             ["apple", ..] => Ok(Self::Apple(&trimmed["apple/".len()..])),
+            #[cfg(feature = "account-auth")]
             ["linear", connection_id]
             | ["linear", connection_id, "collections"]
             | ["linear", connection_id, "teams"] => Ok(Self::LinearTeams { connection_id }),
+            #[cfg(feature = "account-auth")]
             ["linear", connection_id, "teams", team_id]
             | ["linear", connection_id, "teams", team_id, "tickets"] => Ok(Self::LinearTickets {
                 connection_id,
                 team_id,
             }),
+            #[cfg(feature = "account-auth")]
             ["github", connection_id]
             | ["github", connection_id, "collections"]
             | ["github", connection_id, "repos"] => Ok(Self::GithubRepos { connection_id }),
+            #[cfg(feature = "account-auth")]
             ["github", connection_id, "repos", owner, repo]
             | ["github", connection_id, "repos", owner, repo, "tickets"] => {
                 Ok(Self::GithubTickets {
@@ -77,6 +85,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "account-auth")]
     fn parses_linear_team_tickets() {
         let parsed = ReadPath::parse("linear/conn-1/teams/team-1").unwrap();
         assert!(matches!(
@@ -89,6 +98,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "account-auth")]
     fn parses_explicit_linear_tickets_path() {
         let parsed = ReadPath::parse("/linear/conn-1/teams/team-1/tickets/").unwrap();
         assert!(matches!(
@@ -101,6 +111,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "account-auth")]
     fn parses_github_repo_tickets() {
         let parsed = ReadPath::parse("github/conn-1/repos/openai/char").unwrap();
         assert!(matches!(
@@ -114,6 +125,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "account-auth")]
     fn parses_explicit_github_tickets_path() {
         let parsed = ReadPath::parse("github/conn-1/repos/openai/char/tickets").unwrap();
         assert!(matches!(
@@ -127,6 +139,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "account-auth")]
     fn parses_collection_aliases() {
         assert!(matches!(
             ReadPath::parse("linear/conn-1/collections").unwrap(),
@@ -146,5 +159,12 @@ mod tests {
     fn rejects_unknown_paths() {
         assert!(ReadPath::parse("linear").is_err());
         assert!(ReadPath::parse("github/conn-1/repos/openai/char/pulls").is_err());
+    }
+
+    #[test]
+    #[cfg(not(feature = "account-auth"))]
+    fn rejects_account_backed_paths() {
+        assert!(ReadPath::parse("linear/conn-1/teams/team-1").is_err());
+        assert!(ReadPath::parse("github/conn-1/repos/openai/char").is_err());
     }
 }

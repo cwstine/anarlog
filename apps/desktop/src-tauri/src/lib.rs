@@ -798,10 +798,14 @@ mod test {
     #[test]
     fn main_capability_excludes_cloudsync_and_account_plugins() {
         let capability = include_str!("../capabilities/default.json");
+        let main_config = include_str!("../tauri.conf.json");
+        let intel_config = include_str!("../tauri.conf.macos-intel.json");
 
         assert!(!capability.contains("cloudsync"));
         assert!(!capability.contains("\"auth:"));
         assert!(!capability.contains("\"attachment-sync:"));
+        assert!(!main_config.contains("cloudsync"));
+        assert!(!intel_config.contains("cloudsync"));
     }
 
     #[test]

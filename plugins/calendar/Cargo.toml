@@ -9,10 +9,10 @@ description = ""
 
 [features]
 default = ["account-auth"]
-account-auth = ["dep:tauri-plugin-auth"]
+account-auth = ["anlg-calendar/account-api", "dep:tauri-plugin-auth"]
 
 [dependencies]
-anlg-calendar = { workspace = true, features = ["specta"] }
+anlg-calendar = { workspace = true, default-features = false, features = ["specta"] }
 anlg-calendar-interface = { workspace = true }
 
 tauri = { workspace = true, features = ["test"] }

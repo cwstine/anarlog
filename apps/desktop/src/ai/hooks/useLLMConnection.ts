@@ -12,7 +12,6 @@ import {
 } from "ai";
 import { useMemo } from "react";
 
-import type { CharTask } from "@anlg/api-client";
 import type { AIProviderStorage } from "@anlg/store";
 
 import { createAppleFoundationModel } from "../apple-foundation-model";
@@ -37,6 +36,7 @@ import { useAiProvider } from "~/settings/providers";
 import { useConfigValues } from "~/shared/config";
 
 type LanguageModelV3 = Parameters<typeof wrapLanguageModel>[0]["model"];
+type AiTask = "chat" | "enhance" | "title";
 
 type LLMConnectionInfo = {
   providerId: ProviderId;
@@ -70,7 +70,7 @@ export const normalizeLLMProviderId = (
     ? undefined
     : providerId;
 
-export const useLanguageModel = (_task?: CharTask): LanguageModelV3 | null => {
+export const useLanguageModel = (_task?: AiTask): LanguageModelV3 | null => {
   const { conn } = useLLMConnection();
 
   return useMemo(() => {

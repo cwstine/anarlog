@@ -3,10 +3,13 @@ mod error;
 mod events;
 mod runtime;
 
+use tauri::Manager;
+
 pub use anlg_calendar::ProviderConnectionIds;
 pub use error::Error;
 pub use events::*;
 
+#[cfg(feature = "account-auth")]
 pub(crate) struct PluginConfig {
     pub api_base_url: String,
 }
@@ -31,6 +34,7 @@ fn make_specta_builder<R: tauri::Runtime>() -> tauri_specta::Builder<R> {
 
 pub fn init<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
     let specta_builder = make_specta_builder();
+    #[cfg(feature = "account-auth")]
     let api_base_url = get_api_base_url();
 
     tauri::plugin::Builder::new(PLUGIN_NAME)
@@ -40,13 +44,16 @@ pub fn init<R: tauri::Runtime>() -> tauri::plugin::TauriPlugin<R> {
 
             anlg_calendar::start(runtime::TauriCalendarRuntime(app.app_handle().clone()));
 
-            use tauri::Manager;
-            app.manage(PluginConfig { api_base_url });
+            #[cfg(feature = "account-auth")]
+            {
+                app.manage(PluginConfig { api_base_url });
+            }
             Ok(())
         })
         .build()
 }
 
+#[cfg(feature = "account-auth")]
 fn get_api_base_url() -> String {
     #[cfg(not(debug_assertions))]
     {

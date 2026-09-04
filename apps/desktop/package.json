@@ -27,7 +27,6 @@
     "@emoji-mart/data": "^1.2.1",
     "@floating-ui/react": "^0.27.19",
     "@handlewithcare/react-prosemirror": "^3.2.6",
-    "@anlg/api-client": "workspace:*",
     "@anlg/changelog": "workspace:^",
     "@anlg/db": "workspace:*",
     "@anlg/db-react": "workspace:*",

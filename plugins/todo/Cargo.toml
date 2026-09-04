@@ -9,10 +9,10 @@ description = ""
 
 [features]
 default = ["account-auth"]
-account-auth = ["dep:tauri-plugin-auth"]
+account-auth = ["dep:anlg-api-client", "dep:tauri-plugin-auth"]
 
 [dependencies]
-anlg-api-client = { workspace = true }
+anlg-api-client = { workspace = true, optional = true }
 anlg-apple-todo = { workspace = true, features = ["specta"] }
 anlg-github-issues = { workspace = true, features = ["specta"] }
 anlg-http = { workspace = true }
