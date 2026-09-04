@@ -17,7 +17,6 @@ const mocks = vi.hoisted(() => {
     addDeletion: vi.fn(),
     clearDeletion: vi.fn(),
     pendingDeletions: {} as Record<string, { data: DeletedSessionData }>,
-    deleteCloudApiSnapshotBestEffort: vi.fn(),
     emitTo: vi.fn(() => Promise.resolve()),
     finalizeSessionDeletion: vi.fn(),
     getAllWebviewWindows: vi.fn<
@@ -64,10 +63,6 @@ vi.mock("~/calendar/ignored-events", () => ({
     unignoreEvent: mocks.unignoreEvent,
     isIgnored: mocks.isIgnored,
   }),
-}));
-
-vi.mock("~/cloud-api/client", () => ({
-  deleteCloudApiSnapshotBestEffort: mocks.deleteCloudApiSnapshotBestEffort,
 }));
 
 vi.mock("~/session/queries", () => ({
@@ -163,7 +158,6 @@ describe("useDeleteSession", () => {
     });
 
     expect(mocks.finalizeSessionDeletion).toHaveBeenCalledWith("session-1");
-    expect(mocks.deleteCloudApiSnapshotBestEffort).not.toHaveBeenCalled();
   });
 
   it("adds the undo deletion optimistically in the main window", async () => {

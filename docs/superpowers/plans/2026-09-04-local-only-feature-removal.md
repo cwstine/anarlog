@@ -383,6 +383,9 @@ git commit -m "refactor: remove team workspaces and note sharing"
 - Modify: `apps/desktop/src/automations/engine.test.ts`
 - Modify: `apps/desktop/src/settings/automations/starter-config.tsx`
 - Modify: `apps/desktop/src/settings/todo/provider-content.tsx`
+- Modify: `apps/desktop/src/chat/tools/index.ts`
+- Modify: `apps/desktop/src/chat/tools/types.ts`
+- Delete: `apps/desktop/src/chat/tools/web-search.ts`
 - Delete: `apps/desktop/src/settings/todo/github.tsx`
 - Delete: `apps/desktop/src/calendar/components/oauth/`
 - Delete: `apps/desktop/src/imports/connected-import.ts`
@@ -397,7 +400,7 @@ git commit -m "refactor: remove team workspaces and note sharing"
 - Consumes: local main lifecycle, Apple Calendar, file-based import, local webhook actions, and local developer tools.
 - Produces: lifecycle and settings compositions with no account-backed network service mounted or selectable.
 
-- [ ] **Step 1: Add failing lifecycle composition assertions**
+- [x] **Step 1: Add failing lifecycle composition assertions**
 
 Update `main/lifecycle.test.tsx` and `shared/main-app-layout.test.tsx` to assert only local services:
 
@@ -420,15 +423,15 @@ it("renders the local application content directly", () => {
 
 Run both tests and confirm they fail against the current service composition.
 
-- [ ] **Step 2: Remove cloud lifecycles and authenticated tool headers**
+- [x] **Step 2: Remove cloud lifecycles and authenticated tool headers**
 
 Remove attachment transfer, Cloud API backfill, shared-note services, and sync repair from `ClassicMainServices`. Remove `useAuth` and `getAuthHeaders` from `ToolRegistration`; call `buildChatTools` without authenticated headers, deleting the optional parameter from the local tool builder if no retained tool uses it. Remove `MeetingImportSync` and `EnterpriseCaptureSync` from `MainAppLayout`.
 
-- [ ] **Step 3: Remove account-backed settings and retain local alternatives**
+- [x] **Step 3: Remove account-backed settings and retain local alternatives**
 
 Remove Cloud API from Developer settings. Remove Google/Outlook OAuth calendar cards while retaining Apple Calendar. Remove connected imports while retaining file/directory import parsers and local detection. Remove Slack/Notion/Nango automation actions while retaining local webhook actions. Remove GitHub/Linear account-backed todo providers while retaining local Apple Reminders where supported.
 
-- [ ] **Step 4: Delete cloud feature modules and rerun focused tests**
+- [x] **Step 4: Delete cloud feature modules and rerun focused tests**
 
 Delete the listed Cloud API, attachment-sync, OAuth, connected-import, and meeting-import-sync files only after their production imports are gone.
 
@@ -441,7 +444,7 @@ corepack pnpm --filter @anlg/desktop typecheck
 
 Expected: focused tests and typecheck pass without the deleted modules.
 
-- [ ] **Step 5: Commit Task 4**
+- [x] **Step 5: Commit Task 4**
 
 ```bash
 git add apps/desktop/src/main apps/desktop/src/shared/main-app-layout.tsx apps/desktop/src/shared/main-app-layout.test.tsx apps/desktop/src/settings/developers apps/desktop/src/calendar apps/desktop/src/imports apps/desktop/src/automations apps/desktop/src/settings/automations apps/desktop/src/settings/todo apps/desktop/src/services/meeting-import-sync.tsx apps/desktop/src/services/meeting-import-sync.test.tsx apps/desktop/src/cloud-api apps/desktop/src/attachment-sync

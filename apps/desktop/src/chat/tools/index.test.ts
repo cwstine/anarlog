@@ -12,7 +12,6 @@ function dependencies(): ToolDependencies {
     getSessionId: vi.fn(),
     getEnhancedNoteId: vi.fn(),
     openEditTab: vi.fn(),
-    getAuthHeaders: vi.fn(),
   };
 }
 
@@ -36,6 +35,7 @@ describe("chat tool registration", () => {
     expect(tools).toHaveProperty("edit_memo");
     expect(tools).toHaveProperty("edit_summary");
     expect(tools).toHaveProperty("move_meeting_contents");
+    expect(tools).not.toHaveProperty("web_search");
     expect(tools).not.toHaveProperty("search_sessions");
     expect(tools).not.toHaveProperty("grep_notes");
     expect(tools).not.toHaveProperty("read_note");

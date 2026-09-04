@@ -39,10 +39,6 @@ vi.mock("~/session/queries", () => ({
   getOrCreateSessionForEventId: vi.fn(),
 }));
 
-vi.mock("~/services/meeting-import-sync", () => ({
-  MeetingImportSync: () => <div data-testid="meeting-import-sync" />,
-}));
-
 vi.mock("~/shared/hooks/useMountEffect", () => ({
   useMountEffect: vi.fn(),
 }));
@@ -65,20 +61,19 @@ describe("MainAppLayout", () => {
 
   afterEach(cleanup);
 
-  it("mounts main-window import sync inside the auth provider", () => {
+  it("renders the local application content without import sync", () => {
     render(<MainAppLayout />);
 
     const authProvider = screen.getByTestId("auth-provider");
-    expect(
-      authProvider.contains(screen.getByTestId("meeting-import-sync")),
-    ).toBe(true);
+    expect(authProvider.contains(screen.getByTestId("outlet"))).toBe(true);
+    expect(screen.queryByTestId("meeting-import-sync")).toBeNull();
   });
 
-  it("does not mount connected import sync in secondary windows", () => {
+  it("renders the same local content in secondary windows", () => {
     mocks.windowLabel = "note";
 
     render(<MainAppLayout />);
 
-    expect(screen.queryByTestId("meeting-import-sync")).toBeNull();
+    expect(screen.getByTestId("outlet")).toBeTruthy();
   });
 });

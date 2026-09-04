@@ -88,10 +88,6 @@ vi.mock("@anlg/plugin-transcription", () => ({
   },
 }));
 
-vi.mock("~/cloud-api/client", () => ({
-  syncCloudApiSnapshotBestEffort: vi.fn(),
-}));
-
 import { createListenerStore } from ".";
 import {
   getLiveCaptureUiMode,

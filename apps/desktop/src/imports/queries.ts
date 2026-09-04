@@ -12,7 +12,6 @@ export const EMPTY_MEETING_IMPORT_HISTORY: MeetingImportRun[] = [];
 type ImportItemRow = { discovered_count: number };
 type SessionIdRow = { id: string };
 type ExternalMeetingIdRow = { external_event_id: string };
-type MeetingImportMode = "connection" | "export";
 
 export type MeetingImportResult = {
   discovered: number;
@@ -89,33 +88,15 @@ export async function importMeetingFiles(
 ): Promise<MeetingImportResult> {
   if (files.length === 0) throw new Error("Select at least one export file");
 
-  return runMeetingImport(providerId, files, "export");
-}
-
-export async function importConnectedMeetings(
-  providerId: string,
-  files: ImportTextFile[],
-): Promise<MeetingImportResult> {
-  if (files.length === 0) {
-    return {
-      discovered: 0,
-      imported: 0,
-      matched: 0,
-      conflicts: 0,
-      errors: 0,
-    };
-  }
-
-  return runMeetingImport(providerId, files, "connection");
+  return runMeetingImport(providerId, files);
 }
 
 async function runMeetingImport(
   providerId: string,
   files: ImportTextFile[],
-  mode: MeetingImportMode,
 ): Promise<MeetingImportResult> {
   const runId = id();
-  const sourceKind = `meeting-${mode}:${providerId}`;
+  const sourceKind = `meeting-export:${providerId}`;
   const totals: MeetingImportResult = {
     discovered: 0,
     imported: 0,
@@ -184,8 +165,8 @@ async function runMeetingImport(
       }
 
       const existingCount = targets.length - importedTargets.length;
-      const matchedCount = mode === "connection" ? existingCount : 0;
-      const conflictCount = mode === "export" ? existingCount : 0;
+      const matchedCount = 0;
+      const conflictCount = existingCount;
       statements.push({
         sql: `
           INSERT INTO migration_import_items (
@@ -223,11 +204,7 @@ async function runMeetingImport(
             file.path,
             sourceKind,
             target.sessionId,
-            existingIds.has(target.sessionId)
-              ? mode === "connection"
-                ? "matched"
-                : "conflict"
-              : "inserted",
+            existingIds.has(target.sessionId) ? "conflict" : "inserted",
           ],
         });
       }

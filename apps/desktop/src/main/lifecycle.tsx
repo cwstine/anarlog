@@ -2,13 +2,10 @@ import { useRouteContext } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef } from "react";
 
 import { useLanguageModel, useLLMConnection } from "~/ai/hooks";
-import { AttachmentTransferLifecycle } from "~/attachment-sync/lifecycle";
-import { useAuth } from "~/auth";
 import { CloudsyncKeychainRepairToast } from "~/auth/cloudsync-keychain-repair";
 import { searchCalendarEvents } from "~/calendar/queries";
 import { useSessionTab } from "~/chat/components/use-session-tab";
 import { buildChatTools } from "~/chat/tools";
-import { CloudApiBackfillLifecycle } from "~/cloud-api/lifecycle";
 import { searchContacts } from "~/contacts/queries";
 import { useRegisterTools } from "~/contexts/tool";
 import { takePendingWelcomeSession } from "~/onboarding/welcome-note";
@@ -46,9 +43,7 @@ export function useClassicMainLifecycle() {
 export function ClassicMainServices() {
   return (
     <>
-      <AttachmentTransferLifecycle />
       <CloudsyncKeychainRepairToast />
-      <CloudApiBackfillLifecycle />
       <LiveCaptureRecovery />
       <ScheduledMeetingAutoStart />
       <MainListenerControlBridge />
@@ -59,7 +54,6 @@ export function ClassicMainServices() {
 }
 
 function ToolRegistration() {
-  const auth = useAuth();
   const { search } = useSearchEngine();
 
   const getContactSearchResults = searchContacts;
@@ -71,7 +65,6 @@ function ToolRegistration() {
     const { noteFilter, folderFilter } = useSidebarNotes.getState();
     return folderIdForNewNote(noteFilter, folderFilter) ?? null;
   }, []);
-  const getAuthHeaders = useCallback(() => auth?.getHeaders(), [auth]);
   const openEditTab = useCallback((requestId: string) => {
     useTabs.getState().openNew({ type: "edit", requestId });
   }, []);
@@ -87,7 +80,6 @@ function ToolRegistration() {
         getFolderFilter,
         getEnhancedNoteId,
         openEditTab,
-        getAuthHeaders,
       }),
     [
       search,
@@ -97,7 +89,6 @@ function ToolRegistration() {
       getFolderFilter,
       getEnhancedNoteId,
       openEditTab,
-      getAuthHeaders,
     ],
   );
 

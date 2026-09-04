@@ -13,58 +13,11 @@ describe("meeting import providers", () => {
     ).toBe(MEETING_IMPORT_PROVIDERS.length);
   });
 
-  it("enables direct OAuth imports for MCP providers and Nango meeting sources", () => {
-    expect(
-      MEETING_IMPORT_PROVIDERS.filter((provider) => provider.directImport).map(
-        (provider) => provider.id,
-      ),
-    ).toEqual([
-      "granola",
-      "circleback",
-      "fireflies",
-      "krisp",
-      "fathom",
-      "read-ai",
-      "notion",
-      "fellow",
-      "tactiq",
-      "jiminny",
-      "plaud",
-      "pocket",
-      "zoom",
-      "microsoft-teams",
-      "google-meet",
-      "webex",
-    ]);
-    expect(
-      MEETING_IMPORT_PROVIDERS.find((provider) => provider.id === "plaud"),
-    ).toMatchObject({
-      directImport: "cli",
-    });
-    expect(
-      MEETING_IMPORT_PROVIDERS.find((provider) => provider.id === "pocket"),
-    ).toMatchObject({
-      directImport: "mcp-oauth",
-      helpUrl: "https://docs.heypocketai.com/docs",
-    });
-    expect(
-      MEETING_IMPORT_PROVIDERS.find((provider) => provider.id === "zoom"),
-    ).toMatchObject({
-      directImport: "nango-oauth",
-      nangoIntegrationId: "zoom",
-    });
-    expect(
-      MEETING_IMPORT_PROVIDERS.filter(
-        (provider) => provider.directImport === "nango-oauth",
-      ).map((provider) => provider.nangoIntegrationId),
-    ).toEqual([
-      "fathom",
-      "notion",
-      "zoom",
-      "microsoft-teams",
-      "google-meet",
-      "webex",
-    ]);
+  it("keeps provider metadata file-import only", () => {
+    for (const provider of MEETING_IMPORT_PROVIDERS) {
+      expect(provider).not.toHaveProperty("directImport");
+      expect(provider).not.toHaveProperty("nangoIntegrationId");
+    }
   });
 
   it("detects exact native names and bundle identifiers", () => {

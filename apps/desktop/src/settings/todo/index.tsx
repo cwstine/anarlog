@@ -18,10 +18,7 @@ import { SettingsPageTitle } from "~/settings/page-title";
 
 export function SettingsTodo() {
   const isMacos = platform() === "macos";
-  const visibleProviders = TODO_PROVIDERS.filter(
-    (provider) =>
-      provider.platform === undefined || provider.platform === "all" || isMacos,
-  );
+  const visibleProviders = isMacos ? TODO_PROVIDERS : [];
 
   return (
     <div className="flex flex-col gap-6">
