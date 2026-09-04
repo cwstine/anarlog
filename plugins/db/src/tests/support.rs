@@ -1,11 +1,15 @@
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
+#[cfg(feature = "cloudsync")]
 use serde_json::json;
 use tauri::ipc::{Channel, InvokeResponseBody};
+#[cfg(feature = "cloudsync")]
 use wiremock::{Mock, MockServer, Request, Respond, ResponseTemplate, matchers::path};
 
-use crate::{CloudsyncE2eeWitness, QueryEvent, runtime};
+#[cfg(feature = "cloudsync")]
+use crate::CloudsyncE2eeWitness;
+use crate::{QueryEvent, runtime};
 
 pub(super) fn capture_channel() -> (Channel<QueryEvent>, Arc<Mutex<Vec<QueryEvent>>>) {
     let events = Arc::new(Mutex::new(Vec::new()));
@@ -70,6 +74,7 @@ pub(super) async fn setup_runtime() -> (tempfile::TempDir, Arc<runtime::PluginDb
     setup_runtime_with_cloudsync(false).await
 }
 
+#[cfg(feature = "cloudsync")]
 pub(super) async fn setup_enabled_cloudsync_runtime()
 -> (tempfile::TempDir, Arc<runtime::PluginDbRuntime>) {
     let (dir, runtime) = setup_runtime_with_cloudsync(true).await;
@@ -83,11 +88,13 @@ pub(super) async fn setup_enabled_cloudsync_runtime()
     (dir, runtime)
 }
 
+#[cfg(feature = "cloudsync")]
 #[derive(Clone, Default)]
 struct WitnessResponder {
     events: Arc<Mutex<Vec<serde_json::Value>>>,
 }
 
+#[cfg(feature = "cloudsync")]
 impl Respond for WitnessResponder {
     fn respond(&self, request: &Request) -> ResponseTemplate {
         if request.method == wiremock::http::Method::POST {
@@ -148,6 +155,7 @@ impl Respond for WitnessResponder {
     }
 }
 
+#[cfg(feature = "cloudsync")]
 pub(crate) async fn setup_witness(workspace_id: &str) -> (MockServer, CloudsyncE2eeWitness) {
     let server = MockServer::start().await;
     Mock::given(path(format!("/sync/e2ee/witness/{workspace_id}")))
@@ -161,6 +169,7 @@ pub(crate) async fn setup_witness(workspace_id: &str) -> (MockServer, CloudsyncE
     (server, config)
 }
 
+#[cfg(feature = "cloudsync")]
 pub(super) fn unreachable_witness(workspace_id: &str) -> CloudsyncE2eeWitness {
     CloudsyncE2eeWitness {
         endpoint: format!("http://127.0.0.1:9/sync/e2ee/witness/{workspace_id}"),

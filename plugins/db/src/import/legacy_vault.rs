@@ -21,6 +21,7 @@ use self::sessions::RECOVERED_MISSING_SESSION_METADATA;
 mod discovery;
 mod documents;
 mod entities;
+mod frontmatter;
 mod sessions;
 mod source_format;
 

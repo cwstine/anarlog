@@ -2,11 +2,14 @@
 
 mod calendar_ops;
 mod calendar_types;
+#[cfg(feature = "cloudsync")]
 mod cloudsync;
 mod e2ee;
 mod event_ops;
 mod event_types;
 mod legacy_import;
+#[cfg(not(feature = "cloudsync"))]
+mod local_workspace;
 mod session_ops;
 mod session_types;
 mod template_ops;
@@ -18,6 +21,7 @@ mod webhook_types;
 
 pub use calendar_ops::*;
 pub use calendar_types::*;
+#[cfg(feature = "cloudsync")]
 pub use cloudsync::*;
 pub use e2ee::*;
 pub use event_ops::*;
@@ -32,6 +36,11 @@ pub use voiceprint_ops::*;
 pub use voiceprint_types::*;
 pub use webhook_ops::*;
 pub use webhook_types::*;
+
+#[cfg(not(feature = "cloudsync"))]
+fn cloudsync_alter_guard_required(_: &str) -> bool {
+    false
+}
 
 // Older builds keep running against databases that carry newer migrations, so
 // every new migration must be downgrade-safe by default: additive only, new
@@ -452,7 +461,9 @@ const E2EE_PAYLOAD_HASH_LOCAL_STATE_ALTER: &str =
 pub enum AppSchemaError {
     Migrate(anlg_db_migrate::MigrateError),
     Sqlx(sqlx::Error),
+    #[cfg(feature = "cloudsync")]
     Cloudsync(anlg_cloudsync::Error),
+    #[cfg(feature = "cloudsync")]
     CloudsyncWorkspace(CloudsyncWorkspaceError),
     SharedSessionCacheRepair(&'static str),
     AttachmentTransferJobsRepair(&'static str),
@@ -465,7 +476,9 @@ impl std::fmt::Display for AppSchemaError {
         match self {
             Self::Migrate(error) => write!(f, "{error}"),
             Self::Sqlx(error) => write!(f, "{error}"),
+            #[cfg(feature = "cloudsync")]
             Self::Cloudsync(error) => write!(f, "{error}"),
+            #[cfg(feature = "cloudsync")]
             Self::CloudsyncWorkspace(error) => write!(f, "{error}"),
             Self::SharedSessionCacheRepair(error) => write!(f, "{error}"),
             Self::AttachmentTransferJobsRepair(error) => write!(f, "{error}"),
@@ -489,12 +502,14 @@ impl From<sqlx::Error> for AppSchemaError {
     }
 }
 
+#[cfg(feature = "cloudsync")]
 impl From<CloudsyncWorkspaceError> for AppSchemaError {
     fn from(error: CloudsyncWorkspaceError) -> Self {
         Self::CloudsyncWorkspace(error)
     }
 }
 
+#[cfg(feature = "cloudsync")]
 impl From<anlg_cloudsync::Error> for AppSchemaError {
     fn from(error: anlg_cloudsync::Error) -> Self {
         Self::Cloudsync(error)
@@ -518,7 +533,10 @@ pub async fn prepare_schema_with_progress(
     anlg_db_migrate::migrate_with_progress(db, schema(), on_migration_progress).await?;
     repair_missing_core_tables(db.pool(), templates_missing_before_migration).await?;
     backfill_session_share_activation(db.pool()).await?;
+    #[cfg(feature = "cloudsync")]
     ensure_cloudsync_workspace_binding(db.pool()).await?;
+    #[cfg(not(feature = "cloudsync"))]
+    local_workspace::ensure_local_workspace_binding(db.pool()).await?;
     Ok(())
 }
 
@@ -1088,8 +1106,10 @@ async fn apply_net_zero_e2ee_payload_hash_alters(
     // One alter window around the temporary payload_hash column so CloudSync
     // never records a schema change. The final table matches the snapshot
     // taken at begin_alter, so commit_alter only restores tracking.
+    #[cfg(feature = "cloudsync")]
     let cloudsync_alter = db.cloudsync_enabled()
         && anlg_db_core::cloudsync_is_enabled_on(&mut *transaction, "e2ee_records").await?;
+    #[cfg(feature = "cloudsync")]
     if cloudsync_alter {
         anlg_db_core::cloudsync_begin_alter_on(&mut *transaction, "e2ee_records").await?;
     }
@@ -1118,6 +1138,7 @@ async fn apply_net_zero_e2ee_payload_hash_alters(
         total: PAIR.len(),
     });
 
+    #[cfg(feature = "cloudsync")]
     if cloudsync_alter {
         anlg_db_core::cloudsync_commit_alter_on(&mut *transaction, "e2ee_records").await?;
     }
@@ -1173,7 +1194,7 @@ async fn repair_torn_e2ee_payload_hash_local_state_migration(
 
 async fn apply_e2ee_payload_hash_local_state_without_drop_column(
     db: &anlg_db_core::Db,
-    refresh_stale_cloudsync_schema: bool,
+    _refresh_stale_cloudsync_schema: bool,
 ) -> Result<(), AppSchemaError> {
     let pool = db.pool();
     let migration_table_exists: bool = sqlx::query_scalar(
@@ -1223,9 +1244,11 @@ async fn apply_e2ee_payload_hash_local_state_without_drop_column(
     // otherwise sync fails with a schema-hash mismatch after the unbrick.
     // Net-zero upgrades never told CloudSync about payload_hash, so refreshing
     // the hash would only rewrite change-tracking for no schema change.
-    let cloudsync_alter = refresh_stale_cloudsync_schema
+    #[cfg(feature = "cloudsync")]
+    let cloudsync_alter = _refresh_stale_cloudsync_schema
         && db.cloudsync_enabled()
         && anlg_db_core::cloudsync_is_enabled_on(&mut *transaction, "e2ee_records").await?;
+    #[cfg(feature = "cloudsync")]
     if cloudsync_alter {
         anlg_db_core::cloudsync_begin_alter_on(&mut *transaction, "e2ee_records").await?;
     }
@@ -1245,6 +1268,7 @@ async fn apply_e2ee_payload_hash_local_state_without_drop_column(
     .execute(&mut *transaction)
     .await?;
 
+    #[cfg(feature = "cloudsync")]
     if cloudsync_alter {
         anlg_db_core::cloudsync_commit_alter_on(&mut *transaction, "e2ee_records").await?;
     }
@@ -1367,5 +1391,5 @@ async fn repair_missing_core_tables(
     Ok(())
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "cloudsync"))]
 mod schema_tests;

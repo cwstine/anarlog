@@ -2,6 +2,7 @@ use anlg_calendar_interface::{
     CalendarEvent, CalendarListItem, CalendarProviderType, CreateEventInput, EventFilter,
 };
 use tauri::Manager;
+#[cfg(feature = "account-auth")]
 use tauri_plugin_auth::AuthPluginExt;
 use tauri_plugin_permissions::PermissionsPluginExt;
 
@@ -104,6 +105,13 @@ pub fn create_event<R: tauri::Runtime>(
 }
 
 fn access_token<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> Result<Option<String>, Error> {
+    #[cfg(not(feature = "account-auth"))]
+    {
+        let _ = app;
+        return Ok(None);
+    }
+
+    #[cfg(feature = "account-auth")]
     app.access_token()
         .map(|token| token.filter(|token| !token.is_empty()))
         .map_err(|error| Error::Auth(error.to_string()))

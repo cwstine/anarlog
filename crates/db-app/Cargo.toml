@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-anlg-cloudsync = { workspace = true }
-anlg-db-core = { workspace = true }
-anlg-db-migrate = { workspace = true }
+anlg-cloudsync = { workspace = true, optional = true }
+anlg-db-core = { workspace = true, default-features = false }
+anlg-db-migrate = { workspace = true, default-features = false }
 anlg-e2ee = { workspace = true }
 
 base64 = { workspace = true }
@@ -18,7 +18,8 @@ thiserror = { workspace = true }
 uuid = { workspace = true, features = ["v4"] }
 
 [features]
-default = []
+default = ["cloudsync"]
+cloudsync = ["dep:anlg-cloudsync", "anlg-db-core/cloudsync", "anlg-db-migrate/cloudsync"]
 cli = []
 
 [dev-dependencies]

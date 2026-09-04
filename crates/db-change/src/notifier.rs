@@ -16,9 +16,14 @@ pub struct ChangeNotifier {
 
 impl ChangeNotifier {
     pub fn new() -> (Self, SqlitePoolOptions) {
-        Self::build(Some(false), None)
+        Self::build(
+            Some(false),
+            #[cfg(feature = "cloudsync")]
+            None,
+        )
     }
 
+    #[cfg(feature = "cloudsync")]
     pub fn new_with_cloudsync(
         initializer: anlg_cloudsync::CloudsyncConnectionInitializer,
     ) -> (Self, SqlitePoolOptions) {
@@ -26,12 +31,18 @@ impl ChangeNotifier {
     }
 
     pub fn disabled() -> (Self, SqlitePoolOptions) {
-        Self::build(None, None)
+        Self::build(
+            None,
+            #[cfg(feature = "cloudsync")]
+            None,
+        )
     }
 
     fn build(
         cloudsync_enabled: Option<bool>,
-        cloudsync_initializer: Option<anlg_cloudsync::CloudsyncConnectionInitializer>,
+        #[cfg(feature = "cloudsync")] cloudsync_initializer: Option<
+            anlg_cloudsync::CloudsyncConnectionInitializer,
+        >,
     ) -> (Self, SqlitePoolOptions) {
         let (table_change_tx, _) = broadcast::channel(256);
         let change_tracker = Arc::new(ChangeTracker::default());
@@ -51,6 +62,7 @@ impl ChangeNotifier {
         let pool_options = SqlitePoolOptions::new().after_connect(move |conn, _| {
             let callback_tx = callback_tx.clone();
             let callback_tracker = Arc::clone(&callback_tracker);
+            #[cfg(feature = "cloudsync")]
             let cloudsync_initializer = cloudsync_initializer.clone();
 
             Box::pin(async move {
@@ -72,6 +84,18 @@ impl ChangeNotifier {
                 });
 
                 let commit_state = Arc::clone(&hook_state);
+                #[cfg(not(feature = "cloudsync"))]
+                {
+                    handle.set_commit_hook(move || {
+                        commit_state.flush();
+                        true
+                    });
+
+                    handle.set_rollback_hook(move || {
+                        hook_state.clear();
+                    });
+                }
+                #[cfg(feature = "cloudsync")]
                 if cloudsync_enabled {
                     anlg_cloudsync::install_transaction_observer(
                         &mut handle,
@@ -91,6 +115,7 @@ impl ChangeNotifier {
                 }
                 drop(handle);
 
+                #[cfg(feature = "cloudsync")]
                 if let Some(initializer) = cloudsync_initializer {
                     initializer
                         .initialize(conn)

@@ -7,16 +7,26 @@ exclude = ["/js", "/node_modules"]
 links = "tauri-plugin-db"
 description = ""
 
+[features]
+default = ["cloudsync"]
+cloudsync = [
+  "dep:anlg-db-sync",
+  "anlg-db-app/cloudsync",
+  "anlg-db-core/cloudsync",
+  "anlg-db-migrate/cloudsync",
+  "anlg-db-reactive/cloudsync",
+]
+
 [dependencies]
 anlg-agent-access = { workspace = true }
-anlg-db-app = { workspace = true }
-anlg-db-core = { workspace = true }
+anlg-db-app = { workspace = true, default-features = false }
+anlg-db-core = { workspace = true, default-features = false }
 anlg-db-execute = { workspace = true }
-anlg-db-migrate = { workspace = true }
-anlg-db-reactive = { workspace = true, features = ["specta"] }
-anlg-db-sync = { workspace = true }
+anlg-db-migrate = { workspace = true, default-features = false }
+anlg-db-reactive = { workspace = true, default-features = false, features = ["specta"] }
+anlg-db-sync = { workspace = true, optional = true }
 anlg-e2ee = { workspace = true }
-anlg-fs-sync-core = { workspace = true }
+anlg-frontmatter = { workspace = true }
 anlg-session-ingest = { workspace = true }
 anlg-storage = { workspace = true }
 
@@ -35,6 +45,7 @@ thiserror = { workspace = true }
 tokio = { workspace = true, features = ["sync", "time"] }
 tracing = { workspace = true }
 uuid = { workspace = true, features = ["v4"] }
+serde_yaml = { workspace = true }
 
 [dev-dependencies]
 anlg-db-core = { workspace = true, features = ["test-utils"] }

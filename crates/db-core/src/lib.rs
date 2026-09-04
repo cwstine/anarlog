@@ -1,14 +1,22 @@
+#[cfg(feature = "cloudsync")]
 mod cloudsync;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
+#[cfg(feature = "cloudsync")]
+use std::path::PathBuf;
 use std::str::FromStr;
+#[cfg(feature = "cloudsync")]
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
+#[cfg(feature = "cloudsync")]
+use sqlx::Sqlite;
+#[cfg(feature = "cloudsync")]
 use sqlx::pool::PoolConnection;
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
-use sqlx::{Connection, Sqlite, SqlitePool};
+use sqlx::{Connection, SqlitePool};
 
+#[cfg(feature = "cloudsync")]
 pub use crate::cloudsync::{
     CLOUDSYNC_MAX_OUTBOUND_BYTES, CLOUDSYNC_MAX_OUTBOUND_CHUNKS, CLOUDSYNC_MAX_OUTBOUND_ROWS,
     CloudsyncActivityEntry, CloudsyncActivityStatus, CloudsyncActivityTrigger, CloudsyncAuth,
@@ -17,6 +25,7 @@ pub use crate::cloudsync::{
     CloudsyncSyncHook, CloudsyncTableSpec, cloudsync_begin_alter_on, cloudsync_commit_alter_on,
     cloudsync_is_enabled_on,
 };
+#[cfg(feature = "cloudsync")]
 use crate::cloudsync::{CloudsyncInterruptHandle, CloudsyncRuntimeState};
 
 #[derive(Clone, Copy, Debug)]
@@ -40,8 +49,12 @@ pub enum DbOpenError {
     Io(#[from] std::io::Error),
     #[error(transparent)]
     Sqlx(#[from] sqlx::Error),
+    #[cfg(feature = "cloudsync")]
     #[error(transparent)]
     Cloudsync(#[from] anlg_cloudsync::Error),
+    #[cfg(not(feature = "cloudsync"))]
+    #[error("CloudSync support is not compiled into this database")]
+    CloudsyncUnavailable,
 }
 
 pub type ManagedDb = std::sync::Arc<Db>;
@@ -49,15 +62,25 @@ pub type ManagedDb = std::sync::Arc<Db>;
 const SQLITE_BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 
 pub struct Db {
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_enabled: bool,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_path: Option<PathBuf>,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_initializer: anlg_cloudsync::CloudsyncConnectionInitializer,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_connection: Arc<tokio::sync::Mutex<Option<PoolConnection<Sqlite>>>>,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_interrupt: Arc<CloudsyncInterruptHandle>,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_lifecycle: Arc<tokio::sync::Mutex<()>>,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_sync_operation: Arc<tokio::sync::Mutex<()>>,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_sync_requested: Arc<tokio::sync::Notify>,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_runtime: Arc<Mutex<CloudsyncRuntimeState>>,
+    #[cfg(feature = "cloudsync")]
     pub(crate) cloudsync_sync_hook: Arc<Mutex<Option<Arc<dyn CloudsyncSyncHook>>>>,
     pub(crate) pool: SqlitePool,
     change_notifier: anlg_db_change::ChangeNotifier,
@@ -65,16 +88,25 @@ pub struct Db {
 
 impl std::fmt::Debug for Db {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let runtime = self.cloudsync_runtime.lock().unwrap();
+        #[cfg(feature = "cloudsync")]
+        {
+            let runtime = self.cloudsync_runtime.lock().unwrap();
+            return f
+                .debug_struct("Db")
+                .field("cloudsync_enabled", &self.cloudsync_enabled)
+                .field("cloudsync_path", &self.cloudsync_path)
+                .field("cloudsync_runtime", &*runtime)
+                .field("change_notifier", &true)
+                .finish_non_exhaustive();
+        }
+        #[cfg(not(feature = "cloudsync"))]
         f.debug_struct("Db")
-            .field("cloudsync_enabled", &self.cloudsync_enabled)
-            .field("cloudsync_path", &self.cloudsync_path)
-            .field("cloudsync_runtime", &*runtime)
             .field("change_notifier", &true)
             .finish_non_exhaustive()
     }
 }
 
+#[cfg(feature = "cloudsync")]
 impl Drop for Db {
     fn drop(&mut self) {
         let task = {
@@ -93,6 +125,7 @@ impl Drop for Db {
 }
 
 impl Db {
+    #[cfg(feature = "cloudsync")]
     pub async fn open(options: DbOpenOptions<'_>) -> Result<Self, DbOpenError> {
         if options.cloudsync_enabled
             && matches!(options.storage, DbStorage::Local(_))
@@ -118,10 +151,46 @@ impl Db {
         .await
     }
 
+    #[cfg(not(feature = "cloudsync"))]
+    pub async fn open(options: DbOpenOptions<'_>) -> Result<Self, DbOpenError> {
+        if options.cloudsync_enabled {
+            return Err(DbOpenError::CloudsyncUnavailable);
+        }
+        let mut connect_options = match options.storage {
+            DbStorage::Local(path) => {
+                if let Some(parent) = path.parent() {
+                    std::fs::create_dir_all(parent)?;
+                }
+                apply_internal_connect_policy(SqliteConnectOptions::new())
+                    .filename(path)
+                    .create_if_missing(true)
+            }
+            DbStorage::Memory => {
+                apply_internal_connect_policy(SqliteConnectOptions::from_str("sqlite::memory:")?)
+            }
+        };
+        if options.journal_mode_wal {
+            connect_options = connect_options.pragma("journal_mode", "WAL");
+        }
+        if options.foreign_keys {
+            connect_options = connect_options.pragma("foreign_keys", "ON");
+        }
+        let (change_notifier, pool_options) = anlg_db_change::ChangeNotifier::new();
+        let mut pool_options = apply_internal_pool_policy(pool_options);
+        if matches!(options.storage, DbStorage::Memory) {
+            pool_options = pool_options.max_connections(1);
+        } else if let Some(max) = options.max_connections {
+            pool_options = pool_options.max_connections(max);
+        }
+        let pool = pool_options.connect_with(connect_options).await?;
+        Ok(Self::from_local_parts(pool, change_notifier))
+    }
+
     pub fn change_notifier(&self) -> &anlg_db_change::ChangeNotifier {
         &self.change_notifier
     }
 
+    #[cfg(feature = "cloudsync")]
     pub async fn connect_local(path: impl AsRef<Path>) -> Result<Self, anlg_cloudsync::Error> {
         if let Some(parent) = path.as_ref().parent() {
             std::fs::create_dir_all(parent)?;
@@ -157,6 +226,7 @@ impl Db {
         })
     }
 
+    #[cfg(feature = "cloudsync")]
     pub async fn connect_memory() -> Result<Self, anlg_cloudsync::Error> {
         let options =
             apply_internal_connect_policy(SqliteConnectOptions::from_str("sqlite::memory:")?);
@@ -197,20 +267,7 @@ impl Db {
             .connect_with(options)
             .await?;
 
-        Ok(Self {
-            cloudsync_enabled: false,
-            cloudsync_path: None,
-            cloudsync_initializer: anlg_cloudsync::CloudsyncConnectionInitializer::default(),
-            cloudsync_connection: Arc::new(tokio::sync::Mutex::new(None)),
-            cloudsync_interrupt: Arc::new(CloudsyncInterruptHandle::default()),
-            cloudsync_lifecycle: Arc::new(tokio::sync::Mutex::new(())),
-            cloudsync_sync_operation: Arc::new(tokio::sync::Mutex::new(())),
-            cloudsync_sync_requested: Arc::new(tokio::sync::Notify::new()),
-            cloudsync_runtime: Arc::new(Mutex::new(CloudsyncRuntimeState::default())),
-            cloudsync_sync_hook: Arc::new(Mutex::new(None)),
-            pool,
-            change_notifier,
-        })
+        Ok(Self::from_local_parts(pool, change_notifier))
     }
 
     pub async fn connect_local_read_write(path: impl AsRef<Path>) -> Result<Self, sqlx::Error> {
@@ -232,20 +289,7 @@ impl Db {
             .connect_with(options)
             .await?;
 
-        Ok(Self {
-            cloudsync_enabled: false,
-            cloudsync_path: None,
-            cloudsync_initializer: anlg_cloudsync::CloudsyncConnectionInitializer::default(),
-            cloudsync_connection: Arc::new(tokio::sync::Mutex::new(None)),
-            cloudsync_interrupt: Arc::new(CloudsyncInterruptHandle::default()),
-            cloudsync_lifecycle: Arc::new(tokio::sync::Mutex::new(())),
-            cloudsync_sync_operation: Arc::new(tokio::sync::Mutex::new(())),
-            cloudsync_sync_requested: Arc::new(tokio::sync::Notify::new()),
-            cloudsync_runtime: Arc::new(Mutex::new(CloudsyncRuntimeState::default())),
-            cloudsync_sync_hook: Arc::new(Mutex::new(None)),
-            pool,
-            change_notifier,
-        })
+        Ok(Self::from_local_parts(pool, change_notifier))
     }
 
     pub async fn connect_local_read_only(path: impl AsRef<Path>) -> Result<Self, sqlx::Error> {
@@ -259,20 +303,7 @@ impl Db {
             .connect_with(options)
             .await?;
 
-        Ok(Self {
-            cloudsync_enabled: false,
-            cloudsync_path: None,
-            cloudsync_initializer: anlg_cloudsync::CloudsyncConnectionInitializer::default(),
-            cloudsync_connection: Arc::new(tokio::sync::Mutex::new(None)),
-            cloudsync_interrupt: Arc::new(CloudsyncInterruptHandle::default()),
-            cloudsync_lifecycle: Arc::new(tokio::sync::Mutex::new(())),
-            cloudsync_sync_operation: Arc::new(tokio::sync::Mutex::new(())),
-            cloudsync_sync_requested: Arc::new(tokio::sync::Notify::new()),
-            cloudsync_runtime: Arc::new(Mutex::new(CloudsyncRuntimeState::default())),
-            cloudsync_sync_hook: Arc::new(Mutex::new(None)),
-            pool,
-            change_notifier,
-        })
+        Ok(Self::from_local_parts(pool, change_notifier))
     }
 
     pub async fn connect_memory_plain() -> Result<Self, sqlx::Error> {
@@ -285,31 +316,52 @@ impl Db {
             .connect_with(options)
             .await?;
 
-        Ok(Self {
-            cloudsync_enabled: false,
-            cloudsync_path: None,
-            cloudsync_initializer: anlg_cloudsync::CloudsyncConnectionInitializer::default(),
-            cloudsync_connection: Arc::new(tokio::sync::Mutex::new(None)),
-            cloudsync_interrupt: Arc::new(CloudsyncInterruptHandle::default()),
-            cloudsync_lifecycle: Arc::new(tokio::sync::Mutex::new(())),
-            cloudsync_sync_operation: Arc::new(tokio::sync::Mutex::new(())),
-            cloudsync_sync_requested: Arc::new(tokio::sync::Notify::new()),
-            cloudsync_runtime: Arc::new(Mutex::new(CloudsyncRuntimeState::default())),
-            cloudsync_sync_hook: Arc::new(Mutex::new(None)),
-            pool,
-            change_notifier,
-        })
+        Ok(Self::from_local_parts(pool, change_notifier))
     }
 
     pub fn pool(&self) -> &SqlitePool {
         &self.pool
     }
 
+    fn from_local_parts(pool: SqlitePool, change_notifier: anlg_db_change::ChangeNotifier) -> Self {
+        Self {
+            #[cfg(feature = "cloudsync")]
+            cloudsync_enabled: false,
+            #[cfg(feature = "cloudsync")]
+            cloudsync_path: None,
+            #[cfg(feature = "cloudsync")]
+            cloudsync_initializer: anlg_cloudsync::CloudsyncConnectionInitializer::default(),
+            #[cfg(feature = "cloudsync")]
+            cloudsync_connection: Arc::new(tokio::sync::Mutex::new(None)),
+            #[cfg(feature = "cloudsync")]
+            cloudsync_interrupt: Arc::new(CloudsyncInterruptHandle::default()),
+            #[cfg(feature = "cloudsync")]
+            cloudsync_lifecycle: Arc::new(tokio::sync::Mutex::new(())),
+            #[cfg(feature = "cloudsync")]
+            cloudsync_sync_operation: Arc::new(tokio::sync::Mutex::new(())),
+            #[cfg(feature = "cloudsync")]
+            cloudsync_sync_requested: Arc::new(tokio::sync::Notify::new()),
+            #[cfg(feature = "cloudsync")]
+            cloudsync_runtime: Arc::new(Mutex::new(CloudsyncRuntimeState::default())),
+            #[cfg(feature = "cloudsync")]
+            cloudsync_sync_hook: Arc::new(Mutex::new(None)),
+            pool,
+            change_notifier,
+        }
+    }
+
+    #[cfg(not(feature = "cloudsync"))]
+    pub fn cloudsync_enabled(&self) -> bool {
+        false
+    }
+
+    #[cfg(feature = "cloudsync")]
     pub fn set_cloudsync_sync_hook(&self, hook: Arc<dyn CloudsyncSyncHook>) {
         self.cloudsync_sync_hook.lock().unwrap().replace(hook);
     }
 }
 
+#[cfg(feature = "cloudsync")]
 async fn connect_with_options(
     options: &DbOpenOptions<'_>,
     pool_options: SqlitePoolOptions,
@@ -410,6 +462,7 @@ fn apply_internal_pool_policy(pool_options: SqlitePoolOptions) -> SqlitePoolOpti
     })
 }
 
+#[cfg(feature = "cloudsync")]
 async fn ensure_cloudsync_wal(pool: &SqlitePool) -> Result<(), anlg_cloudsync::Error> {
     let journal_mode: String = sqlx::query_scalar("PRAGMA journal_mode")
         .fetch_one(pool)

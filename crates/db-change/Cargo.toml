@@ -3,8 +3,12 @@ name = "db-change"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+default = ["cloudsync"]
+cloudsync = ["dep:anlg-cloudsync"]
+
 [dependencies]
-anlg-cloudsync = { workspace = true }
+anlg-cloudsync = { workspace = true, optional = true }
 
 sqlx = { workspace = true, features = ["runtime-tokio", "sqlite"] }
 tokio = { workspace = true, features = ["sync"] }

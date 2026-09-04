@@ -784,6 +784,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[cfg(feature = "cloudsync")]
     async fn verified_file_import_survives_cloudsync_reopen_without_rerun() {
         let dir = tempfile::tempdir().unwrap();
         let db_path = dir.path().join("app.db");

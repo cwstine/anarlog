@@ -66,12 +66,12 @@ anlg-cli-process = { path = "crates/cli-process", package = "cli-process" }
 anlg-cloudsync = { path = "crates/cloudsync", package = "cloudsync" }
 anlg-codex = { path = "crates/codex", package = "codex" }
 anlg-data = { path = "crates/data", package = "data" }
-anlg-db-app = { path = "crates/db-app", package = "db-app" }
-anlg-db-change = { path = "crates/db-change", package = "db-change" }
-anlg-db-core = { path = "crates/db-core", package = "db-core" }
+anlg-db-app = { path = "crates/db-app", package = "db-app", default-features = false }
+anlg-db-change = { path = "crates/db-change", package = "db-change", default-features = false }
+anlg-db-core = { path = "crates/db-core", package = "db-core", default-features = false }
 anlg-db-execute = { path = "crates/db-execute", package = "db-execute" }
-anlg-db-migrate = { path = "crates/db-migrate", package = "db-migrate" }
-anlg-db-reactive = { path = "crates/db-reactive", package = "db-reactive" }
+anlg-db-migrate = { path = "crates/db-migrate", package = "db-migrate", default-features = false }
+anlg-db-reactive = { path = "crates/db-reactive", package = "db-reactive", default-features = false }
 anlg-db-sync = { path = "crates/db-sync", package = "db-sync" }
 anlg-detect = { path = "crates/detect", package = "detect" }
 anlg-device-monitor = { path = "crates/device-monitor", package = "device-monitor" }
@@ -189,8 +189,8 @@ tauri-plugin-attachment-sync = { path = "plugins/attachment-sync" }
 tauri-plugin-audio-priority = { path = "plugins/audio-priority" }
 tauri-plugin-auth = { path = "plugins/auth" }
 tauri-plugin-bedrock = { path = "plugins/bedrock" }
-tauri-plugin-calendar = { path = "plugins/calendar" }
-tauri-plugin-db = { path = "plugins/db" }
+tauri-plugin-calendar = { path = "plugins/calendar", default-features = false }
+tauri-plugin-db = { path = "plugins/db", default-features = false }
 tauri-plugin-deeplink2 = { path = "plugins/deeplink2" }
 tauri-plugin-detect = { path = "plugins/detect" }
 tauri-plugin-dictation = { path = "plugins/dictation" }
@@ -225,7 +225,7 @@ tauri-plugin-sidecar2 = { path = "plugins/sidecar2" }
 tauri-plugin-store2 = { path = "plugins/store2" }
 tauri-plugin-tantivy = { path = "plugins/tantivy" }
 tauri-plugin-template = { path = "plugins/template" }
-tauri-plugin-todo = { path = "plugins/todo" }
+tauri-plugin-todo = { path = "plugins/todo", default-features = false }
 tauri-plugin-tracing = { path = "plugins/tracing" }
 tauri-plugin-transcription = { path = "plugins/transcription" }
 tauri-plugin-tray = { path = "plugins/tray", package = "tauri-plugin-anlg-tray" }

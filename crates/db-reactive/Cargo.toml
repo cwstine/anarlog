@@ -4,11 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
+default = ["cloudsync"]
+cloudsync = ["anlg-db-change/cloudsync", "anlg-db-core/cloudsync"]
 specta = ["dep:specta"]
 
 [dependencies]
-anlg-db-change = { workspace = true }
-anlg-db-core = { workspace = true }
+anlg-db-change = { workspace = true, default-features = false }
+anlg-db-core = { workspace = true, default-features = false }
 anlg-db-execute = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

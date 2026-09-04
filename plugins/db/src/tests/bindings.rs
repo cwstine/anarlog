@@ -18,6 +18,7 @@ fn export_types() {
 }
 
 #[test]
+#[cfg(feature = "cloudsync")]
 fn default_permissions_exclude_generic_cloudsync_control() {
     let permissions = include_str!("../../permissions/default.toml");
 
@@ -46,6 +47,7 @@ fn default_permissions_include_legacy_migration_workflow() {
 }
 
 #[test]
+#[cfg(feature = "cloudsync")]
 fn default_permissions_include_device_enrollment_workflow() {
     let permissions = include_str!("../../permissions/default.toml");
 

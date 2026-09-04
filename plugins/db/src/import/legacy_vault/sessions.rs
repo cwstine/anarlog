@@ -6,10 +6,10 @@ use anlg_db_app::{
     LegacyAttachment, LegacyDocument, LegacyImportBatch, LegacyImportRow, LegacyParticipant,
     LegacySession, LegacySessionTag, LegacyTag, LegacyTranscript,
 };
-use anlg_fs_sync_core::frontmatter::ParsedDocument;
 use serde_json::Value;
 
 use super::discovery::SourceFile;
+use super::frontmatter::ParsedDocument;
 use super::source_format::{
     append_warning, content_type_for_path, infer_session_id_and_folder, normalized_relative_path,
     parse_json_object, stable_id, value_i64, value_string,

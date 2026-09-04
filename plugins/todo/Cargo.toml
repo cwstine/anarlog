@@ -7,6 +7,10 @@ exclude = ["/js", "/node_modules"]
 links = "tauri-plugin-todo"
 description = ""
 
+[features]
+default = ["account-auth"]
+account-auth = ["dep:tauri-plugin-auth"]
+
 [dependencies]
 anlg-api-client = { workspace = true }
 anlg-apple-todo = { workspace = true, features = ["specta"] }
@@ -15,7 +19,7 @@ anlg-http = { workspace = true }
 anlg-ticket-interface = { workspace = true }
 
 tauri = { workspace = true, features = ["test"] }
-tauri-plugin-auth = { workspace = true }
+tauri-plugin-auth = { workspace = true, optional = true }
 tauri-plugin-permissions = { workspace = true }
 tauri-specta = { workspace = true, features = ["derive", "typescript"] }
 

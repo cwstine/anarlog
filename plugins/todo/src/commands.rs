@@ -4,6 +4,7 @@ use anlg_apple_todo::types::{
 use anlg_ticket_interface::{CollectionPage, TicketPage};
 
 use tauri::Manager;
+#[cfg(feature = "account-auth")]
 use tauri_plugin_auth::AuthPluginExt;
 
 use crate::error::Error;
@@ -280,7 +281,17 @@ pub async fn github_issue_comments(
 }
 
 fn require_access_token<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> Result<String, Error> {
+    #[cfg(not(feature = "account-auth"))]
+    {
+        let _ = app;
+        return Err(Error::Auth(
+            "account-backed integrations are unavailable in this build".to_string(),
+        ));
+    }
+
+    #[cfg(feature = "account-auth")]
     let token = app.access_token().map_err(|e| Error::Auth(e.to_string()))?;
+    #[cfg(feature = "account-auth")]
     match token {
         Some(t) if !t.is_empty() => Ok(t),
         _ => Err(Error::Auth("not authenticated".to_string())),

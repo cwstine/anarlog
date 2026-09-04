@@ -4,11 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
+default = ["cloudsync"]
+cloudsync = ["dep:anlg-cloudsync", "anlg-db-change/cloudsync"]
 test-utils = []
 
 [dependencies]
-anlg-cloudsync = { workspace = true }
-anlg-db-change = { workspace = true }
+anlg-cloudsync = { workspace = true, optional = true }
+anlg-db-change = { workspace = true, default-features = false }
 
 backon = { workspace = true }
 libsqlite3-sys = "0.35"
