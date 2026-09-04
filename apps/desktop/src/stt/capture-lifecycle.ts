@@ -229,8 +229,7 @@ export function useCaptureLifecycle(sessionId: string) {
         isRealtimeLocalModel(model);
       const shouldRefineSpeakerDiarization = () =>
         hasMultipleRemoteParticipants &&
-        ((provider === "anarlog" && model === "cloud") ||
-          shouldUseLocalBatchForSpeakerDiarization());
+        shouldUseLocalBatchForSpeakerDiarization();
       const cloudsyncLeaseKey = `${sessionId}:${transcriptId}`;
       let pendingSummaryMode = recoveredMarker?.summaryMode;
       let completionTracked = false;

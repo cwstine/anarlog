@@ -29,8 +29,6 @@ import {
   normalizeReasoningEffort,
   supportsReasoningEffort,
 } from "~/ai/reasoning-effort";
-import { useAuth } from "~/auth";
-import { useBillingAccess } from "~/auth/billing-context";
 import {
   providerRowId,
   ProviderIconSlot,
@@ -38,7 +36,6 @@ import {
 } from "~/settings/ai/shared";
 import {
   getProviderSelectionBlockers,
-  requiresEntitlement,
 } from "~/settings/ai/shared/eligibility";
 import { listAnthropicModels } from "~/settings/ai/shared/list-anthropic";
 import { listAppleFoundationModels } from "~/settings/ai/shared/list-apple-foundation";
@@ -82,7 +79,6 @@ export function SelectProviderAndModel() {
   const { providers: configuredProviders, isReady: providerSettingsReady } =
     useConfiguredMapping();
   const settingsReady = useSettingsReady();
-  const billing = useBillingAccess();
   const queryClient = useQueryClient();
   const { setAccordionValue } = useLlmSettings();
   const [pendingSelection, setPendingSelection] = useState<{
@@ -270,11 +266,6 @@ export function SelectProviderAndModel() {
       : undefined;
 
   const handleProviderChange = (provider: string) => {
-    if (provider === "anarlog" && !billing.isPaid) {
-      billing.upgradeToPro();
-      return;
-    }
-
     const requestId = ++selectionRequestRef.current;
 
     const status = configuredProviders[provider];
@@ -393,11 +384,6 @@ export function SelectProviderAndModel() {
             </SelectTrigger>
             <SelectContent>
               {providerOptions.map((provider) => {
-                const requiresPro = requiresEntitlement(
-                  provider.requirements,
-                  "pro",
-                );
-                const locked = requiresPro && !billing.isPaid;
                 const configured =
                   configuredProviders[provider.id]?.configured ?? false;
 
@@ -405,10 +391,10 @@ export function SelectProviderAndModel() {
                   <SelectItem
                     key={provider.id}
                     value={provider.id}
-                    disabled={locked || !configured}
+                    disabled={!configured}
                     className={cn([
                       "data-disabled:text-muted-foreground data-disabled:!opacity-100",
-                      !configured && !locked && "text-muted-foreground",
+                      !configured && "text-muted-foreground",
                     ])}
                   >
                     <div className="flex flex-col gap-0.5">
@@ -416,11 +402,6 @@ export function SelectProviderAndModel() {
                         <ProviderIconSlot>{provider.icon}</ProviderIconSlot>
                         <span>{provider.displayName}</span>
                       </div>
-                      {locked ? (
-                        <span className="text-muted-foreground text-[11px]">
-                          <Trans>Upgrade to Pro to use this provider.</Trans>
-                        </span>
-                      ) : null}
                     </div>
                   </SelectItem>
                 );
@@ -548,19 +529,6 @@ export function getLlmProviderStatus({
     }
   }
 
-  if (provider.id === "anarlog") {
-    const result: ListModelsResult = {
-      models: ["Auto"],
-      ignored: [],
-      metadata: {
-        Auto: {
-          input_modalities: ["text", "image"] as InputModality[],
-        },
-      },
-    };
-    return { configured: true, listModels: async () => result };
-  }
-
   let listModelsFunc: () => Promise<ListModelsResult>;
 
   switch (provider.id) {
@@ -639,8 +607,6 @@ function useConfiguredMapping(): {
   providers: Record<string, ProviderStatus>;
   isReady: boolean;
 } {
-  const auth = useAuth();
-  const billing = useBillingAccess();
   const availability = useProviderAvailability("llm", PROVIDERS);
   const { current_llm_provider } = useConfigValues([
     "current_llm_provider",
@@ -663,14 +629,14 @@ function useConfiguredMapping(): {
           getLlmProviderStatus({
             provider,
             config,
-            isAuthenticated: !!auth?.session,
-            isPaid: billing.isPaid,
+            isAuthenticated: true,
+            isPaid: true,
             isAvailable,
           }),
         ];
       }),
     ) as Record<string, ProviderStatus>;
-  }, [configuredProviders, auth, billing, availability, current_llm_provider]);
+  }, [configuredProviders, availability, current_llm_provider]);
 
   return {
     providers: mapping,

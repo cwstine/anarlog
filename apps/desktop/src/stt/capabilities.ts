@@ -123,7 +123,7 @@ export function getUnsupportedDesktopLocalSttRepair(
   currentArch: string,
   provider: string | undefined,
   model: string | undefined,
-  canUseCloud: boolean,
+  _canUseCloud: boolean,
 ) {
   if (
     isDesktopLocalSttAvailable(currentPlatform, currentArch) ||
@@ -133,9 +133,7 @@ export function getUnsupportedDesktopLocalSttRepair(
     return null;
   }
 
-  return canUseCloud
-    ? { provider: "anarlog", model: "cloud" }
-    : { provider: "", model: "" };
+  return { provider: "", model: "" };
 }
 
 export function isConfiguredSttModel(
@@ -147,7 +145,7 @@ export function isConfiguredSttModel(
   }
 
   if (provider === "anarlog") {
-    return model === "cloud" || isSupportedLocalSttModel(model);
+    return isSupportedLocalSttModel(model);
   }
 
   if (provider === "soniqo") {

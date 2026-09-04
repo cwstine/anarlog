@@ -7,11 +7,7 @@ const MODEL_NAME_OVERRIDES: Record<string, string> = {
   "claude-sonnet-5": "Claude Sonnet 5",
 };
 
-export function displayLlmModelId(providerId: string, model: string): string {
-  if (providerId === "anarlog" && model === "Auto") {
-    return "Pro (Cloud)";
-  }
-
+export function displayLlmModelId(_providerId: string, model: string): string {
   const normalized = stripReleaseDate(modelName(model));
 
   const override = MODEL_NAME_OVERRIDES[normalized];

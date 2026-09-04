@@ -3,8 +3,9 @@ import { describe, expect, it } from "vitest";
 import { normalizeLLMProviderId } from "./useLLMConnection";
 
 describe("normalizeLLMProviderId", () => {
-  it("maps the legacy hosted provider id to Anarlog", () => {
-    expect(normalizeLLMProviderId("hyprnote")).toBe("anarlog");
+  it("removes current and legacy hosted provider ids", () => {
+    expect(normalizeLLMProviderId("anarlog")).toBeUndefined();
+    expect(normalizeLLMProviderId("hyprnote")).toBeUndefined();
   });
 
   it("preserves current provider ids", () => {

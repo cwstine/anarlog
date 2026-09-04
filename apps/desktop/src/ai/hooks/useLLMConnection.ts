@@ -10,24 +10,19 @@ import {
   extractReasoningMiddleware,
   wrapLanguageModel,
 } from "ai";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 import type { CharTask } from "@anlg/api-client";
 import type { AIProviderStorage } from "@anlg/store";
 
 import { createAppleFoundationModel } from "../apple-foundation-model";
-import { createAuthFetch } from "../auth-fetch";
 import {
   normalizeReasoningEffort,
   type ReasoningEffort,
   reasoningProviderOptions,
 } from "../reasoning-effort";
 import { streamOnlyGenerationMiddleware } from "../stream-only-generation";
-import { createTracedFetch, tracedFetch } from "../traced-fetch";
 
-import { useAuth } from "~/auth";
-import { useBillingAccess } from "~/auth/billing-context";
-import { env } from "~/env";
 import { type ProviderId, PROVIDERS } from "~/settings/ai/llm/shared";
 import {
   CHATGPT_API_BASE_URL,
@@ -55,8 +50,6 @@ export type LLMConnectionStatus =
   | { status: "pending"; reason: "missing_provider" }
   | { status: "pending"; reason: "missing_model"; providerId: ProviderId }
   | { status: "error"; reason: "provider_not_found"; providerId: string }
-  | { status: "error"; reason: "unauthenticated"; providerId: "anarlog" }
-  | { status: "error"; reason: "not_pro"; providerId: "anarlog" }
   | {
       status: "error";
       reason: "missing_config";
@@ -70,40 +63,23 @@ type LLMConnectionResult = {
   status: LLMConnectionStatus;
 };
 
-export const normalizeLLMProviderId = (providerId: string): string =>
-  providerId === "hyprnote" ? "anarlog" : providerId;
+export const normalizeLLMProviderId = (
+  providerId: string,
+): string | undefined =>
+  providerId === "anarlog" || providerId === "hyprnote"
+    ? undefined
+    : providerId;
 
-export const useLanguageModel = (task?: CharTask): LanguageModelV3 | null => {
+export const useLanguageModel = (_task?: CharTask): LanguageModelV3 | null => {
   const { conn } = useLLMConnection();
-  const auth = useAuth();
-
-  // Auth is resolved at fetch time (not model construction) so token
-  // refreshes take effect without recreating the chat transport chain.
-  const getSessionForRequestRef = useRef(auth.getSessionForRequest);
-  getSessionForRequestRef.current = auth.getSessionForRequest;
-  const refreshSessionRef = useRef(auth.refreshSession);
-  refreshSessionRef.current = auth.refreshSession;
 
   return useMemo(() => {
     if (!conn) return null;
-
-    const hostedFetch =
-      conn.providerId === "anarlog"
-        ? createAuthFetch(
-            task ? createTracedFetch(task) : tracedFetch,
-            async () => (await getSessionForRequestRef.current())?.access_token,
-            async () => (await refreshSessionRef.current())?.access_token,
-          )
-        : undefined;
-
-    return createLanguageModel(conn, task, hostedFetch);
-  }, [conn, task]);
+    return createLanguageModel(conn);
+  }, [conn]);
 };
 
 export const useLLMConnection = (): LLMConnectionResult => {
-  const auth = useAuth();
-  const billing = useBillingAccess();
-
   const {
     current_llm_provider,
     current_llm_model,
@@ -124,12 +100,8 @@ export const useLLMConnection = (): LLMConnectionResult => {
         modelId: current_llm_model,
         reasoningEffort: normalizeReasoningEffort(current_llm_reasoning_effort),
         providerConfig,
-        session: auth?.session,
-        isPaid: billing.isPaid,
       }),
     [
-      auth,
-      billing.isPaid,
       current_llm_model,
       current_llm_provider,
       current_llm_reasoning_effort,
@@ -148,16 +120,12 @@ const resolveLLMConnection = (params: {
   modelId: string | undefined;
   reasoningEffort: ReasoningEffort;
   providerConfig: AIProviderStorage | undefined;
-  session: { access_token: string } | null | undefined;
-  isPaid: boolean;
 }): LLMConnectionResult => {
   const {
     providerId: rawProviderId,
     modelId,
     reasoningEffort,
     providerConfig,
-    session,
-    isPaid,
   } = params;
 
   if (!rawProviderId) {
@@ -167,7 +135,14 @@ const resolveLLMConnection = (params: {
     };
   }
 
-  const providerId = normalizeLLMProviderId(rawProviderId) as ProviderId;
+  const normalizedProviderId = normalizeLLMProviderId(rawProviderId);
+  if (!normalizedProviderId) {
+    return {
+      conn: null,
+      status: { status: "pending", reason: "missing_provider" },
+    };
+  }
+  const providerId = normalizedProviderId as ProviderId;
 
   if (!modelId) {
     return {
@@ -196,8 +171,8 @@ const resolveLLMConnection = (params: {
   const apiKey = providerConfig?.api_key?.trim() || "";
 
   const context: ProviderEligibilityContext = {
-    isAuthenticated: !!session,
-    isPaid,
+    isAuthenticated: true,
+    isPaid: true,
     config: { base_url: baseUrl, api_key: apiKey },
   };
 
@@ -208,18 +183,6 @@ const resolveLLMConnection = (params: {
 
   if (blockers.length > 0) {
     const blocker = blockers[0];
-    if (blocker.code === "requires_auth" && providerId === "anarlog") {
-      return {
-        conn: null,
-        status: { status: "error", reason: "unauthenticated", providerId },
-      };
-    }
-    if (blocker.code === "requires_entitlement" && providerId === "anarlog") {
-      return {
-        conn: null,
-        status: { status: "error", reason: "not_pro", providerId },
-      };
-    }
     if (blocker.code === "missing_config") {
       return {
         conn: null,
@@ -231,19 +194,6 @@ const resolveLLMConnection = (params: {
         },
       };
     }
-  }
-
-  if (providerId === "anarlog" && session) {
-    return {
-      conn: {
-        providerId,
-        modelId,
-        baseUrl: baseUrl ?? new URL("/llm", env.VITE_API_URL).toString(),
-        apiKey: session.access_token,
-        reasoningEffort,
-      },
-      status: { status: "success", providerId, isHosted: true },
-    };
   }
 
   return {
@@ -264,12 +214,8 @@ const wrapWithThinkingMiddleware = (
   });
 };
 
-const createLanguageModel = (
-  conn: LLMConnectionInfo,
-  task?: CharTask,
-  hostedFetch?: typeof fetch,
-): LanguageModelV3 => {
-  const model = createProviderModel(conn, task, hostedFetch);
+const createLanguageModel = (conn: LLMConnectionInfo): LanguageModelV3 => {
+  const model = createProviderModel(conn);
   const providerOptions = reasoningProviderOptions(
     conn.providerId,
     conn.modelId,
@@ -285,21 +231,8 @@ const createLanguageModel = (
   });
 };
 
-const createProviderModel = (
-  conn: LLMConnectionInfo,
-  task?: CharTask,
-  hostedFetch?: typeof fetch,
-): LanguageModelV3 => {
+const createProviderModel = (conn: LLMConnectionInfo): LanguageModelV3 => {
   switch (conn.providerId) {
-    case "anarlog": {
-      const provider = createOpenRouter({
-        fetch: hostedFetch ?? (task ? createTracedFetch(task) : tracedFetch),
-        baseURL: conn.baseUrl,
-        apiKey: conn.apiKey,
-      });
-      return wrapWithThinkingMiddleware(provider.chat(conn.modelId));
-    }
-
     case "anthropic": {
       const provider = createAnthropic({
         fetch: tauriFetch,

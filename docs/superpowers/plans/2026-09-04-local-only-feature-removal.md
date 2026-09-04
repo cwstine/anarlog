@@ -187,7 +187,7 @@ git commit -m "refactor: remove account team and sync product navigation"
 - Consumes: stored provider IDs and existing direct provider definitions.
 - Produces: provider resolution that accepts local/direct-BYOK configuration without auth or plan state, and maps legacy `anarlog/cloud` selections to the unconfigured provider state.
 
-- [ ] **Step 1: Add failing tests for ungated local behavior and cloud-provider normalization**
+- [x] **Step 1: Add failing tests for ungated local behavior and cloud-provider normalization**
 
 Add a Timeline component test with `useAudioPlayer` mocked to return ordinary
 local playback state and billing mocked as non-Pro for the initial RED run:
@@ -220,7 +220,7 @@ expect(normalizeLLMProviderId("hyprnote")).toBeUndefined();
 expect(normalizeLLMProviderId("openai")).toBe("openai");
 ```
 
-- [ ] **Step 2: Run provider/playback tests and confirm RED**
+- [x] **Step 2: Run provider/playback tests and confirm RED**
 
 ```bash
 corepack pnpm --filter @anlg/desktop test -- src/audio-player/timeline.test.tsx src/stt/capabilities.test.ts src/ai/hooks/useLLMConnection.test.ts
@@ -228,17 +228,17 @@ corepack pnpm --filter @anlg/desktop test -- src/audio-player/timeline.test.tsx 
 
 Expected: failures from current plan enforcement and registered Anarlog providers.
 
-- [ ] **Step 3: Remove entitlement gates from retained local functionality**
+- [x] **Step 3: Remove entitlement gates from retained local functionality**
 
 Remove `useBillingAccess`, `PlanGate`, and upgrade callbacks from playback speed/timeline, Dictionary, local Automations, auto-template format, app-icon selection, and other retained local controls. Delete `settings/plan-gate.tsx` after `rg -l 'PlanGate|useNotifyPlanRequired' apps/desktop/src` returns no retained production consumer. Keep controls enabled with their existing validation and platform checks.
 
-- [ ] **Step 4: Remove hosted Anarlog LLM and STT providers**
+- [x] **Step 4: Remove hosted Anarlog LLM and STT providers**
 
 Delete the Anarlog provider entries from `settings/ai/llm/shared.tsx` and `settings/ai/stt/shared.tsx`. Remove auth/billing imports, authenticated fetch construction, `unauthenticated`/`not_pro` status variants, and the `case "anarlog"` hosted model branch from `useLLMConnection.ts`. Make `normalizeLLMProviderId` return `undefined` for `anarlog` and `hyprnote`, and let the existing missing-provider state prompt the user to choose a retained provider.
 
 In STT capability and execution code, distinguish on-device Soniqo/Apple/local-file providers from the removed Anarlog cloud provider. Change legacy `anarlog/cloud` to unconfigured during settings hydration in `settings/queries.ts`; do not change stored direct-provider API keys.
 
-- [ ] **Step 5: Rerun focused tests and typecheck**
+- [x] **Step 5: Rerun focused tests and typecheck**
 
 ```bash
 corepack pnpm --filter @anlg/desktop test -- src/audio-player/timeline.test.tsx src/stt/capabilities.test.ts src/ai/hooks/useLLMConnection.test.ts src/settings/providers.test.ts
@@ -247,7 +247,7 @@ corepack pnpm --filter @anlg/desktop typecheck
 
 Expected: tests pass and provider code has no auth/billing import.
 
-- [ ] **Step 6: Commit Task 2**
+- [x] **Step 6: Commit Task 2**
 
 ```bash
 git add apps/desktop/src/audio-player apps/desktop/src/settings/dictionary apps/desktop/src/settings/automations apps/desktop/src/templates apps/desktop/src/settings/appearance apps/desktop/src/settings/plan-gate.tsx apps/desktop/src/settings/plan-gate.test.tsx apps/desktop/src/settings/ai apps/desktop/src/ai/hooks/useLLMConnection.ts apps/desktop/src/ai/hooks/useLLMConnection.test.ts apps/desktop/src/stt apps/desktop/src/settings/queries.ts

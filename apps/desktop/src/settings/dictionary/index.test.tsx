@@ -6,16 +6,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-const mocks = vi.hoisted(() => ({
-  billing: {
-    isPro: true,
-    isUpgradingToPro: false,
-    upgradeToPro: vi.fn(),
-  },
-  toastWarning: vi.fn(),
-}));
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@lingui/react/macro", () => ({
   Trans: ({ children }: { children?: ReactNode }) => <>{children}</>,
@@ -41,14 +32,6 @@ vi.mock("~/settings/queries", () => ({
   useSetSettingValue: () => vi.fn(),
 }));
 
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => mocks.billing,
-}));
-
-vi.mock("@anlg/ui/components/ui/toast", () => ({
-  sonnerToast: { warning: mocks.toastWarning },
-}));
-
 vi.mock("~/shared/config", () => ({
   useConfigValue: () => [],
 }));
@@ -56,33 +39,13 @@ vi.mock("~/shared/config", () => ({
 import { DictionarySettings, SettingsDictionary } from "./index";
 
 describe("DictionarySettings", () => {
-  beforeEach(() => {
-    mocks.billing.isPro = true;
-    mocks.billing.isUpgradingToPro = false;
-    mocks.billing.upgradeToPro.mockClear();
-    mocks.toastWarning.mockClear();
-  });
-
   afterEach(cleanup);
 
-  it("shows the dictionary editor and toasts on the free plan", () => {
-    mocks.billing.isPro = false;
-
+  it("shows the dictionary editor without an account", () => {
     render(<SettingsDictionary />);
 
     expect(screen.getByRole("textbox")).toBeTruthy();
     fireEvent.click(screen.getByRole("textbox"));
-
-    expect(mocks.toastWarning).toHaveBeenCalledWith(
-      "This requires Anarlog Pro",
-      {
-        action: {
-          label: "Upgrade",
-          onClick: expect.any(Function),
-        },
-      },
-    );
-    expect(mocks.billing.upgradeToPro).not.toHaveBeenCalled();
   });
 
   it("shows an empty state and disabled add control", () => {

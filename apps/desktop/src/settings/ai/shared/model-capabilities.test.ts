@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { modelSupportsImageInput } from "./model-capabilities";
 
 describe("modelSupportsImageInput", () => {
-  it("allows known multimodal hosted models", () => {
-    expect(modelSupportsImageInput("anarlog", "Auto")).toBe(true);
+  it("allows known multimodal direct-provider models", () => {
+    expect(modelSupportsImageInput("anarlog", "Auto")).toBe(false);
     expect(modelSupportsImageInput("openai", "gpt-4o")).toBe(true);
     expect(modelSupportsImageInput("anthropic", "claude-3-5-sonnet")).toBe(
       true,

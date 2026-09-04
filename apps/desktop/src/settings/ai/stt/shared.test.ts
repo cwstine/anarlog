@@ -11,7 +11,6 @@ import {
 describe("STT providers", () => {
   test("orders providers by popularity", () => {
     expect(PROVIDERS.map(({ id }) => id)).toEqual([
-      "anarlog",
       "soniqo",
       "apple_speech",
       "local_file",
@@ -58,11 +57,8 @@ describe("STT providers", () => {
 });
 
 describe("STT model display labels", () => {
-  test("keeps cloud model product-facing", () => {
-    expect(displayModelLabel("cloud")).toBe("Pro (Cloud)");
-  });
-
   test("uses product-facing labels for hosted provider models", () => {
+    expect(displayModelLabel("cloud")).toBe("cloud");
     expect(displayModelLabel("stt-rt-v5")).toBe("Soniox 5");
     expect(displayModelLabel("universal-3-5-pro")).toBe("Universal 3.5 Pro");
     expect(displayModelLabel("universal-3-5-pro-realtime")).toBe(

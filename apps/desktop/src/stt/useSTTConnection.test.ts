@@ -4,24 +4,12 @@ import { createElement, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const {
-  authState,
-  billingState,
   config,
   getServerForModelMock,
   isModelDownloadedMock,
   readiness,
   startServerForPathMock,
 } = vi.hoisted(() => ({
-  authState: {
-    session: { access_token: "access-token" } as
-      | { access_token: string }
-      | null
-      | undefined,
-  },
-  billingState: {
-    isPaid: true,
-    isReady: true,
-  },
   config: {
     current_stt_provider: "anarlog",
     current_stt_model: "cloud",
@@ -42,18 +30,6 @@ vi.mock("@anlg/plugin-local-stt", () => ({
     isModelDownloaded: isModelDownloadedMock,
     startServerForPath: startServerForPathMock,
   },
-}));
-
-vi.mock("~/auth", () => ({
-  useAuth: () => ({ session: authState.session }),
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => billingState,
-}));
-
-vi.mock("~/env", () => ({
-  env: { VITE_API_URL: "https://api.anarlog.so" },
 }));
 
 vi.mock("~/settings/providers", () => ({
@@ -100,9 +76,6 @@ describe("useSTTConnection", () => {
     config.current_stt_provider = "anarlog";
     config.current_stt_model = "cloud";
     config.local_stt_model_path = "";
-    authState.session = { access_token: "access-token" };
-    billingState.isPaid = true;
-    billingState.isReady = true;
     readiness.provider = true;
     readiness.settings = true;
     getServerForModelMock.mockReset();
@@ -110,7 +83,7 @@ describe("useSTTConnection", () => {
     startServerForPathMock.mockReset();
   });
 
-  it("uses the hosted STT URL when the stored Anarlog URL is blank", () => {
+  it("does not connect a removed Anarlog cloud selection", () => {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -119,13 +92,8 @@ describe("useSTTConnection", () => {
 
     const { result } = renderHook(() => useSTTConnection(), { wrapper });
 
-    expect(result.current.conn).toEqual({
-      provider: "anarlog",
-      model: "cloud",
-      baseUrl: "https://api.anarlog.so/stt",
-      apiKey: "access-token",
-    });
-    expect(result.current.isReady).toBe(true);
+    expect(result.current.conn).toBeNull();
+    expect(result.current.isReady).toBe(false);
   });
 
   it("uses the provider endpoint when only a Deepgram API key is stored", () => {
@@ -167,27 +135,6 @@ describe("useSTTConnection", () => {
     const settingsPending = renderHook(() => useSTTConnection(), { wrapper });
 
     expect(settingsPending.result.current.isReady).toBe(false);
-  });
-
-  it("waits for cloud authentication and billing access", () => {
-    billingState.isReady = false;
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
-    const wrapper = ({ children }: { children: ReactNode }) =>
-      createElement(QueryClientProvider, { client: queryClient }, children);
-
-    const billingPending = renderHook(() => useSTTConnection(), { wrapper });
-
-    expect(billingPending.result.current.isReady).toBe(false);
-
-    billingPending.unmount();
-    billingState.isReady = true;
-    authState.session = undefined;
-    const authPending = renderHook(() => useSTTConnection(), { wrapper });
-
-    expect(authPending.result.current.conn).toBeNull();
-    expect(authPending.result.current.isReady).toBe(false);
   });
 
   it("waits for an on-device model server to become ready", async () => {

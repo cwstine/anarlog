@@ -33,7 +33,6 @@ import {
 } from "./starter-config";
 import { useSaveWorkflow, WorkflowBuilder } from "./workflow-builder";
 
-import { useBillingAccess } from "~/auth/billing-context";
 import {
   useDeleteChatAutomation,
   useDeleteWorkflow,
@@ -60,7 +59,6 @@ import {
 import { useChatGroup } from "~/chat/store/queries";
 import { SettingsHydrationBoundary } from "~/settings/hydration-boundary";
 import { SettingsPageTitle } from "~/settings/page-title";
-import { useNotifyPlanRequired } from "~/settings/plan-gate";
 import {
   getStoredSettingValues,
   setSettingValue,
@@ -300,8 +298,6 @@ function CustomWorkflowDetails({
   onDelete: () => void;
 }) {
   const { t } = useLingui();
-  const billing = useBillingAccess();
-  const notifyPlanRequired = useNotifyPlanRequired();
   const workflows = useAutomationWorkflows();
   const saveWorkflow = useSaveWorkflow();
 
@@ -310,10 +306,6 @@ function CustomWorkflowDetails({
   };
 
   const handleEnable = (enabled: boolean) => {
-    if (enabled && !billing.isPro) {
-      notifyPlanRequired("pro");
-      return;
-    }
     persist({ ...workflow, enabled });
   };
 
@@ -330,7 +322,7 @@ function CustomWorkflowDetails({
               size="sm"
               variant="outline"
               onClick={() => handleEnable(false)}
-              disabled={!billing.isReady || saveWorkflow.isPending}
+              disabled={saveWorkflow.isPending}
             >
               <Trans>Disable</Trans>
             </Button>
@@ -339,13 +331,9 @@ function CustomWorkflowDetails({
               type="button"
               size="sm"
               onClick={() => handleEnable(true)}
-              disabled={
-                !billing.isReady ||
-                saveWorkflow.isPending ||
-                (billing.isPro && !isWorkflowReady(workflow))
-              }
+              disabled={saveWorkflow.isPending || !isWorkflowReady(workflow)}
               title={
-                billing.isPro && !isWorkflowReady(workflow)
+                !isWorkflowReady(workflow)
                   ? t`Add and configure at least one action first.`
                   : undefined
               }
@@ -419,8 +407,6 @@ function useEnsuredWorkflow({
 
 function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
   const { t } = useLingui();
-  const billing = useBillingAccess();
-  const notifyPlanRequired = useNotifyPlanRequired();
   const starter = useStarterAutomations().find((item) => item.id === starterId);
   const [showPreview, setShowPreview] = useState(false);
   const { values: settingValues } = useStoredSettingValues();
@@ -474,18 +460,10 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
   })();
 
   const handleSaveDraft = () => {
-    if (!billing.isPro) {
-      notifyPlanRequired("pro");
-      return;
-    }
     saveDraftMutation.mutate();
   };
 
   const handleEnable = () => {
-    if (!billing.isPro) {
-      notifyPlanRequired("pro");
-      return;
-    }
     setEnabledMutation.mutate({ enabled: true });
   };
 
@@ -557,7 +535,7 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
               type="button"
               size="sm"
               onClick={handleSaveDraft}
-              disabled={!billing.isReady || saveDraftMutation.isPending}
+              disabled={saveDraftMutation.isPending}
             >
               <FloppyDisk size={14} />
               <Trans>Save draft</Trans>
@@ -568,7 +546,7 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
                 size="sm"
                 variant="outline"
                 onClick={() => setEnabledMutation.mutate({ enabled: false })}
-                disabled={!billing.isReady || setEnabledMutation.isPending}
+                disabled={setEnabledMutation.isPending}
               >
                 <Trans>Disable</Trans>
               </Button>
@@ -577,12 +555,8 @@ function StarterAutomationDetails({ starterId }: { starterId: StarterId }) {
                 type="button"
                 size="sm"
                 onClick={handleEnable}
-                disabled={
-                  !billing.isReady ||
-                  setEnabledMutation.isPending ||
-                  (billing.isPro && !isReady)
-                }
-                title={billing.isPro && !isReady ? readinessHint : undefined}
+                disabled={setEnabledMutation.isPending || !isReady}
+                title={!isReady ? readinessHint : undefined}
               >
                 <Lightning size={14} weight="fill" />
                 <Trans>Save &amp; enable</Trans>
