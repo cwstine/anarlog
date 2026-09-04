@@ -486,7 +486,7 @@ git commit -m "refactor: remove account backed desktop services"
 - Consumes: local root layout, local database identity, retained settings store, and local lock behavior.
 - Produces: a desktop frontend with no auth/billing context and no Supabase or attachment-sync JavaScript dependency.
 
-- [ ] **Step 1: Change root-layout tests to forbid providers and confirm RED**
+- [x] **Step 1: Change root-layout tests to forbid providers and confirm RED**
 
 Remove auth/billing test mocks from `shared/main-app-layout.test.tsx` and assert that the outlet renders directly:
 
@@ -500,11 +500,11 @@ it("does not require auth or billing providers", () => {
 
 Run the test and confirm it fails while `AuthProvider` remains.
 
-- [ ] **Step 2: Remove remaining auth consumers and providers**
+- [x] **Step 2: Remove remaining auth consumers and providers**
 
 Use `rg -l 'from "~/auth|from "\.\.?/auth|useAuth|useBillingAccess' apps/desktop/src --glob '!**/*.test.*'` as the exact remaining-work list. For each retained local component, use `useOwnerUserId` when existing rows determine ownership, use `DEFAULT_USER_ID` only for a new empty database, or remove account-only behavior. Remove auth-only toasts, deep links, instruction handoffs, developer actions, and billing dialogs. Render `MainAppContent` directly from `MainAppLayout`.
 
-- [ ] **Step 3: Characterize legacy local ownership before removing auth**
+- [x] **Step 3: Characterize legacy local ownership before removing auth**
 
 Create `shared/owner-user.test.ts` with `useLiveQuery` mocked to execute the
 provided `mapRows` callback:
@@ -527,7 +527,7 @@ Run the test and confirm both characterization cases pass before auth files are
 deleted. Preserve the owner-query behavior; do not rewrite old rows to a new
 owner ID.
 
-- [ ] **Step 4: Normalize obsolete settings without cloud work**
+- [x] **Step 4: Normalize obsolete settings without cloud work**
 
 Remove `cloud_sync_enabled` and account/billing preferences from the active settings schema. Keep legacy snapshot parsing tolerant: old keys are ignored, hosted provider selections become empty, and direct BYOK keys remain. Add an assertion to `settings/legacy-snapshots.test.ts`:
 
@@ -539,7 +539,7 @@ expect(normalized.ai_providers).toEqual(legacy.ai_providers);
 
 Run the test first and observe the legacy hosted selections survive, then implement normalization.
 
-- [ ] **Step 5: Delete auth/billing/sync modules and remove package dependencies**
+- [x] **Step 5: Delete auth/billing/sync modules and remove package dependencies**
 
 Delete the listed directories and E2EE sync setup after production imports are zero. Remove `@anlg/supabase`, `@supabase/supabase-js`, `@anlg/plugin-attachment-sync`, and `@anlg/pricing` from `apps/desktop/package.json` when `rg` shows no retained desktop import. Remove `.env.supabase` from desktop Tauri scripts. Regenerate `pnpm-lock.yaml` with:
 
@@ -547,7 +547,7 @@ Delete the listed directories and E2EE sync setup after production imports are z
 corepack pnpm install --lockfile-only
 ```
 
-- [ ] **Step 6: Run the auth-free frontend verification**
+- [x] **Step 6: Run the auth-free frontend verification**
 
 ```bash
 corepack pnpm --filter @anlg/desktop test -- src/shared/main-app-layout.test.tsx src/shared/owner-user.test.ts src/settings/legacy-snapshots.test.ts src/lock/gate.test.tsx src/onboarding/config.test.ts src/sidebar/settings.test.tsx
@@ -561,7 +561,7 @@ rg -n 'from "~/auth|useAuth|useBillingAccess|AuthProvider|BillingProvider' apps/
 rg -n '@anlg/supabase|@supabase/supabase-js|@anlg/plugin-attachment-sync' apps/desktop/src apps/desktop/package.json
 ```
 
-- [ ] **Step 7: Commit Task 5**
+- [x] **Step 7: Commit Task 5**
 
 ```bash
 git add apps/desktop/src apps/desktop/package.json pnpm-lock.yaml
@@ -589,7 +589,7 @@ git commit -m "refactor: remove desktop auth billing and sync frontend"
 - Consumes: normal `Db::open`/SQLite behavior and `tauri_plugin_db::init(db)`.
 - Produces: a local-only feature path in which the desktop dependency tree does not compile, bundle, initialize, or load `anlg-cloudsync`, while non-desktop workspace consumers may retain the default CloudSync feature.
 
-- [ ] **Step 1: Add a failing native composition test**
+- [x] **Step 1: Add a failing native composition test**
 
 In the existing `apps/desktop/src-tauri/src/lib.rs` test module, replace the cloud lifecycle capability assertion with a local-only assertion:
 
@@ -611,11 +611,11 @@ cargo test -p desktop main_capability_excludes_cloudsync_and_auth_commands
 
 Expected: failure because native capabilities/plugins remain.
 
-- [ ] **Step 2: Remove desktop CloudSync configuration and plugins**
+- [x] **Step 2: Remove desktop CloudSync configuration and plugins**
 
 Delete `cloudsync_runtime_config_from_env`, its parsing helpers/tests, and the CloudSync constants from `src-tauri/src/db.rs`. Change desktop initialization from `init_with_cloudsync(db, cloudsync_config)` to `tauri_plugin_db::init(db)`. Remove `tauri_plugin_auth` and `tauri_plugin_attachment_sync` registration and dependencies. Remove CloudSync, auth, and attachment-sync permissions from desktop capability JSON files.
 
-- [ ] **Step 3: Feature-gate the native CloudSync implementation**
+- [x] **Step 3: Feature-gate the native CloudSync implementation**
 
 Add default-on `cloudsync` features to the shared database crates so existing non-Corola consumers retain current behavior:
 
@@ -630,7 +630,7 @@ anlg-cloudsync = { workspace = true, optional = true }
 
 Gate CloudSync-only modules, error variants, fields, initialization paths, and exports with `#[cfg(feature = "cloudsync")]`. Provide the ordinary SQLite open path without extension hooks when the feature is absent. Propagate the feature through `db-change`, `db-app`, `db-reactive`, and `tauri-plugin-db`. Configure the desktop's dependency path with `default-features = false`; keep shared-crate defaults on so API/CLI behavior does not change.
 
-- [ ] **Step 4: Verify the local-only Rust feature path**
+- [x] **Step 4: Verify the local-only Rust feature path**
 
 ```bash
 cargo test -p desktop main_capability_excludes_cloudsync_and_auth_commands
@@ -647,7 +647,7 @@ cargo check -p db-core --features cloudsync
 cargo test -p db-core --features cloudsync
 ```
 
-- [ ] **Step 5: Commit Task 6**
+- [x] **Step 5: Commit Task 6**
 
 ```bash
 git add apps/desktop/src-tauri plugins/db crates/db-core crates/db-change crates/db-app crates/db-reactive Cargo.lock
@@ -666,7 +666,7 @@ git commit -m "refactor: remove CloudSync from the desktop runtime"
 - Consumes: the finished local-only desktop source tree and package manifest.
 - Produces: observable environment tests plus repeatable frontend/native dependency-audit commands.
 
-- [ ] **Step 1: Remove obsolete required environment definitions with an observable test**
+- [x] **Step 1: Remove obsolete required environment definitions with an observable test**
 
 Create `env.test.ts` and import the actual `env` object without defining account variables:
 
@@ -687,7 +687,7 @@ Run it and confirm RED because the fields still exist. Delete Supabase and
 billing configuration from `env.ts`. Keep generic `VITE_APP_URL`/`VITE_API_URL`
 only if a retained direct feature uses them; otherwise remove them too.
 
-- [ ] **Step 2: Run explicit dependency audits**
+- [x] **Step 2: Run explicit dependency audits**
 
 Require these commands to produce no output/status matches:
 
@@ -707,7 +707,7 @@ test ! -d apps/desktop/src/settings/team
 If a search reports a retained production import, remove that concrete
 consumer and rerun its nearest behavior test before repeating the audit.
 
-- [ ] **Step 3: Run frontend verification**
+- [x] **Step 3: Run frontend verification**
 
 ```bash
 corepack pnpm --filter @anlg/desktop test
@@ -718,7 +718,7 @@ corepack pnpm fmt:check
 
 Expected: all commands exit zero with no new warnings.
 
-- [ ] **Step 4: Run native and repository-boundary verification**
+- [x] **Step 4: Run native and repository-boundary verification**
 
 ```bash
 cargo test -p desktop
@@ -729,7 +729,7 @@ rg -n 'supabase|cloudsync|CloudSync|session-sharing|shared-notes|CloudApi|Billin
 
 Expected: Rust commands pass; `cargo tree` reports no CloudSync dependency; the final search contains only documented legacy compatibility strings or test fixtures, with no runtime account/cloud import.
 
-- [ ] **Step 5: Confirm local feature coverage**
+- [x] **Step 5: Confirm local feature coverage**
 
 ```bash
 corepack pnpm --filter @anlg/desktop test -- src/session/source-apps.test.ts src/session/queries.test.ts src/stt/capabilities.test.ts src/imports/parser.test.ts src/calendar/queries.test.ts src/settings/providers.test.ts
@@ -737,7 +737,7 @@ corepack pnpm --filter @anlg/desktop test -- src/session/source-apps.test.ts src
 
 Expected: local note, meeting detection, STT, import, calendar, and provider tests pass.
 
-- [ ] **Step 6: Record verification and commit the completed removal**
+- [x] **Step 6: Record verification and commit the completed removal**
 
 Mark each completed checkbox in this plan and append the exact command results under a `## Verification Results` heading. Then commit:
 
@@ -746,9 +746,30 @@ git add apps/desktop docs/superpowers/plans/2026-09-04-local-only-feature-remova
 git commit -m "test: enforce the local-only desktop boundary"
 ```
 
+## Verification Results
+
+Recorded on 2026-09-04 from `feature/corola-local-only`:
+
+- Desktop TypeScript: `./node_modules/.bin/tsc --noEmit -p apps/desktop/tsconfig.json` passed.
+- Focused local-feature suite: 10 files and 140 tests passed, covering environment, shortcuts, settings, local load gating, source-app detection, sessions, STT, imports, Apple Calendar, and provider settings.
+- Local/BYOK empty-summary test: 1 test passed after removing its obsolete Pro-trial expectation.
+- Full desktop Vitest run: 2,957 tests passed and 13 failed. One stale Pro-trial assertion from this change was corrected and passed on rerun. The remaining 12 failures are the pre-existing menu/timing baseline in related notes, note filtering, main-body dragging, template reset, folder deletion, and automation menus.
+- Changed frontend files pass direct `oxfmt --check`; repository `dprint` could not run because its pnpm exec plugin attempted to repair/install the existing node_modules state.
+- Repository lint remains non-green on the existing monorepo baseline: Oxlint reports 4 errors/655 warnings (including a missing mobile Expo tsconfig), and ESLint reports 10 errors/1 warning across existing desktop/web query keys. The changed removal test passes ESLint directly.
+- Desktop Rust: `cargo check --offline -p desktop` passed using a clean no-space temporary target directory; `cargo test --offline -p desktop` passed all 45 tests.
+- Local database plugin: `cargo test --offline -p tauri-plugin-db --no-default-features --lib` passed all 47 tests.
+- Local calendar/todo boundaries: the no-default calendar suite passed 18 tests; todo passed 5 local-only tests and 9 default-feature tests; both plugin configurations compile.
+- Shared CloudSync compatibility: `cargo test --offline -p db-core --features cloudsync --lib` passed all 104 tests.
+- Reverse dependency audits report no `cloudsync`, `db-sync`, `attachment-sync`, `tauri-plugin-auth`, or account `api-client` package in the desktop graph.
+- Production source audits report no desktop auth/billing providers, Supabase packages, attachment-sync imports, or deleted feature directories. Remaining `cloudsync_workspace_binding` references are the documented inert compatibility key used to keep existing local data visible.
+
+The removal-specific acceptance checks are green. The repository-wide frontend
+baseline exceptions above are unrelated to the removed infrastructure and are
+recorded rather than expanded into this feature-removal scope.
+
 ## Follow-up plan
 
-After every acceptance check above passes, create and execute
+After the removal-specific acceptance checks above pass, create and execute
 `docs/superpowers/plans/2026-09-04-corola-rebrand.md`. That plan owns product
 names, bundle identifiers, deep-link schemes, original icon generation,
 installer/native assets, removal of retained Anarlog URLs, and update signing
