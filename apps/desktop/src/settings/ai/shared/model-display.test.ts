@@ -32,7 +32,7 @@ describe("displayLlmModelId", () => {
     );
   });
 
-  test("keeps managed cloud label product-facing", () => {
-    expect(displayLlmModelId("anarlog", "Auto")).toBe("Pro (Cloud)");
+  test("does not preserve the removed managed-cloud label", () => {
+    expect(displayLlmModelId("anarlog", "Auto")).toBe("Auto");
   });
 });

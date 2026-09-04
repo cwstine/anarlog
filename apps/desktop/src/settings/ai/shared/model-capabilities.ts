@@ -25,10 +25,6 @@ export function modelSupportsImageInput(
     return false;
   }
 
-  if (providerId === "anarlog" && modelId === "Auto") {
-    return true;
-  }
-
   if (IMAGE_INPUT_MODEL_RE.test(modelId)) {
     return true;
   }

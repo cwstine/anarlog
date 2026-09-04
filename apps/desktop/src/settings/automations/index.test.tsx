@@ -18,11 +18,6 @@ vi.mock("@iconify-icon/react", () => ({
 }));
 
 const mocks = vi.hoisted(() => ({
-  billing: {
-    isPro: true,
-    isReady: true,
-    upgradeToPro: vi.fn(),
-  },
   chatGroup: null as {
     id: string;
     ownerUserId: string;
@@ -49,10 +44,6 @@ const mocks = vi.hoisted(() => ({
   toastError: vi.fn(),
   toastSuccess: vi.fn(),
   toastWarning: vi.fn(),
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => mocks.billing,
 }));
 
 vi.mock("~/automations/actions", () => ({
@@ -133,9 +124,6 @@ describe("AutomationsContent", () => {
   });
 
   beforeEach(() => {
-    mocks.billing.isPro = true;
-    mocks.billing.isReady = true;
-    mocks.billing.upgradeToPro.mockClear();
     mocks.chatGroup = null;
     mocks.deleteChatAutomation.mockClear();
     mocks.deleteWorkflow.mockClear();
@@ -261,7 +249,7 @@ describe("AutomationsContent", () => {
     expect(body?.className).toContain("pt-3");
   });
 
-  it("saves the selected draft for Pro users", async () => {
+  it("saves the selected draft without an account", async () => {
     mocks.selection = { kind: "starter", starterId: "markdown-export" };
 
     renderAutomations();
@@ -275,27 +263,6 @@ describe("AutomationsContent", () => {
       );
     });
     expect(mocks.toastSuccess).toHaveBeenCalledWith("Automation draft saved");
-  });
-
-  it("toasts instead of saving on the free plan", () => {
-    mocks.billing.isPro = false;
-    mocks.selection = { kind: "starter", starterId: "notion-project-notes" };
-
-    renderAutomations();
-
-    fireEvent.click(screen.getByRole("button", { name: "Save draft" }));
-
-    expect(mocks.toastWarning).toHaveBeenCalledWith(
-      "This requires Anarlog Pro",
-      {
-        action: {
-          label: "Upgrade",
-          onClick: expect.any(Function),
-        },
-      },
-    );
-    expect(mocks.billing.upgradeToPro).not.toHaveBeenCalled();
-    expect(mocks.setSettingValue).not.toHaveBeenCalled();
   });
 
   it("shows a dedicated view for a chat-created automation", () => {

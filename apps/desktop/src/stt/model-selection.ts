@@ -99,6 +99,10 @@ export function normalizeStoredSttSelection(
     return { provider: "apple_speech", model: normalizedModel };
   }
 
+  if (provider === "anarlog") {
+    return { provider: "", model: "" };
+  }
+
   return { provider, model: normalizedModel };
 }
 

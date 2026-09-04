@@ -233,8 +233,8 @@ describe("isRealtimeLocalModel", () => {
 });
 
 describe("isConfiguredSttModel", () => {
-  test("requires known model ids for Anarlog STT", () => {
-    expect(isConfiguredSttModel("anarlog", "cloud")).toBe(true);
+  test("treats removed Anarlog cloud STT as unconfigured", () => {
+    expect(isConfiguredSttModel("anarlog", "cloud")).toBe(false);
     expect(isConfiguredSttModel("anarlog", "soniqo-qwen3-small")).toBe(true);
     expect(isConfiguredSttModel("anarlog", "removed-local-model")).toBe(false);
   });
@@ -263,7 +263,7 @@ describe("getUnsupportedDesktopLocalSttRepair", () => {
   });
 
   test.each(["windows", "linux"])(
-    "uses hosted transcription for entitled users on %s",
+    "requires a direct provider when local transcription is unsupported on %s",
     (currentPlatform) => {
       expect(
         getUnsupportedDesktopLocalSttRepair(
@@ -273,7 +273,7 @@ describe("getUnsupportedDesktopLocalSttRepair", () => {
           "soniqo-parakeet-streaming",
           true,
         ),
-      ).toEqual({ provider: "anarlog", model: "cloud" });
+      ).toEqual({ provider: "", model: "" });
     },
   );
 
@@ -313,15 +313,12 @@ describe("getUnsupportedDesktopLocalSttRepair", () => {
         "local-file",
         true,
       ),
-    ).toEqual({ provider: "anarlog", model: "cloud" });
+    ).toEqual({ provider: "", model: "" });
   });
 
-  test.each([
-    [true, { provider: "anarlog", model: "cloud" }],
-    [false, { provider: "", model: "" }],
-  ])(
-    "repairs unsupported Intel Mac local transcription when cloud access is %s",
-    (canUseCloud, expected) => {
+  test.each([true, false])(
+    "repairs unsupported Intel Mac local transcription without a hosted fallback when legacy cloud access is %s",
+    (canUseCloud) => {
       expect(
         getUnsupportedDesktopLocalSttRepair(
           "macos",
@@ -330,7 +327,7 @@ describe("getUnsupportedDesktopLocalSttRepair", () => {
           "soniqo-parakeet-streaming",
           canUseCloud,
         ),
-      ).toEqual(expected);
+      ).toEqual({ provider: "", model: "" });
     },
   );
 

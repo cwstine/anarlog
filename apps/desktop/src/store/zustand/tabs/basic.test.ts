@@ -422,24 +422,35 @@ describe("Basic Tab Actions", () => {
     ]);
   });
 
-  test("openNew preserves account settings tab requests", () => {
-    useTabs.getState().openNew({ type: "settings", state: { tab: "account" } });
+  test("openNew redirects removed hosted settings tabs to app", () => {
+    useTabs
+      .getState()
+      .openNew({ type: "settings", state: { tab: "account" as never } });
 
     expect(useTabs.getState()).toHaveCurrentTab({
       type: "settings",
-      state: { tab: "account" },
+      state: { tab: "app" },
     });
     expect(useTabs.getState()).toMatchTabsInOrder([
-      { type: "settings", active: true, state: { tab: "account" } },
+      { type: "settings", active: true, state: { tab: "app" } },
     ]);
-  });
 
-  test("openNew preserves sync settings tab requests", () => {
-    useTabs.getState().openNew({ type: "settings", state: { tab: "sync" } });
+    useTabs
+      .getState()
+      .openNew({ type: "settings", state: { tab: "sync" as never } });
 
     expect(useTabs.getState()).toHaveCurrentTab({
       type: "settings",
-      state: { tab: "sync" },
+      state: { tab: "app" },
+    });
+
+    useTabs
+      .getState()
+      .openNew({ type: "settings", state: { tab: "team" as never } });
+
+    expect(useTabs.getState()).toHaveCurrentTab({
+      type: "settings",
+      state: { tab: "app" },
     });
   });
 

@@ -14,14 +14,8 @@ const mocks = vi.hoisted(() => ({
   renderTemplate: vi.fn(),
   setSettingValue: vi.fn(),
   toastError: vi.fn(),
-  toastWarning: vi.fn(),
   inferSummaryFormat: vi.fn(),
   model: { modelId: "test-model" },
-  billing: {
-    isPro: true,
-    isUpgradingToPro: false,
-    upgradeToPro: vi.fn(),
-  },
   values: {
     auto_summary_prompt: "",
     selected_template_id: "",
@@ -103,7 +97,7 @@ vi.mock("@anlg/plugin-template", () => ({
 }));
 
 vi.mock("@anlg/ui/components/ui/toast", () => ({
-  sonnerToast: { error: mocks.toastError, warning: mocks.toastWarning },
+  sonnerToast: { error: mocks.toastError },
 }));
 
 vi.mock("./auto-format-inference", () => ({
@@ -118,10 +112,6 @@ vi.mock("~/ai/hooks", () => ({
 
 vi.mock("~/settings/queries", () => ({
   setSettingValue: mocks.setSettingValue,
-}));
-
-vi.mock("~/auth/billing-context", () => ({
-  useBillingAccess: () => mocks.billing,
 }));
 
 vi.mock("~/shared/config", () => ({
@@ -146,9 +136,6 @@ describe("Auto format editor", () => {
     vi.clearAllMocks();
     mocks.values.auto_summary_prompt = "";
     mocks.values.selected_template_id = "";
-    mocks.billing.isPro = true;
-    mocks.billing.isUpgradingToPro = false;
-    mocks.billing.upgradeToPro.mockClear();
     mocks.getTemplateSource.mockResolvedValue({
       status: "ok",
       data: defaultFormat,
@@ -174,9 +161,7 @@ describe("Auto format editor", () => {
     expect(screen.queryByText("Variables")).toBeNull();
   });
 
-  it("keeps the format visible and toasts for Free users", () => {
-    mocks.billing.isPro = false;
-
+  it("keeps the format editor available without an account", () => {
     renderWithQueryClient(
       <AutoFormatForm defaultFormat={defaultFormat} formatOverride="" />,
     );
@@ -190,24 +175,10 @@ describe("Auto format editor", () => {
       screen.getByText("Choose how Auto structures and styles your summaries."),
     ).toBeTruthy();
 
-    fireEvent.click(screen.getByRole("button", { name: "Save" }));
-
-    expect(mocks.toastWarning).toHaveBeenCalledWith(
-      "This requires Anarlog Pro",
-      {
-        action: {
-          label: "Upgrade",
-          onClick: expect.any(Function),
-        },
-      },
-    );
-    expect(mocks.billing.upgradeToPro).not.toHaveBeenCalled();
-    expect(mocks.setSettingValue).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Save" })).toBeTruthy();
   });
 
-  it("toasts instead of opening example generation for Free users", () => {
-    mocks.billing.isPro = false;
-
+  it("opens example generation without an account", () => {
     renderWithQueryClient(
       <AutoFormatForm defaultFormat={defaultFormat} formatOverride="" />,
     );
@@ -216,19 +187,9 @@ describe("Auto format editor", () => {
       screen.getByRole("button", { name: "Improve with examples" }),
     );
 
-    expect(mocks.toastWarning).toHaveBeenCalledWith(
-      "This requires Anarlog Pro",
-      {
-        action: {
-          label: "Upgrade",
-          onClick: expect.any(Function),
-        },
-      },
-    );
-    expect(mocks.billing.upgradeToPro).not.toHaveBeenCalled();
     expect(
-      screen.queryByRole("dialog", { name: "Improve summary format" }),
-    ).toBeNull();
+      screen.getByRole("dialog", { name: "Improve summary format" }),
+    ).toBeTruthy();
   });
 
   it("generates an editable format from up to three transient examples", async () => {

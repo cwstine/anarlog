@@ -28,8 +28,7 @@ import {
 import { Shuffle } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 
-import { env } from "~/env";
-import { AnarlogProviderIcon, ProviderLobeIcon } from "~/settings/ai/shared";
+import { ProviderLobeIcon } from "~/settings/ai/shared";
 import { type ProviderRequirement } from "~/settings/ai/shared/eligibility";
 import { checkAppleFoundationModelAvailability } from "~/settings/ai/shared/list-apple-foundation";
 import {
@@ -57,17 +56,6 @@ export type Provider = {
 };
 
 const _PROVIDERS = [
-  {
-    id: "anarlog",
-    displayName: "Anarlog",
-    badge: "Recommended",
-    icon: <AnarlogProviderIcon />,
-    baseUrl: new URL("/llm", env.VITE_API_URL).toString(),
-    requirements: [
-      { kind: "requires_auth" },
-      { kind: "requires_entitlement", entitlement: "pro" },
-    ],
-  },
   {
     id: "claude",
     displayName: "Claude",

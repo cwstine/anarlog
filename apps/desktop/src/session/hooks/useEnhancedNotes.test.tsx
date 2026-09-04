@@ -13,8 +13,8 @@ const hoisted = vi.hoisted(() => ({
   sessionLoaded: true,
   llmStatus: {
     status: "success",
-    providerId: "anarlog",
-    isHosted: true,
+    providerId: "openai",
+    isHosted: false,
   } as LLMConnectionStatus,
   service: {
     ensureNote: vi.fn(),
@@ -77,8 +77,8 @@ describe("useEnsureDefaultSummary", () => {
     hoisted.sessionLoaded = true;
     hoisted.llmStatus = {
       status: "success",
-      providerId: "anarlog",
-      isHosted: true,
+      providerId: "openai",
+      isHosted: false,
     };
     hoisted.service.ensureNote.mockClear();
     hoisted.service.queueAutoEnhanceIfSummaryEmpty.mockClear();
@@ -216,26 +216,6 @@ describe("useEnsureDefaultSummary", () => {
     ).not.toHaveBeenCalled();
   });
 
-  it("creates the summary row when a hosted subscription blocks generation", async () => {
-    hoisted.llmStatus = {
-      status: "error",
-      reason: "not_pro",
-      providerId: "anarlog",
-    };
-
-    renderHook(() => useEnsureDefaultSummary("session-1"));
-
-    await waitFor(() => {
-      expect(hoisted.service.ensureNote).toHaveBeenCalledWith(
-        "session-1",
-        "template-1",
-      );
-    });
-    expect(
-      hoisted.service.queueAutoEnhanceIfSummaryEmpty,
-    ).not.toHaveBeenCalled();
-  });
-
   it("creates the summary row when provider API keys are missing", async () => {
     hoisted.llmStatus = {
       status: "error",
@@ -261,7 +241,7 @@ describe("useEnsureDefaultSummary", () => {
     hoisted.llmStatus = {
       status: "pending",
       reason: "missing_model",
-      providerId: "anarlog",
+      providerId: "openai",
     };
 
     renderHook(() => useEnsureDefaultSummary("session-1"));
