@@ -1,7 +1,6 @@
 #![forbid(unsafe_code)]
 
 mod cli;
-mod cloud;
 mod commands;
 mod db;
 mod error;
@@ -13,11 +12,6 @@ pub use error::{Error, Result};
 pub use output::JSON_SCHEMA_VERSION;
 
 pub async fn run(mut args: Args) -> Result<u8> {
-    if let cli::Command::Auth { command } = &args.command {
-        commands::auth::run(command, args.json).await?;
-        return Ok(0);
-    }
-
     if matches!(&args.command, cli::Command::Doctor) {
         let ready = commands::doctor::run(&args, args.json).await?;
         return Ok(if ready { 0 } else { 1 });
@@ -26,10 +20,9 @@ pub async fn run(mut args: Args) -> Result<u8> {
     let json = args.json;
     let command = std::mem::replace(&mut args.command, cli::Command::Doctor);
     match command {
-        cli::Command::Auth { .. } => unreachable!("auth returns before opening the database"),
         cli::Command::Doctor => unreachable!("doctor returns before opening the database"),
-        cli::Command::Meetings { source, command } => {
-            let source = commands::meetings::DataSource::open(&args, source).await?;
+        cli::Command::Meetings { command } => {
+            let source = commands::meetings::DataSource::open(&args).await?;
             commands::meetings::run(&source, command, json).await?
         }
         cli::Command::Proposals { command } => {
@@ -93,7 +86,6 @@ mod tests {
             db_path: Some(db_path),
             json: false,
             command: cli::Command::Meetings {
-                source: cli::MeetingSource::Local,
                 command: cli::MeetingCommand::Export {
                     id: "meeting-1".to_string(),
                     format: cli::ExportFormat::Markdown,

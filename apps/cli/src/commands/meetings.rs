@@ -1,82 +1,56 @@
 use std::sync::Arc;
 
-use crate::cli::{DocumentKind, ExportFormat, MeetingCommand, MeetingSource};
-use crate::{Args, Error, Result, cloud::CloudClient, db, output};
+use crate::cli::{DocumentKind, ExportFormat, MeetingCommand};
+use crate::{Args, Result, db, output};
 use anlg_agent_access::{
     Document, GetMeetingInput, GetMeetingTranscriptInput, GetRecurringMeetingHistoryInput,
     ListMeetingsInput, Meeting, MeetingExport, MeetingListItem, MeetingPage, TranscriptPage,
 };
 
-pub enum DataSource {
-    Local(Arc<anlg_db_core::Db>),
-    Cloud(CloudClient),
-}
+pub struct DataSource(Arc<anlg_db_core::Db>);
 
 impl DataSource {
-    pub async fn open(args: &Args, source: MeetingSource) -> Result<Self> {
-        match source {
-            MeetingSource::Local => db::open(args).await.map(Arc::new).map(Self::Local),
-            MeetingSource::Cloud => CloudClient::current().map(Self::Cloud),
-            MeetingSource::Auto => match db::open(args).await {
-                Ok(db) => Ok(Self::Local(Arc::new(db))),
-                Err(Error::DatabaseNotFound(_)) => CloudClient::current().map(Self::Cloud),
-                Err(error) => Err(error),
-            },
-        }
+    pub async fn open(args: &Args) -> Result<Self> {
+        db::open(args).await.map(Arc::new).map(Self)
     }
 
     async fn list_meetings(
         &self,
         input: anlg_agent_access::ListMeetingsInput,
     ) -> Result<MeetingPage> {
-        match self {
-            Self::Local(db) => anlg_agent_access::list_meetings(db.pool(), input)
-                .await
-                .map_err(Into::into),
-            Self::Cloud(client) => client.list_meetings(input).await,
-        }
+        anlg_agent_access::list_meetings(self.0.pool(), input)
+            .await
+            .map_err(Into::into)
     }
 
     async fn get_meeting(&self, input: GetMeetingInput) -> Result<Meeting> {
-        match self {
-            Self::Local(db) => anlg_agent_access::get_meeting(db.pool(), input)
-                .await
-                .map_err(Into::into),
-            Self::Cloud(client) => client.get_meeting(input).await,
-        }
+        anlg_agent_access::get_meeting(self.0.pool(), input)
+            .await
+            .map_err(Into::into)
     }
 
     async fn get_meeting_transcript(
         &self,
         input: GetMeetingTranscriptInput,
     ) -> Result<TranscriptPage> {
-        match self {
-            Self::Local(db) => anlg_agent_access::get_meeting_transcript(db.pool(), input)
-                .await
-                .map_err(Into::into),
-            Self::Cloud(client) => client.get_meeting_transcript(input).await,
-        }
+        anlg_agent_access::get_meeting_transcript(self.0.pool(), input)
+            .await
+            .map_err(Into::into)
     }
 
     async fn get_recurring_meeting_history(
         &self,
         input: GetRecurringMeetingHistoryInput,
     ) -> Result<MeetingPage> {
-        match self {
-            Self::Local(db) => anlg_agent_access::get_recurring_meeting_history(db.pool(), input)
-                .await
-                .map_err(Into::into),
-            Self::Cloud(client) => client.get_recurring_meeting_history(input).await,
-        }
+        anlg_agent_access::get_recurring_meeting_history(self.0.pool(), input)
+            .await
+            .map_err(Into::into)
     }
 
     async fn get_meeting_export(&self, meeting_id: String) -> Result<MeetingExport> {
-        match self {
-            Self::Local(db) => anlg_agent_access::get_meeting_export(db.pool(), meeting_id)
-                .await
-                .map_err(Into::into),
-            Self::Cloud(client) => client.get_meeting_export(meeting_id).await,
-        }
+        anlg_agent_access::get_meeting_export(self.0.pool(), meeting_id)
+            .await
+            .map_err(Into::into)
     }
 }
 

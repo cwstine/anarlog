@@ -39,13 +39,8 @@ pub struct Args {
 impl Args {
     pub fn analytics_command_name(&self) -> &'static str {
         match &self.command {
-            Command::Auth { command } => match command {
-                AuthCommand::Login => "auth_login",
-                AuthCommand::Status => "auth_status",
-                AuthCommand::Logout => "auth_logout",
-            },
             Command::Doctor => "doctor",
-            Command::Meetings { command, .. } => match command {
+            Command::Meetings { command } => match command {
                 MeetingCommand::List { .. } => "meetings_list",
                 MeetingCommand::Get { .. } => "meetings_get",
                 MeetingCommand::Note { .. } => "meetings_note",
@@ -75,18 +70,10 @@ impl Args {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Sign in to an Anarlog account from a browser
-    Auth {
-        #[command(subcommand)]
-        command: AuthCommand,
-    },
     /// Check the local CLI and database connection without changing data
     Doctor,
     /// Browse and export meetings
     Meetings {
-        /// Choose local data, hosted Cloud snapshots, or Cloud only when no local database exists
-        #[arg(long, env = "ANARLOG_SOURCE", value_enum, default_value_t = MeetingSource::Local)]
-        source: MeetingSource,
         #[command(subcommand)]
         command: MeetingCommand,
     },
@@ -144,24 +131,6 @@ impl ProposalKind {
             Self::Memo => "memo",
         }
     }
-}
-
-#[derive(Debug, Subcommand)]
-pub enum AuthCommand {
-    /// Sign in through a browser on this or another device
-    Login,
-    /// Show the locally stored account session
-    Status,
-    /// Remove the locally stored account session
-    Logout,
-}
-
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, ValueEnum)]
-pub enum MeetingSource {
-    #[default]
-    Local,
-    Cloud,
-    Auto,
 }
 
 #[derive(Debug, Subcommand)]
@@ -240,7 +209,7 @@ mod tests {
         ]);
 
         assert!(args.json);
-        let Command::Meetings { command, .. } = args.command else {
+        let Command::Meetings { command } = args.command else {
             panic!("expected meetings command");
         };
         let MeetingCommand::List { query, limit, .. } = command else {
@@ -253,13 +222,14 @@ mod tests {
     #[test]
     fn help_exposes_mcp_and_export() {
         let help = Args::command().render_long_help().to_string();
-        assert!(help.contains("auth"));
+        assert!(!help.contains("auth"));
+        assert!(!help.contains("--source"));
         assert!(help.contains("meetings"));
         assert!(help.contains("mcp"));
         assert!(help.contains("doctor"));
         assert!(help.contains("proposals"));
 
-        let Command::Meetings { command, .. } = Args::parse_from([
+        let Command::Meetings { command } = Args::parse_from([
             "anarlog",
             "meetings",
             "export",
@@ -281,30 +251,8 @@ mod tests {
     }
 
     #[test]
-    fn parses_auth_commands() {
-        assert!(matches!(
-            Args::parse_from(["anarlog", "auth", "login"]).command,
-            Command::Auth {
-                command: AuthCommand::Login
-            }
-        ));
-        assert!(matches!(
-            Args::parse_from(["anarlog", "auth", "status"]).command,
-            Command::Auth {
-                command: AuthCommand::Status
-            }
-        ));
-        assert!(matches!(
-            Args::parse_from(["anarlog", "auth", "logout"]).command,
-            Command::Auth {
-                command: AuthCommand::Logout
-            }
-        ));
-    }
-
-    #[test]
     fn parses_transcript_and_history_pagination() {
-        let Command::Meetings { command, .. } = Args::parse_from([
+        let Command::Meetings { command } = Args::parse_from([
             "anarlog",
             "meetings",
             "transcript",
@@ -327,7 +275,7 @@ mod tests {
             }
         ));
 
-        let Command::Meetings { command, .. } = Args::parse_from([
+        let Command::Meetings { command } = Args::parse_from([
             "anarlog",
             "meetings",
             "history",
@@ -351,23 +299,6 @@ mod tests {
             Args::try_parse_from(["anarlog", "meetings", "export", "meeting-1", "--force"])
                 .is_err()
         );
-    }
-
-    #[test]
-    fn parses_cloud_and_auto_meeting_sources() {
-        let Command::Meetings { source, .. } =
-            Args::parse_from(["anarlog", "meetings", "--source", "cloud", "list"]).command
-        else {
-            panic!("expected meetings command");
-        };
-        assert_eq!(source, MeetingSource::Cloud);
-
-        let Command::Meetings { source, .. } =
-            Args::parse_from(["anarlog", "meetings", "--source", "auto", "list"]).command
-        else {
-            panic!("expected meetings command");
-        };
-        assert_eq!(source, MeetingSource::Auto);
     }
 
     #[test]

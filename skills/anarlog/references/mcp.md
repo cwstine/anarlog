@@ -1,6 +1,7 @@
 # MCP tools and resources
 
-Cloud MCP is read-only. Local MCP adds proposal tools, which insert or decline staged edits; they never apply those edits to the meeting.
+Local MCP reads the on-device database. Proposal tools insert or decline staged
+edits; they never apply those edits to the meeting.
 
 | Tool                            | Use                                                                                                                        |
 | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |

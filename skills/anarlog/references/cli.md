@@ -4,23 +4,9 @@ Use `--json` for agent-readable output.
 
 Linux Flatpak installs this command as `anarlog-cli`; use that name instead of `anarlog` in the examples when that is the command on PATH.
 
-Account authentication works on headless systems:
-
-```bash
-anarlog auth login
-anarlog --json auth status
-anarlog auth logout
-```
-
-For `auth login`, give the printed URL to the user. They may open it on another device, sign in, choose **Copy URL**, and paste the resulting `anarlog://auth/callback` link into the hidden prompt. Never ask the user to paste that callback link into chat or expose it in command arguments because it contains account tokens.
-
-On Linux, sessions use Secret Service when available and otherwise use the desktop-compatible local auth file with mode `0600`. With `--json`, `auth login` prints the URL to stderr and reads the callback from stdin.
-
 ```bash
 anarlog --json doctor
 anarlog --json meetings list --query "planning" --limit 20 --offset 0
-anarlog --json meetings --source cloud list --query "planning" --limit 20 --offset 0
-anarlog --json meetings --source auto get MEETING_ID
 anarlog --json meetings get MEETING_ID
 anarlog --json meetings note MEETING_ID --kind note
 anarlog --json meetings note MEETING_ID --kind summary
@@ -33,7 +19,8 @@ anarlog --json proposals decline PROPOSAL_ID
 
 `proposals create` stages a pending edit. Do not claim the meeting changed. A human applies or declines it in the Anarlog desktop app.
 
-Meeting commands default to `--source local`. `--source cloud` reads hosted snapshots using `anarlog auth login`; `--source auto` uses Cloud only when the local database is absent. Cloud access is read-only, so proposals remain local.
+Meeting commands always read the local database. There is no login or hosted
+data-source flag.
 
 `doctor` exits with status 1 when its response contains `ready: false`.
 

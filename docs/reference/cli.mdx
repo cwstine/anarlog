@@ -19,34 +19,8 @@ anarlog [--base DIR] [--db-path FILE] [--json] <command>
 
 On Flatpak, the host command is `anarlog-cli`. On DEB, AppImage, macOS, Windows, and Settings-installed builds, the command is `anarlog`. Substitute `anarlog-cli` only when that is the command on your PATH.
 
-## Account commands
-
-```bash
-anarlog auth login
-anarlog auth status
-anarlog auth logout
-```
-
-`auth login` prints a URL that can be opened in any browser, including one on another device. Sign in, choose **Copy URL** on the completion page, then paste the `anarlog://auth/callback` link into the hidden CLI prompt. The CLI verifies the session with Anarlog before saving it in the same local auth store as the desktop app.
-
-With `--json`, the login URL and instructions are printed to stderr. The callback URL is read from stdin. JSON appears on stdout only after login completes.
-
-On Linux, the CLI uses Secret Service when it is available. Headless systems without Secret Service fall back to `auth.cli.json` in Anarlog's local application-data directory with permissions limited to the current user. The desktop app reconciles that file into Secret Service when it becomes available. On Windows, the CLI stores sessions with DPAPI in the desktop app's secure auth file. `auth logout` removes the local session; it does not delete the Anarlog account.
-
-`auth status` reports the signed-in account and whether the current access token has expired. The stored refresh token lets the desktop app refresh an expired access token when it starts.
-
-## Meeting data sources
-
-Meeting commands accept `--source local|cloud|auto` before their subcommand:
-
-```bash
-anarlog meetings --source cloud list
-anarlog meetings --source auto get MEETING_ID
-```
-
-`local` is the default and reads Anarlog's database on this computer. `cloud` reads the opted-in hosted snapshots using the account saved by `anarlog auth login`. `auto` uses the local database when it exists and falls back to Cloud when it does not. Set `ANARLOG_SOURCE` to choose the same behavior without a flag.
-
-All meeting read commands support all three sources. `--base`, `--db-path`, and `doctor` apply only to local data. Proposals and `anarlog mcp` remain local because hosted Cloud access is read-only.
+All commands operate on the local database. The CLI has no account, login, or
+hosted meeting source.
 
 ## Meeting commands
 
@@ -103,7 +77,6 @@ Starts the local MCP server over stdio. Meeting reads are idempotent. Proposal t
 
 ```bash
 anarlog --help
-anarlog auth --help
 anarlog meetings --help
 anarlog meetings list --help
 anarlog --version

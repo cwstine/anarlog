@@ -6,7 +6,8 @@ List or search meetings again and use the returned ID. Do not retry a guessed ID
 
 ## No meetings returned
 
-If Cloud `list_meetings` returns an empty list, search again with `anarlog --json meetings list` when the local CLI is available. An empty Cloud list usually means snapshots are off or that meeting has not uploaded. Tell the user none were found only after the sources you can reach are empty. Do not invent meetings.
+Search again with a shorter title fragment. Tell the user none were found only
+after the available local searches are empty. Do not invent meetings.
 
 ## Database not found
 
@@ -15,10 +16,6 @@ Run `anarlog --json doctor`. Ask the user to open Anarlog once if the database d
 ## Database operation failed
 
 Confirm the desktop app and CLI come from compatible revisions. Do not run migrations or write SQL from the agent.
-
-## Cloud command failed
-
-Preserve the CLI's hosted error code. Run `anarlog auth login` again for `unauthorized`, ask the user to enable **Cloud API & Connectors** for `cloud_api_not_enabled`, and wait for the reported retry delay after `rate_limited`. Do not silently switch a user-requested `--source cloud` read to local data.
 
 ## Export output exists
 
