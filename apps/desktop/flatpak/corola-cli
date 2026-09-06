@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [ "${FLATPAK_ID:-}" = "so.anarlog.Anarlog" ]; then
-  exec /app/libexec/anarlog-cli "$@"
+if [ "${FLATPAK_ID:-}" = "com.corola.desktop" ]; then
+  exec /app/libexec/corola-cli "$@"
 fi
 
 # A sandbox neither inherits the caller's working directory nor can read it, so
@@ -12,5 +12,5 @@ caller_dir=$(pwd)
 exec flatpak run \
   --filesystem="$caller_dir" \
   --cwd="$caller_dir" \
-  --command=/app/libexec/anarlog-cli \
-  so.anarlog.Anarlog "$@"
+  --command=/app/libexec/corola-cli \
+  com.corola.desktop "$@"

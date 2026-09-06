@@ -359,30 +359,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anarlog-cli"
-version = "0.1.0"
-dependencies = [
- "agent-access",
- "clap",
- "cli-docs",
- "db-app",
- "db-core",
- "dirs 6.0.0",
- "insta",
- "rmcp",
- "schemars 1.2.1",
- "sentry",
- "serde",
- "serde_json",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "url",
- "user-error",
-]
-
-[[package]]
 name = "android_system_properties"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3783,6 +3759,30 @@ dependencies = [
  "objc2-core-audio",
  "objc2-core-audio-types",
  "objc2-core-foundation",
+]
+
+[[package]]
+name = "corola-cli"
+version = "0.1.0"
+dependencies = [
+ "agent-access",
+ "clap",
+ "cli-docs",
+ "db-app",
+ "db-core",
+ "dirs 6.0.0",
+ "insta",
+ "rmcp",
+ "schemars 1.2.1",
+ "sentry",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "url",
+ "user-error",
 ]
 
 [[package]]

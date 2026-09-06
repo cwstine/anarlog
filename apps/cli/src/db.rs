@@ -52,6 +52,8 @@ fn resolve_default_path_for_command(data_dir: &Path, command_name: Option<&OsStr
         .and_then(|name| Path::new(name).file_stem())
         .and_then(OsStr::to_str);
     let channel_identifier = match command_name {
+        Some("corola-dev") => Some("com.corola.dev"),
+        Some("corola-staging") => Some("com.corola.staging"),
         Some("anarlog-dev") => Some("com.hyprnote.dev"),
         Some("anarlog-staging") => Some("com.hyprnote.staging"),
         _ => None,
@@ -60,19 +62,29 @@ fn resolve_default_path_for_command(data_dir: &Path, command_name: Option<&OsStr
         return data_dir.join(identifier).join("app.db");
     }
 
-    let current = data_dir.join("anarlog").join("app.db");
+    let current = data_dir.join("corola").join("app.db");
     if current.is_file() {
         return current;
     }
 
-    let legacy = data_dir.join("hyprnote").join("app.db");
+    let legacy = data_dir.join("anarlog").join("app.db");
     if legacy.is_file() {
         return legacy;
     }
 
-    let identifier = data_dir.join("com.hyprnote.stable").join("app.db");
+    let oldest = data_dir.join("hyprnote").join("app.db");
+    if oldest.is_file() {
+        return oldest;
+    }
+
+    let identifier = data_dir.join("com.corola.desktop").join("app.db");
     if identifier.is_file() {
         return identifier;
+    }
+
+    let legacy_identifier = data_dir.join("com.hyprnote.stable").join("app.db");
+    if legacy_identifier.is_file() {
+        return legacy_identifier;
     }
 
     current
@@ -85,28 +97,36 @@ mod tests {
     #[test]
     fn default_path_prefers_current_then_legacy_then_identifier() {
         let dir = tempfile::tempdir().unwrap();
-        let current = dir.path().join("anarlog/app.db");
+        let current = dir.path().join("corola/app.db");
+        let anarlog = dir.path().join("anarlog/app.db");
         let legacy = dir.path().join("hyprnote/app.db");
         let identifier = dir.path().join("com.hyprnote.stable/app.db");
 
         std::fs::create_dir_all(identifier.parent().unwrap()).unwrap();
         std::fs::write(&identifier, "").unwrap();
         assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola"))),
             identifier
         );
 
         std::fs::create_dir_all(legacy.parent().unwrap()).unwrap();
         std::fs::write(&legacy, "").unwrap();
         assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola"))),
             legacy
+        );
+
+        std::fs::create_dir_all(anarlog.parent().unwrap()).unwrap();
+        std::fs::write(&anarlog, "").unwrap();
+        assert_eq!(
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola"))),
+            anarlog
         );
 
         std::fs::create_dir_all(current.parent().unwrap()).unwrap();
         std::fs::write(&current, "").unwrap();
         assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola"))),
             current
         );
     }
@@ -115,33 +135,33 @@ mod tests {
     fn default_path_targets_current_location_for_new_installs() {
         let dir = tempfile::tempdir().unwrap();
         assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog"))),
-            dir.path().join("anarlog/app.db")
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola"))),
+            dir.path().join("corola/app.db")
         );
     }
 
     #[test]
     fn channel_commands_target_their_channel_database() {
         let dir = tempfile::tempdir().unwrap();
-        let stable = dir.path().join("anarlog/app.db");
+        let stable = dir.path().join("corola/app.db");
         std::fs::create_dir_all(stable.parent().unwrap()).unwrap();
         std::fs::write(stable, "").unwrap();
 
         assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-dev"))),
-            dir.path().join("com.hyprnote.dev/app.db")
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola-dev"))),
+            dir.path().join("com.corola.dev/app.db")
         );
         assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-staging"))),
-            dir.path().join("com.hyprnote.staging/app.db")
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola-staging"))),
+            dir.path().join("com.corola.staging/app.db")
         );
         assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-dev.exe"))),
-            dir.path().join("com.hyprnote.dev/app.db")
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola-dev.exe"))),
+            dir.path().join("com.corola.dev/app.db")
         );
         assert_eq!(
-            resolve_default_path_for_command(dir.path(), Some(OsStr::new("anarlog-staging.exe"))),
-            dir.path().join("com.hyprnote.staging/app.db")
+            resolve_default_path_for_command(dir.path(), Some(OsStr::new("corola-staging.exe"))),
+            dir.path().join("com.corola.staging/app.db")
         );
     }
 }

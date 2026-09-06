@@ -222,6 +222,7 @@ mod tests {
     #[test]
     fn help_exposes_mcp_and_export() {
         let help = Args::command().render_long_help().to_string();
+        assert_eq!(env!("CARGO_PKG_NAME"), "corola-cli");
         assert!(!help.contains("auth"));
         assert!(!help.contains("--source"));
         assert!(help.contains("meetings"));

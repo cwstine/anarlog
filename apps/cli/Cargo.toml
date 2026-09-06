@@ -1,10 +1,10 @@
 [package]
-name = "anarlog-cli"
+name = "corola-cli"
 version = "0.1.0"
 edition = "2024"
 
 [[bin]]
-name = "anarlog"
+name = "corola"
 path = "src/main.rs"
 
 [dependencies]

@@ -1,14 +1,14 @@
 [Desktop Entry]
-Name=Anarlog
+Name=Corola
 GenericName=AI Meeting Notes
 Comment=The AI notepad for private meetings
-Exec=anarlog %U
-Icon=so.anarlog.Anarlog
+Exec=corola %U
+Icon=com.corola.desktop
 Terminal=false
 Type=Application
 Categories=Office;
 Keywords=notes;meeting;transcription;ai;audio;recording;
 StartupNotify=true
-StartupWMClass=anarlog
-MimeType=x-scheme-handler/anarlog;x-scheme-handler/hyprnote;
+StartupWMClass=corola
+MimeType=x-scheme-handler/corola;
 X-GNOME-UsesNotifications=true

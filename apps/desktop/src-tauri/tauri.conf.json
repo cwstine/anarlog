@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Anarlog Dev",
-  "mainBinaryName": "anarlog-dev",
-  "identifier": "com.hyprnote.dev",
+  "productName": "Corola Dev",
+  "mainBinaryName": "corola-dev",
+  "identifier": "com.corola.dev",
   "build": {
     "features": ["direct-distribution"],
     "beforeDevCommand": "pnpm -F desktop dev",
@@ -25,9 +25,9 @@
     }
   },
   "bundle": {
-    "publisher": "Fastrepl",
+    "publisher": "Corola",
     "active": true,
-    "createUpdaterArtifacts": true,
+    "createUpdaterArtifacts": false,
     "targets": "all",
     "linux": {
       "deb": {
@@ -57,19 +57,9 @@
     "resources": {
       "../../../plugins/windows/swift-lib/src/Resources/CabinSketch-Regular.ttf": "CabinSketch-Regular.ttf",
       "../../../plugins/windows/swift-lib/src/Resources/OFL.txt": "CabinSketch-OFL.txt",
-      "resources/anagram/AppIcon.icns": "icons/anagram.icns",
-      "resources/anagram-dark/AppIcon.icns": "icons/anagram-dark.icns",
       "resources/dev/AppIcon.icns": "icons/dev.icns",
-      "resources/dev-dark/AppIcon.icns": "icons/dev-dark.icns",
-      "resources/journal/AppIcon.icns": "icons/journal.icns",
-      "resources/notepad/AppIcon.icns": "icons/notepad.icns",
-      "resources/stone/AppIcon.icns": "icons/stone.icns",
       "resources/staging/AppIcon.icns": "icons/staging.icns",
-      "resources/staging-dark/AppIcon.icns": "icons/staging-dark.icns",
       "icons/stable/icon.icns": "icons/stable.icns",
-      "resources/stable-dark/AppIcon.icns": "icons/stable-dark.icns",
-      "resources/typewriter-key/AppIcon.icns": "icons/typewriter-key.icns",
-      "resources/walnut/AppIcon.icns": "icons/walnut.icns",
       "resources/notification-icons": "notification-icons"
     },
     "macOS": {
@@ -99,17 +89,12 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": [
-          "anarlog-dev",
-          "hypr",
-          "char"
-        ]
+        "schemes": ["corola-dev"]
       }
     },
     "updater": {
       "active": false,
-      "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEFFNUI0ODhBNzhBMTEwQQpSV1FLRVlxbmlMVGxDdXJvaUVTTnlwNEF5R1Bodzh3WThMZUpNMVk4K0hhbnV4TDZ1TFFucC9Gbwo="
+      "dialog": false
     }
   }
 }

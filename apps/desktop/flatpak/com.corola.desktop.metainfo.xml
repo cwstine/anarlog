@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>so.anarlog.Anarlog</id>
+  <id>com.corola.desktop</id>
 
-  <name>Anarlog</name>
+  <name>Corola</name>
   <summary>The AI notepad for private meetings</summary>
 
   <metadata_license>CC0-1.0</metadata_license>
@@ -10,7 +10,7 @@
 
   <description>
     <p>
-      Anarlog is a private meeting notepad that records microphone and computer
+      Corola is a private meeting notepad that records microphone and computer
       audio, transcribes conversations, and keeps notes alongside the transcript.
     </p>
     <p>Features include:</p>
@@ -23,15 +23,10 @@
     </ul>
   </description>
 
-  <launchable type="desktop-id">so.anarlog.Anarlog.desktop</launchable>
+  <launchable type="desktop-id">com.corola.desktop.desktop</launchable>
 
-  <url type="homepage">https://anarlog.so</url>
-  <url type="bugtracker">https://github.com/fastrepl/anarlog/issues</url>
-  <url type="vcs-browser">https://github.com/fastrepl/anarlog</url>
-  <url type="contribute">https://github.com/fastrepl/anarlog/blob/main/CONTRIBUTING.md</url>
-
-  <developer id="com.fastrepl">
-    <name>Fastrepl</name>
+  <developer id="com.corola">
+    <name>Corola</name>
   </developer>
 
   <branding>

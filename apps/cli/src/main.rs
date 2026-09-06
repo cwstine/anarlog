@@ -1,9 +1,9 @@
 use std::process::ExitCode;
 use std::time::Instant;
 
-use anarlog_cli::Args;
 use clap::Parser;
 use clap::error::ErrorKind;
+use corola_cli::Args;
 
 mod analytics;
 mod error_reporting;
@@ -25,7 +25,7 @@ async fn main() -> ExitCode {
                 eprintln!(
                     "{}",
                     serde_json::to_string_pretty(&serde_json::json!({
-                        "schema_version": anarlog_cli::JSON_SCHEMA_VERSION,
+                        "schema_version": corola_cli::JSON_SCHEMA_VERSION,
                         "error": {
                             "code": "invalid_arguments",
                             "message": error.to_string(),
@@ -42,7 +42,7 @@ async fn main() -> ExitCode {
     let command = args.analytics_command_name();
     let started_at = Instant::now();
     let _sentry_guard = error_reporting::init();
-    let result = anarlog_cli::run(args).await;
+    let result = corola_cli::run(args).await;
     let outcome = match &result {
         Ok(0) => "succeeded",
         Ok(_) | Err(_) => "failed",

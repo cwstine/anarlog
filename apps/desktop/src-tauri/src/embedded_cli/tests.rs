@@ -4,18 +4,24 @@ use std::os::unix::fs::PermissionsExt;
 
 #[test]
 fn maps_bundle_id_to_command_name() {
-    assert_eq!(command_name_from_identifier(STABLE_BUNDLE_ID), "anarlog");
+    assert_eq!(command_name_from_identifier(STABLE_BUNDLE_ID), "corola");
     assert_eq!(
         command_name_from_identifier(LEGACY_STABLE_BUNDLE_ID),
-        "anarlog"
+        "corola"
     );
-    assert_eq!(command_name_from_identifier(FLATPAK_BUNDLE_ID), "anarlog");
     assert_eq!(
         command_name_from_identifier(STAGING_BUNDLE_ID),
-        "anarlog-staging"
+        "corola-staging"
     );
-    assert_eq!(command_name_from_identifier(DEV_BUNDLE_ID), "anarlog-dev");
-    assert_eq!(command_name_from_identifier("unknown"), "anarlog");
+    assert_eq!(command_name_from_identifier(DEV_BUNDLE_ID), "corola-dev");
+    assert_eq!(command_name_from_identifier("unknown"), "corola");
+}
+
+#[cfg(any(target_os = "macos", target_os = "windows", target_os = "linux"))]
+#[test]
+fn uses_corola_names_for_bundled_cli_artifacts() {
+    assert!(bundled_binary_name().unwrap().starts_with("corola-cli-"));
+    assert!(sidecar_binary_name().starts_with("corola-cli"));
 }
 
 #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
@@ -23,9 +29,9 @@ fn maps_bundle_id_to_command_name() {
 fn resolves_linux_x64_bundled_binary() {
     assert_eq!(
         bundled_binary_name(),
-        Some("anarlog-cli-x86_64-unknown-linux-gnu")
+        Some("corola-cli-x86_64-unknown-linux-gnu")
     );
-    assert_eq!(sidecar_binary_name(), "anarlog-cli");
+    assert_eq!(sidecar_binary_name(), "corola-cli");
 }
 
 #[cfg(all(target_os = "linux", target_arch = "aarch64"))]
@@ -33,17 +39,17 @@ fn resolves_linux_x64_bundled_binary() {
 fn resolves_linux_arm64_bundled_binary() {
     assert_eq!(
         bundled_binary_name(),
-        Some("anarlog-cli-aarch64-unknown-linux-gnu")
+        Some("corola-cli-aarch64-unknown-linux-gnu")
     );
-    assert_eq!(sidecar_binary_name(), "anarlog-cli");
+    assert_eq!(sidecar_binary_name(), "corola-cli");
 }
 
 #[test]
 fn finds_windows_path_entries_case_insensitively() {
-    let expected = Path::new(r"C:\Users\Test\AppData\Local\Anarlog\bin");
+    let expected = Path::new(r"C:\Users\Test\AppData\Local\Corola\bin");
 
     assert!(path_list_contains(
-        r"C:\Windows;C:\USERS\TEST\APPDATA\LOCAL\ANARLOG\BIN\;C:\Tools",
+        r"C:\Windows;C:\USERS\TEST\APPDATA\LOCAL\COROLA\BIN\;C:\Tools",
         expected
     ));
     assert!(!path_list_contains(

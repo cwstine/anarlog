@@ -35,6 +35,9 @@ fn validate_secret_coordinate(caller: SecretCaller, scope: &str, key: &str) -> R
 
 fn secure_store_service(identifier: &str) -> String {
     let identifier = match identifier {
+        "com.corola.dev" => "com.anarlog.dev",
+        "com.corola.staging" => "com.anarlog.staging",
+        "com.corola.desktop" => "com.anarlog.stable",
         "com.hyprnote.dev" => "com.anarlog.dev",
         "com.hyprnote.staging" => "com.anarlog.staging",
         "com.hyprnote.stable" | "com.hyprnote.Hyprnote" => "com.anarlog.stable",
@@ -46,7 +49,7 @@ fn secure_store_service(identifier: &str) -> String {
 
 fn secure_store_account(identifier: &str, scope: &str, key: &str) -> String {
     let account = format!("{scope}:{key}");
-    if identifier == "com.hyprnote.dev" {
+    if matches!(identifier, "com.corola.dev" | "com.hyprnote.dev") {
         // Rotate away from dev items whose ACLs captured unstable ad-hoc signatures.
         format!("v2:{account}")
     } else {
@@ -467,6 +470,18 @@ mod tests {
     #[test]
     fn uses_anarlog_service_names_for_legacy_bundle_identifiers() {
         assert_eq!(
+            secure_store_service("com.corola.dev"),
+            "com.anarlog.dev.secure-store"
+        );
+        assert_eq!(
+            secure_store_service("com.corola.staging"),
+            "com.anarlog.staging.secure-store"
+        );
+        assert_eq!(
+            secure_store_service("com.corola.desktop"),
+            "com.anarlog.stable.secure-store"
+        );
+        assert_eq!(
             secure_store_service("com.hyprnote.dev"),
             "com.anarlog.dev.secure-store"
         );
@@ -494,6 +509,10 @@ mod tests {
 
     #[test]
     fn versions_dev_accounts_across_signing_changes() {
+        assert_eq!(
+            secure_store_account("com.corola.dev", "provider", "deepgram"),
+            "v2:provider:deepgram"
+        );
         assert_eq!(
             secure_store_account("com.hyprnote.dev", "provider", "deepgram"),
             "v2:provider:deepgram"
