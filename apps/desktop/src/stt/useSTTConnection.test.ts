@@ -59,7 +59,7 @@ vi.mock("~/shared/config", () => ({
 }));
 
 vi.mock("~/stt/capabilities", () => ({
-  isAnarlogCloudSttModel: (provider: string, model: string) =>
+  isCorolaCloudSttModel: (provider: string, model: string) =>
     provider === "anarlog" && model === "cloud",
   isLocalFileSttModel: (provider: string, model: string) =>
     provider === "local_file" && model === "local-file",
@@ -83,7 +83,7 @@ describe("useSTTConnection", () => {
     startServerForPathMock.mockReset();
   });
 
-  it("does not connect a removed Anarlog cloud selection", () => {
+  it("does not connect a removed hosted selection", () => {
     const queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });

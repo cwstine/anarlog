@@ -114,7 +114,7 @@ describe("SettingsNav", () => {
     expect(screen.queryByText("Account")).toBeNull();
     expect(screen.queryByText("Teams")).toBeNull();
     expect(screen.queryByText("Sync")).toBeNull();
-    expect(screen.queryByLabelText("Requires Anarlog Pro")).toBeNull();
+    expect(screen.queryByLabelText("Requires Pro")).toBeNull();
     expect(screen.getByText("Dictionary")).toBeTruthy();
     expect(screen.getByText("Automations")).toBeTruthy();
   });

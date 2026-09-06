@@ -176,7 +176,7 @@ describe("isOnDeviceSttModel", () => {
     );
   });
 
-  test("keeps legacy Anarlog local selections working during migration", () => {
+  test("keeps legacy Corola local selections working during migration", () => {
     expect(isOnDeviceSttModel("anarlog", "soniqo-parakeet-streaming")).toBe(
       true,
     );
@@ -233,7 +233,7 @@ describe("isRealtimeLocalModel", () => {
 });
 
 describe("isConfiguredSttModel", () => {
-  test("treats removed Anarlog cloud STT as unconfigured", () => {
+  test("treats removed hosted STT as unconfigured", () => {
     expect(isConfiguredSttModel("anarlog", "cloud")).toBe(false);
     expect(isConfiguredSttModel("anarlog", "soniqo-qwen3-small")).toBe(true);
     expect(isConfiguredSttModel("anarlog", "removed-local-model")).toBe(false);

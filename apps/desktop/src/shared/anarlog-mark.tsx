@@ -1,6 +1,6 @@
 export const ANARLOG_MARK_VIEW_BOX = "-2 79 235 180";
 
-export function AnarlogMark({ className }: { className?: string }) {
+export function CorolaMark({ className }: { className?: string }) {
   return (
     <svg
       viewBox={ANARLOG_MARK_VIEW_BOX}

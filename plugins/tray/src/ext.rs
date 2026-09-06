@@ -5,7 +5,7 @@ use std::sync::{
 
 use tauri::async_runtime::JoinHandle;
 #[cfg(target_os = "macos")]
-use tauri::menu::{HELP_SUBMENU_ID, Submenu, WINDOW_SUBMENU_ID};
+use tauri::menu::{Submenu, WINDOW_SUBMENU_ID};
 #[cfg(target_os = "macos")]
 use tauri::tray::{MouseButtonState, TrayIconEvent};
 use tauri::{
@@ -24,7 +24,7 @@ use crate::{
 };
 
 #[cfg(target_os = "macos")]
-use crate::menu_items::{AppInfo, AppNew, HelpReportBug, HelpSuggestFeature, TrayQuit};
+use crate::menu_items::{AppInfo, AppNew, TrayQuit};
 use crate::menu_items::{
     MenuItemHandler, TrayCheckUpdate, TrayHide, TrayOpen, TrayQuitCompletely, TraySettings,
     TrayShowEvents, TrayStart, TrayVersion, build_agenda_item,
@@ -131,17 +131,6 @@ pub fn build_app_menu(app: &AppHandle<tauri::Wry>) -> Result<Menu<tauri::Wry>> {
             &PredefinedMenuItem::close_window(app, None)?,
         ],
     )?;
-    let help_submenu = Submenu::with_id_and_items(
-        app,
-        HELP_SUBMENU_ID,
-        "Help",
-        true,
-        &[
-            &HelpReportBug::build(app)?,
-            &HelpSuggestFeature::build(app)?,
-        ],
-    )?;
-
     Menu::with_items(
         app,
         &[
@@ -150,7 +139,6 @@ pub fn build_app_menu(app: &AppHandle<tauri::Wry>) -> Result<Menu<tauri::Wry>> {
             &edit_submenu,
             &view_submenu,
             &window_submenu,
-            &help_submenu,
         ],
     )
 }

@@ -2,30 +2,30 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
-const SKILL_DIR_NAME: &str = "anarlog";
+const SKILL_DIR_NAME: &str = "corola";
 
-// The published skill package from `skills/anarlog`, embedded at build time so
+// The published skill package from `skills/corola`, embedded at build time so
 // installs work offline and always match the running app version.
 const SKILL_FILES: &[(&str, &str)] = &[
     (
         "SKILL.md",
-        include_str!("../../../../skills/anarlog/SKILL.md"),
+        include_str!("../../../../skills/corola/SKILL.md"),
     ),
     (
         "references/cli.md",
-        include_str!("../../../../skills/anarlog/references/cli.md"),
+        include_str!("../../../../skills/corola/references/cli.md"),
     ),
     (
         "references/errors.md",
-        include_str!("../../../../skills/anarlog/references/errors.md"),
+        include_str!("../../../../skills/corola/references/errors.md"),
     ),
     (
         "references/mcp.md",
-        include_str!("../../../../skills/anarlog/references/mcp.md"),
+        include_str!("../../../../skills/corola/references/mcp.md"),
     ),
     (
         "references/setup.md",
-        include_str!("../../../../skills/anarlog/references/setup.md"),
+        include_str!("../../../../skills/corola/references/setup.md"),
     ),
 ];
 
@@ -110,7 +110,7 @@ pub fn install(agent: SkillAgent) -> Result<SkillAgentStatus, String> {
 }
 
 fn home_dir() -> Result<PathBuf, String> {
-    dirs::home_dir().ok_or_else(|| "Anarlog could not find your home directory.".to_string())
+    dirs::home_dir().ok_or_else(|| "Corola could not find your home directory.".to_string())
 }
 
 fn skill_dir(agent: SkillAgent, home: &Path) -> PathBuf {

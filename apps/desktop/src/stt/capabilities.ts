@@ -78,7 +78,7 @@ export function isSupportedLocalSttModel(
   );
 }
 
-export function isAnarlogCloudSttModel(
+export function isCorolaCloudSttModel(
   provider?: string | null,
   model?: string | null,
 ) {

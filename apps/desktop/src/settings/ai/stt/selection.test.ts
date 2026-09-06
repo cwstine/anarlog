@@ -71,7 +71,7 @@ describe("getDefaultSttModel", () => {
     expect(getDefaultSttModel("fireworks")).toBe("whisper-v3-turbo");
   });
 
-  test("does not invent a model for custom or Anarlog providers", () => {
+  test("does not invent a model for custom or Corola providers", () => {
     expect(getDefaultSttModel("custom")).toBeUndefined();
     expect(getDefaultSttModel("anarlog")).toBeUndefined();
   });

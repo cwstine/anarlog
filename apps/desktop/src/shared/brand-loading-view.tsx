@@ -1,6 +1,6 @@
 import { cn } from "@anlg/utils";
 
-import { AnarlogMark } from "./anarlog-mark";
+import { CorolaMark } from "./anarlog-mark";
 
 export function BrandLoadingView({ detail }: { detail?: string }) {
   return (
@@ -20,7 +20,7 @@ export function BrandLoadingView({ detail }: { detail?: string }) {
             "dark:drop-shadow-[0_12px_28px_rgba(0,0,0,0.45)]",
           ])}
         >
-          <AnarlogMark className="text-foreground/20 w-full" />
+          <CorolaMark className="text-foreground/20 w-full" />
           <div
             aria-hidden="true"
             className={cn([
@@ -34,7 +34,7 @@ export function BrandLoadingView({ detail }: { detail?: string }) {
               "motion-reduce:animate-none motion-reduce:opacity-0",
             ])}
           >
-            <AnarlogMark className="w-full" />
+            <CorolaMark className="w-full" />
           </div>
         </div>
         {detail ? (

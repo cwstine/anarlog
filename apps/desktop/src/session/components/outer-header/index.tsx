@@ -2,14 +2,8 @@ import { useLingui } from "@lingui/react/macro";
 import { Headset, Square, VideoCamera } from "@phosphor-icons/react";
 import { useCallback, useRef, useState } from "react";
 
-import { commands as deeplinkCommands } from "@anlg/plugin-deeplink2";
 import { commands as openerCommands } from "@anlg/plugin-opener2";
 import { Button } from "@anlg/ui/components/ui/button";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-} from "@anlg/ui/components/ui/popover";
 import { cn, parseEventInstant, safeParseDate } from "@anlg/utils";
 
 import { RecordingIcon, useHasTranscript } from "../shared";
@@ -19,10 +13,6 @@ import { OverflowButton } from "./overflow";
 import { useAudioPlayer } from "~/audio-player";
 import { useNow } from "~/calendar/hooks";
 import { useShell } from "~/contexts/shell";
-import {
-  buildWelcomeNoteDemoUrl,
-  WELCOME_NOTE_TRACKING_ID,
-} from "~/onboarding/welcome-note.constants";
 import { useEventCountdown } from "~/session/hooks/useEventCountdown";
 import { useMeetingMicInUse } from "~/session/hooks/useMeetingMicInUse";
 import {
@@ -31,7 +21,6 @@ import {
 } from "~/session/hooks/useRemoteMeeting";
 import { useSessionEvent } from "~/session/hooks/useSessionEvent";
 import { useWindowControlsGutter } from "~/shared/hooks/useWindowControlsGutter";
-import { getScheme } from "~/shared/utils";
 import type { EditorView, Tab } from "~/store/zustand/tabs/schema";
 import { useListener } from "~/stt/contexts";
 import { useStartListening } from "~/stt/useStartListening";
@@ -169,7 +158,6 @@ function HeaderMeetingAction({
   sessionId: string;
   event: {
     meeting_link?: string;
-    tracking_id?: string;
     started_at?: string;
   } | null;
   eventEnded: boolean;
@@ -181,21 +169,17 @@ function HeaderMeetingAction({
   const stop = useListener((state) => state.stop);
   const remote = getRemoteMeeting(event?.meeting_link);
   const meetingLink = event?.meeting_link || null;
-  const isWelcomeDemo = event?.tracking_id === WELCOME_NOTE_TRACKING_ID;
   const canJoinFromHeader = Boolean(
     !eventEnded &&
     !hasTranscript &&
     !audioExists &&
     meetingLink &&
-    (remote !== null || isWelcomeDemo),
+    remote !== null,
   );
   const now = useNow();
   const meetingStarted = meetingHasStarted(event?.started_at, now);
   const meetingMicInUse = useMeetingMicInUse(
-    canJoinFromHeader &&
-      !isWelcomeDemo &&
-      sessionMode === "inactive" &&
-      meetingStarted,
+    canJoinFromHeader && sessionMode === "inactive" && meetingStarted,
   );
   const { t } = useLingui();
   const joiningMeetingRef = useRef(false);
@@ -213,25 +197,8 @@ function HeaderMeetingAction({
       return;
     }
 
-    let url = meetingLink;
-    if (isWelcomeDemo) {
-      url = buildWelcomeNoteDemoUrl(meetingLink);
-      try {
-        const scheme = await getScheme();
-        const result = await deeplinkCommands.startCallbackServer(scheme, null);
-        if (result.status === "ok") {
-          url = buildWelcomeNoteDemoUrl(meetingLink, result.data);
-        }
-      } catch (error) {
-        console.error(
-          "[onboarding] failed to prepare demo completion callback",
-          error,
-        );
-      }
-    }
-
-    void openerCommands.openUrl(url, null);
-  }, [isWelcomeDemo, meetingLink]);
+    void openerCommands.openUrl(meetingLink, null);
+  }, [meetingLink]);
   const joinMeeting = useCallback(async () => {
     if (joiningMeetingRef.current) {
       return;
@@ -267,18 +234,12 @@ function HeaderMeetingAction({
 
     if (
       canJoinFromHeader &&
-      (isWelcomeDemo || !meetingStarted || !meetingMicInUse)
+      (!meetingStarted || !meetingMicInUse)
     ) {
       return {
         label: t`Join & record`,
         title: t`Join meeting and record`,
-        icon: isWelcomeDemo ? (
-          <img
-            src="/assets/anarlog-icon.png"
-            alt=""
-            className="size-3.5 shrink-0"
-          />
-        ) : remote ? (
+        icon: remote ? (
           getMeetingDisplay(remote.type).icon
         ) : undefined,
         onClick: () => {
@@ -301,17 +262,9 @@ function HeaderMeetingAction({
     sessionMode !== "active" &&
     sessionMode !== "running_batch" &&
     sessionMode !== "finalizing";
-  const showWelcomeDemoPrompt =
-    isWelcomeDemo &&
-    sessionMode === "inactive" &&
-    !hasTranscript &&
-    !audioExists;
-
   return (
-    <Popover open={showWelcomeDemoPrompt}>
-      <div className="relative mr-1 flex min-w-0 shrink-0 items-center">
-        <PopoverAnchor asChild>
-          <Button
+    <div className="relative mr-1 flex min-w-0 shrink-0 items-center">
+      <Button
             type="button"
             size="sm"
             variant="outline"
@@ -330,27 +283,8 @@ function HeaderMeetingAction({
           >
             {action.icon}
             <span className="truncate">{action.label}</span>
-          </Button>
-        </PopoverAnchor>
-        {showWelcomeDemoPrompt ? (
-          <PopoverContent
-            data-welcome-demo-prompt
-            side="bottom"
-            sideOffset={10}
-            onOpenAutoFocus={(event) => event.preventDefault()}
-            className="border-border bg-popover text-popover-foreground pointer-events-none w-72 max-w-[calc(100vw-1rem)] rounded-md border px-3 py-2.5 text-sm shadow-sm"
-          >
-            <span
-              data-welcome-demo-prompt-tail
-              aria-hidden="true"
-              className="border-border bg-popover absolute -top-1.5 left-1/2 size-3 -translate-x-1/2 rotate-45 border-t border-l"
-            />
-            <span className="relative block font-medium">{t`Try the demo`}</span>
-            <span className="text-muted-foreground relative mt-0.5 block leading-snug">
-              {t`This is a prerecorded demo, so your camera stays off. Click Join & record to see Anarlog in action.`}
-            </span>
-          </PopoverContent>
-        ) : showCountdown ? (
+      </Button>
+      {showCountdown ? (
           <div
             data-header-meeting-countdown
             className="border-border bg-popover text-popover-foreground pointer-events-none absolute top-full left-1/2 z-20 mt-2 -translate-x-1/2 rounded-md border px-2.5 py-1 font-mono text-xs whitespace-nowrap tabular-nums shadow-sm"
@@ -362,9 +296,8 @@ function HeaderMeetingAction({
             />
             <span className="relative">{countdown.label}</span>
           </div>
-        ) : null}
-      </div>
-    </Popover>
+      ) : null}
+    </div>
   );
 }
 

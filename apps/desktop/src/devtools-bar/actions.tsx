@@ -300,7 +300,7 @@ export function useDevtoolsActions() {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         location: "Conference Room",
       },
-      action_label: "Open Anarlog",
+      action_label: "Open Corola",
       action_variant: null,
       options: null,
       footer: null,
@@ -366,7 +366,7 @@ export function useDevtoolsActions() {
     await notificationCommands.showNotification({
       key: createAutoStopEndedNotificationKey(sessionId),
       title: "Did your meeting end?",
-      message: `Anarlog will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
+      message: `Corola will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
       timeout: { secs: AUTO_STOP_CONFIRM_TIMEOUT_SECONDS, nanos: 0 },
       source: null,
       start_time: null,

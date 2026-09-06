@@ -142,7 +142,7 @@ const isMainWindow = getCurrentWebviewWindowLabel() === "main";
 if (isMainWindow) {
   void analyticsCommands.eventFireAndForget({ event: "app_started" });
   try {
-    const firstOpenKey = "anarlog:analytics:first-opened";
+    const firstOpenKey = "corola:analytics:first-opened";
     if (localStorage.getItem(firstOpenKey) === null) {
       localStorage.setItem(firstOpenKey, "1");
       trackAnalyticsEvent("app_first_opened", {

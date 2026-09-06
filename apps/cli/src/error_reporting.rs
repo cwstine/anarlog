@@ -12,7 +12,7 @@ pub fn init() -> Option<sentry::ClientInitGuard> {
         .or_else(|| option_env!("SENTRY_DSN").map(ToOwned::to_owned))?;
     let guard = sentry::init(sentry::ClientOptions {
         dsn: dsn.parse().ok(),
-        release: Some(format!("anarlog-cli@{}", env!("CARGO_PKG_VERSION")).into()),
+        release: Some(format!("corola-cli@{}", env!("CARGO_PKG_VERSION")).into()),
         environment: Some(if cfg!(debug_assertions) {
             "development".into()
         } else {
@@ -25,8 +25,8 @@ pub fn init() -> Option<sentry::ClientInitGuard> {
     });
     sentry::configure_scope(|scope| {
         scope.set_tag("service.name", "cli");
-        scope.set_tag("service.namespace", "anarlog");
-        scope.set_tag("anarlog.surface", "cli");
+        scope.set_tag("service.namespace", "corola");
+        scope.set_tag("corola.surface", "cli");
     });
     Some(guard)
 }
@@ -34,8 +34,8 @@ pub fn init() -> Option<sentry::ClientInitGuard> {
 pub fn capture_command_error(command: &str, error_code: &str) {
     sentry::with_scope(
         |scope| {
-            scope.set_tag("anarlog.operation", "cli_command");
-            scope.set_tag("anarlog.command", command);
+            scope.set_tag("corola.operation", "cli_command");
+            scope.set_tag("corola.command", command);
             scope.set_tag("error.code", error_code);
         },
         || {

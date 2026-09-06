@@ -155,7 +155,7 @@ export async function showMeetingEndedPrompt({
     await notificationCommands.showNotification({
       key,
       title: "Did your meeting end?",
-      message: `Anarlog will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
+      message: `Corola will stop listening in ${AUTO_STOP_CONFIRM_TIMEOUT_SECONDS} seconds.`,
       timeout: { secs: AUTO_STOP_CONFIRM_TIMEOUT_SECONDS, nanos: 0 },
       source: null,
       start_time: null,

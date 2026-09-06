@@ -2109,7 +2109,7 @@ describe("useStartListening", () => {
     });
 
     expect(sonnerToastErrorMock).toHaveBeenCalledWith(
-      "Anarlog could not save part of the live transcript.",
+      "Corola could not save part of the live transcript.",
       { id: "live-transcript-persist-failed" },
     );
     expect(queueAutoEnhanceIfSummaryEmptyMock).not.toHaveBeenCalled();
@@ -2158,7 +2158,7 @@ describe("useStartListening", () => {
     });
 
     expect(sonnerToastErrorMock).toHaveBeenCalledWith(
-      "Anarlog could not finish saving the transcript. The recording was kept so you can try again.",
+      "Corola could not finish saving the transcript. The recording was kept so you can try again.",
       { id: "post-capture-transcript-incomplete" },
     );
     expect(markSessionAudioTranscriptionCompleteMock).not.toHaveBeenCalled();
@@ -2271,7 +2271,7 @@ describe("useStartListening", () => {
     });
 
     expect(sonnerToastErrorMock).toHaveBeenCalledWith(
-      "Anarlog could not finish saving the transcript. The recording was kept so you can try again.",
+      "Corola could not finish saving the transcript. The recording was kept so you can try again.",
       { id: "post-capture-transcript-incomplete" },
     );
     expect(queueAutoEnhanceIfSummaryEmptyMock).not.toHaveBeenCalled();
@@ -2513,7 +2513,7 @@ describe("useStartListening", () => {
 
     expect(queueAutoEnhanceIfSummaryEmptyMock).toHaveBeenCalledOnce();
     expect(sonnerToastErrorMock).toHaveBeenCalledWith(
-      "The transcript was saved, but Anarlog could not start the summary. Try generating it again.",
+      "The transcript was saved, but Corola could not start the summary. Try generating it again.",
       { id: "post-capture-summary-failed" },
     );
     expect(clearCaptureLifecycleMarkerMock).not.toHaveBeenCalled();
@@ -2892,7 +2892,7 @@ describe("useStartListening", () => {
 
     await waitFor(() => {
       expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
-        "I'm using Anarlog to record and transcribe this meeting. https://anarlog.so",
+        "I'm using Corola to record and transcribe this meeting.",
         ["com.tinyspeck.slackmacgap"],
       );
     });
@@ -2920,7 +2920,7 @@ describe("useStartListening", () => {
 
     await waitFor(() => {
       expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
-        "I'm using Anarlog to record and transcribe this meeting. https://anarlog.so",
+        "I'm using Corola to record and transcribe this meeting.",
         ["us.zoom.xos"],
       );
     });
@@ -3033,7 +3033,7 @@ describe("useStartListening", () => {
     listMicUsingApplicationsMock
       .mockResolvedValueOnce({
         status: "ok",
-        data: [{ id: "com.anarlog.dev", name: "Anarlog Dev" }],
+        data: [{ id: "com.anarlog.dev", name: "Corola Dev" }],
       })
       .mockResolvedValueOnce({
         status: "ok",
@@ -3066,18 +3066,18 @@ describe("useStartListening", () => {
     expect(listMicUsingApplicationsMock).toHaveBeenCalledTimes(2);
     expect(sendMeetingChatMessageMock).toHaveBeenNthCalledWith(
       1,
-      expect.stringContaining("https://anarlog.so"),
+      expect.stringContaining("Corola"),
       ["com.anarlog.dev"],
     );
     expect(sendMeetingChatMessageMock).toHaveBeenNthCalledWith(
       2,
-      expect.stringContaining("https://anarlog.so"),
+      expect.stringContaining("Corola"),
       ["us.zoom.xos"],
     );
     expect(sonnerToastWarningMock).not.toHaveBeenCalled();
   });
 
-  test("keeps the Slack scope when Anarlog also appears in the mic-active apps", async () => {
+  test("keeps the Slack scope when Corola also appears in the mic-active apps", async () => {
     useConfigValueMock.mockImplementation((key: string) =>
       key === "ai_language"
         ? "en"
@@ -3088,7 +3088,7 @@ describe("useStartListening", () => {
     listMicUsingApplicationsMock.mockResolvedValue({
       status: "ok",
       data: [
-        { id: "com.anarlog.dev", name: "Anarlog Dev" },
+        { id: "com.anarlog.dev", name: "Corola Dev" },
         { id: "com.tinyspeck.slackmacgap", name: "Slack" },
       ],
     });
@@ -3102,7 +3102,7 @@ describe("useStartListening", () => {
 
     await waitFor(() => {
       expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
-        expect.stringContaining("https://anarlog.so"),
+        expect.stringContaining("Corola"),
         ["com.anarlog.dev", "com.tinyspeck.slackmacgap"],
       );
     });
@@ -3131,7 +3131,7 @@ describe("useStartListening", () => {
     });
 
     expect(sendMeetingChatMessageMock).toHaveBeenCalledWith(
-      expect.stringContaining("https://anarlog.so"),
+      expect.stringContaining("Corola"),
       ["us.zoom.xos", "com.tinyspeck.slackmacgap"],
     );
     expect(warn).toHaveBeenCalledWith(
@@ -3139,7 +3139,7 @@ describe("useStartListening", () => {
       "expected exactly one recognized meeting app bundle",
     );
     expect(sonnerToastWarningMock).toHaveBeenCalledWith(
-      "Recording started, but Anarlog could not post the meeting chat disclosure.",
+      "Recording started, but Corola could not post the meeting chat disclosure.",
       { id: "meeting-disclosure-send-failed", duration: Infinity },
     );
     warn.mockRestore();
@@ -3289,7 +3289,7 @@ describe("useStartListening", () => {
       error,
     );
     expect(sonnerToastWarningMock).toHaveBeenCalledWith(
-      "Recording started, but Anarlog could not post the meeting chat disclosure.",
+      "Recording started, but Corola could not post the meeting chat disclosure.",
       { id: "meeting-disclosure-send-failed", duration: Infinity },
     );
     warn.mockRestore();
@@ -3314,7 +3314,7 @@ describe("useStartListening", () => {
       expect(startMeetingChatCaptureMock).toHaveBeenCalledWith({
         sessionId: "session-1",
         excludedTexts: [
-          "I'm using Anarlog to record and transcribe this meeting. https://anarlog.so",
+          "I'm using Corola to record and transcribe this meeting.",
         ],
         onParticipantDeclined: expect.any(Function),
       });
@@ -3353,7 +3353,7 @@ describe("useStartListening", () => {
       expect(startMeetingChatCaptureMock).toHaveBeenCalledWith({
         sessionId: "session-1",
         excludedTexts: [
-          "I'm using Anarlog to record and transcribe this meeting. https://anarlog.so",
+          "I'm using Corola to record and transcribe this meeting.",
         ],
         onParticipantDeclined: expect.any(Function),
       });

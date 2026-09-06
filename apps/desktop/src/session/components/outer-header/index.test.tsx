@@ -22,8 +22,6 @@ const mocks = vi.hoisted(() => ({
   sessionEvents: {} as Record<string, any>,
   nowMs: new Date("2026-06-05T09:50:00.000Z").getTime(),
   openUrl: vi.fn(),
-  startCallbackServer: vi.fn(),
-  getScheme: vi.fn(),
   startListening: vi.fn(),
   stopListening: vi.fn(),
   stopTranscription: vi.fn(),
@@ -69,12 +67,6 @@ vi.mock("@anlg/plugin-opener2", () => ({
   },
 }));
 
-vi.mock("@anlg/plugin-deeplink2", () => ({
-  commands: {
-    startCallbackServer: mocks.startCallbackServer,
-  },
-}));
-
 vi.mock("~/calendar/hooks", () => ({
   useNow: () => new Date(mocks.nowMs),
 }));
@@ -104,11 +96,6 @@ vi.mock("~/shared/config", () => ({
 
 vi.mock("~/shared/hooks/useWindowControlsGutter", () => ({
   useWindowControlsGutter: () => mocks.windowControlsGutter,
-}));
-
-vi.mock("~/shared/utils", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("~/shared/utils")>()),
-  getScheme: mocks.getScheme,
 }));
 
 vi.mock("~/store/zustand/tabs", () => ({
@@ -158,13 +145,6 @@ describe("OuterHeader", () => {
     mocks.sessionEvents = {};
     mocks.nowMs = new Date("2026-06-05T09:50:00.000Z").getTime();
     mocks.openUrl.mockClear();
-    mocks.startCallbackServer.mockReset();
-    mocks.startCallbackServer.mockResolvedValue({
-      status: "ok",
-      data: 43210,
-    });
-    mocks.getScheme.mockReset();
-    mocks.getScheme.mockResolvedValue("anarlog-dev");
     mocks.startListening.mockClear();
     mocks.stopListening.mockClear();
     mocks.stopTranscription.mockClear();
@@ -845,201 +825,6 @@ describe("OuterHeader", () => {
 
     expect(mocks.openUrl).not.toHaveBeenCalled();
     expect(mocks.startListening).toHaveBeenCalledOnce();
-  });
-
-  it("keeps join-and-record for the welcome demo even if the mic is in use after start", () => {
-    mocks.sessionEvents = {
-      "session-1": {
-        tracking_id: "anarlog-onboarding-demo-v1",
-        started_at: "2026-06-05T10:00:00.000Z",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
-      },
-    };
-    mocks.nowMs = new Date("2026-06-05T10:05:00.000Z").getTime();
-    mocks.meetingMicInUse = true;
-
-    render(
-      <OuterHeader
-        sessionId="session-1"
-        currentView={{ type: "raw" } as EditorView}
-      />,
-    );
-
-    expect(screen.getByRole("button", { name: "Join & record" })).toBeTruthy();
-  });
-
-  it("opens the welcome demo with an automatic completion callback", async () => {
-    mocks.sessionEvents = {
-      "session-1": {
-        tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
-      },
-    };
-
-    render(
-      <OuterHeader
-        sessionId="session-1"
-        currentView={{ type: "raw" } as EditorView}
-      />,
-    );
-
-    const joinButton = screen.getByRole("button", { name: "Join & record" });
-    const logo = joinButton.querySelector("img");
-
-    fireEvent.click(joinButton);
-
-    expect(logo?.getAttribute("src")).toBe("/assets/anarlog-icon.png");
-    expect(logo?.getAttribute("alt")).toBe("");
-    expect(logo?.className).toContain("size-3.5");
-    expect(mocks.startListening).toHaveBeenCalledOnce();
-    await vi.waitFor(() => {
-      expect(mocks.startCallbackServer).toHaveBeenCalledWith(
-        "anarlog-dev",
-        null,
-      );
-      expect(mocks.openUrl).toHaveBeenCalledOnce();
-    });
-
-    const openedUrl = new URL(mocks.openUrl.mock.calls[0][0]);
-    expect(openedUrl.origin + openedUrl.pathname).toBe(
-      "https://anarlog.so/onboarding-demo/",
-    );
-    expect(openedUrl.searchParams.get("autojoin")).toBe("1");
-    expect(openedUrl.searchParams.get("completion_url")).toBe(
-      "http://127.0.0.1:43210/onboarding-demo/complete",
-    );
-  });
-
-  it("still auto-joins the welcome demo if the completion callback cannot start", async () => {
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-    mocks.startCallbackServer.mockRejectedValue(new Error("unavailable"));
-    mocks.sessionEvents = {
-      "session-1": {
-        tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
-      },
-    };
-
-    try {
-      render(
-        <OuterHeader
-          sessionId="session-1"
-          currentView={{ type: "raw" } as EditorView}
-        />,
-      );
-
-      fireEvent.click(screen.getByRole("button", { name: "Join & record" }));
-
-      await vi.waitFor(() => {
-        expect(mocks.openUrl).toHaveBeenCalledOnce();
-      });
-
-      const openedUrl = new URL(mocks.openUrl.mock.calls[0][0]);
-      expect(openedUrl.origin + openedUrl.pathname).toBe(
-        "https://anarlog.so/onboarding-demo/",
-      );
-      expect(openedUrl.searchParams.get("autojoin")).toBe("1");
-      expect(openedUrl.searchParams.get("completion_url")).toBeNull();
-      expect(consoleError).toHaveBeenCalled();
-    } finally {
-      consoleError.mockRestore();
-    }
-  });
-
-  it("prompts new users to try the prerecorded welcome demo", () => {
-    mocks.sessionEvents = {
-      "session-1": {
-        tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
-      },
-    };
-
-    render(
-      <OuterHeader
-        sessionId="session-1"
-        currentView={{ type: "raw" } as EditorView}
-      />,
-    );
-
-    const prompt = screen
-      .getByText("Try the demo")
-      .closest("[data-welcome-demo-prompt]");
-
-    expect(prompt).not.toBeNull();
-    expect(prompt?.textContent).toContain(
-      "This is a prerecorded demo, so your camera stays off.",
-    );
-    expect(prompt?.textContent).toContain(
-      "Click Join & record to see Anarlog in action.",
-    );
-    expect(
-      prompt?.querySelector("[data-welcome-demo-prompt-tail]"),
-    ).not.toBeNull();
-    expect(prompt?.parentElement?.parentElement).toBe(document.body);
-  });
-
-  it("does not prompt users who have already recorded the welcome demo", () => {
-    mocks.audioExists = true;
-    mocks.sessionEvents = {
-      "session-1": {
-        tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
-      },
-    };
-
-    render(
-      <OuterHeader
-        sessionId="session-1"
-        currentView={{ type: "raw" } as EditorView}
-      />,
-    );
-
-    expect(screen.queryByText("Try the demo")).toBeNull();
-  });
-
-  it("ignores repeated welcome demo joins while startup is in progress", async () => {
-    let resolveCallbackServer: (value: {
-      status: "ok";
-      data: number;
-    }) => void = () => {};
-    mocks.startCallbackServer.mockReturnValue(
-      new Promise((resolve) => {
-        resolveCallbackServer = resolve;
-      }),
-    );
-    mocks.sessionEvents = {
-      "session-1": {
-        tracking_id: "anarlog-onboarding-demo-v1",
-        meeting_link: "https://anarlog.so/onboarding-demo/",
-      },
-    };
-
-    render(
-      <OuterHeader
-        sessionId="session-1"
-        currentView={{ type: "raw" } as EditorView}
-      />,
-    );
-
-    const joinButton = screen.getByRole("button", { name: "Join & record" });
-
-    fireEvent.click(joinButton);
-    fireEvent.click(joinButton);
-
-    expect(joinButton.hasAttribute("disabled")).toBe(true);
-    expect(mocks.startListening).toHaveBeenCalledOnce();
-    await vi.waitFor(() => {
-      expect(mocks.startCallbackServer).toHaveBeenCalledOnce();
-    });
-
-    resolveCallbackServer({ status: "ok", data: 43210 });
-
-    await vi.waitFor(() => {
-      expect(mocks.openUrl).toHaveBeenCalledOnce();
-      expect(joinButton.hasAttribute("disabled")).toBe(false);
-    });
   });
 
   it("shows the meeting countdown in a callout below the header action", () => {

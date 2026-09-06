@@ -23,7 +23,7 @@ describe("getScheme", () => {
     ["com.hyprnote.Hyprnote", "corola"],
     ["com.hyprnote.staging", "corola-staging"],
     ["com.hyprnote.dev", "corola-dev"],
-    ["so.anarlog.Anarlog", "corola"],
+    ["so.anarlog.Corola", "corola"],
     ["unknown", "corola"],
   ])("maps %s to %s", async (identifier, scheme) => {
     mocks.getIdentifier.mockResolvedValue(identifier);

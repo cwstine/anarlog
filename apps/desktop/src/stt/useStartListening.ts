@@ -105,7 +105,7 @@ export function useStartListeningState(sessionId: string) {
         );
       }
       sonnerToast.error(
-        "Anarlog could not safely start recording. Please try again.",
+        "Corola could not safely start recording. Please try again.",
         { id: "capture-state-persist-failed" },
       );
       return;
@@ -146,7 +146,7 @@ export function useStartListeningState(sessionId: string) {
         );
       }
       sonnerToast.error(
-        "Anarlog could not safely start recording. Please try again.",
+        "Corola could not safely start recording. Please try again.",
         { id: "capture-state-persist-failed" },
       );
       return;
@@ -162,7 +162,7 @@ export function useStartListeningState(sessionId: string) {
       } catch (error) {
         console.error("[listener] failed to clean up capture state", error);
         sonnerToast.error(
-          "Anarlog could not safely start recording. Please try again.",
+          "Corola could not safely start recording. Please try again.",
           { id: "capture-state-persist-failed" },
         );
       }
@@ -217,7 +217,7 @@ export function useStartListeningState(sessionId: string) {
         excludedTexts: [MEETING_DISCLOSURE_MESSAGE],
         onParticipantDeclined: () => {
           sonnerToast.warning(
-            "A participant declined recording. Anarlog stopped listening.",
+            "A participant declined recording. Corola stopped listening.",
             { id: "meeting-consent-declined", duration: Infinity },
           );
           stop();

@@ -6,7 +6,7 @@ describe("detectCloudStorageService", () => {
   it("detects iCloud Drive paths", () => {
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/Mobile Documents/com~apple~CloudDocs/Anarlog",
+        "/Users/john/Library/Mobile Documents/com~apple~CloudDocs/Corola",
       ),
     ).toBe("iCloud Drive");
   });
@@ -22,17 +22,17 @@ describe("detectCloudStorageService", () => {
   it("detects file-provider mounts under Library/CloudStorage", () => {
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/CloudStorage/Dropbox/Anarlog",
+        "/Users/john/Library/CloudStorage/Dropbox/Corola",
       ),
     ).toBe("Dropbox");
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/CloudStorage/OneDrive-Personal/Anarlog",
+        "/Users/john/Library/CloudStorage/OneDrive-Personal/Corola",
       ),
     ).toBe("OneDrive");
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/CloudStorage/GoogleDrive-john@example.com/My Drive/Anarlog",
+        "/Users/john/Library/CloudStorage/GoogleDrive-john@example.com/My Drive/Corola",
       ),
     ).toBe("Google Drive");
   });
@@ -40,26 +40,26 @@ describe("detectCloudStorageService", () => {
   it("falls back to the mount name for unknown providers", () => {
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/CloudStorage/pCloud-john@example.com/Anarlog",
+        "/Users/john/Library/CloudStorage/pCloud-john@example.com/Corola",
       ),
     ).toBe("pCloud");
   });
 
   it("detects legacy sync folders in the home directory", () => {
-    expect(detectCloudStorageService("/Users/john/Dropbox/Anarlog")).toBe(
+    expect(detectCloudStorageService("/Users/john/Dropbox/Corola")).toBe(
       "Dropbox",
     );
-    expect(detectCloudStorageService("/Users/john/Google Drive/Anarlog")).toBe(
+    expect(detectCloudStorageService("/Users/john/Google Drive/Corola")).toBe(
       "Google Drive",
     );
   });
 
   it("detects Windows sync folders", () => {
     expect(
-      detectCloudStorageService("C:\\Users\\john\\OneDrive - Acme\\Anarlog"),
+      detectCloudStorageService("C:\\Users\\john\\OneDrive - Acme\\Corola"),
     ).toBe("OneDrive");
     expect(
-      detectCloudStorageService("C:\\Users\\john\\iCloudDrive\\Anarlog"),
+      detectCloudStorageService("C:\\Users\\john\\iCloudDrive\\Corola"),
     ).toBe("iCloud Drive");
   });
 
@@ -70,7 +70,7 @@ describe("detectCloudStorageService", () => {
       ),
     ).toBeNull();
     expect(
-      detectCloudStorageService("/Users/john/Documents/Anarlog"),
+      detectCloudStorageService("/Users/john/Documents/Corola"),
     ).toBeNull();
   });
 });

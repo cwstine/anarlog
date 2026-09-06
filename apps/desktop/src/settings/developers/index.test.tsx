@@ -5,7 +5,6 @@ import {
   render,
   screen,
   waitFor,
-  within,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -17,7 +16,6 @@ const mocks = vi.hoisted(() => ({
   toastError: vi.fn(),
   toastSuccess: vi.fn(),
   toastWarning: vi.fn(),
-  openUrl: vi.fn(),
 }));
 
 vi.mock("~/types/tauri.gen", () => ({
@@ -54,10 +52,6 @@ vi.mock("@anlg/ui/components/ui/dropdown-menu", () => ({
   ),
 }));
 
-vi.mock("@anlg/plugin-opener2", () => ({
-  commands: { openUrl: mocks.openUrl },
-}));
-
 vi.mock("@anlg/plugin-local-api", () => ({
   commands: {
     listWebhooks: vi.fn().mockResolvedValue({ status: "ok", data: [] }),
@@ -81,13 +75,13 @@ import {
 describe("buildMcpConfiguration", () => {
   it("uses the exact installed CLI path", () => {
     const configuration = JSON.parse(
-      buildMcpConfiguration("/Users/test/.local/bin/anarlog"),
+      buildMcpConfiguration("/Users/test/.local/bin/corola"),
     );
 
     expect(configuration).toEqual({
       mcpServers: {
-        anarlog: {
-          command: "/Users/test/.local/bin/anarlog",
+        corola: {
+          command: "/Users/test/.local/bin/corola",
           args: ["mcp"],
         },
       },
@@ -100,12 +94,12 @@ describe("getCliInstallNotification", () => {
     expect(
       getCliInstallNotification({
         supported: true,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
+        commandName: "corola",
+        installPath: "/Users/test/.local/bin/corola",
         state: "installed",
         details: "Installed.",
       }),
-    ).toEqual({ type: "success", message: "anarlog is ready to use" });
+    ).toEqual({ type: "success", message: "corola is ready to use" });
   });
 
   it.each(["resource_missing", "unsupported"] as const)(
@@ -114,8 +108,8 @@ describe("getCliInstallNotification", () => {
       expect(
         getCliInstallNotification({
           supported: false,
-          commandName: "anarlog",
-          installPath: "/Users/test/.local/bin/anarlog",
+          commandName: "corola",
+          installPath: "/Users/test/.local/bin/corola",
           state,
           details: "The CLI is unavailable in this build.",
         }),
@@ -137,20 +131,19 @@ describe("SettingsDevelopers", () => {
     mocks.toastError.mockReset();
     mocks.toastSuccess.mockReset();
     mocks.toastWarning.mockReset();
-    mocks.openUrl.mockReset();
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it("shows one guide button in the page header", () => {
+  it("does not link to product-hosted documentation", () => {
     mocks.checkEmbeddedCli.mockResolvedValue({
       status: "ok",
       data: {
         supported: true,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
+        commandName: "corola",
+        installPath: "/Users/test/.local/bin/corola",
         state: "installed",
         details: "Installed.",
       },
@@ -165,19 +158,8 @@ describe("SettingsDevelopers", () => {
       </QueryClientProvider>,
     );
 
-    const heading = screen.getByRole("heading", { name: "Developers" });
-    const guideButton = within(heading.parentElement as HTMLElement).getByRole(
-      "button",
-      { name: "Guide" },
-    );
-    expect(screen.getAllByRole("button", { name: "Guide" })).toHaveLength(1);
-
-    fireEvent.click(guideButton);
-
-    expect(mocks.openUrl).toHaveBeenCalledWith(
-      "https://docs.anarlog.so/agents/overview",
-      null,
-    );
+    expect(screen.getByRole("heading", { name: "Developers" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Guide" })).toBeNull();
   });
 
   it("uses the installed CLI path when copying the MCP configuration", async () => {
@@ -190,11 +172,11 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: true,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
+        commandName: "corola",
+        installPath: "/Users/test/.local/bin/corola",
         state: "installed",
         details:
-          "Installed at /Users/test/.local/bin/anarlog and managed by Anarlog.",
+          "Installed at /Users/test/.local/bin/corola and managed by Corola.",
       },
     });
 
@@ -211,18 +193,18 @@ describe("SettingsDevelopers", () => {
     expect(screen.getByLabelText("Installed")).toBeTruthy();
     expect(screen.queryByText("Installed")).toBeNull();
     expect(
-      screen.queryByText(/\/Users\/test\/\.local\/bin\/anarlog/),
+      screen.queryByText(/\/Users\/test\/\.local\/bin\/corola/),
     ).toBeNull();
-    expect(screen.queryByText("anarlog --json meetings list")).toBeNull();
-    expect(screen.queryByText("anarlog mcp")).toBeNull();
+    expect(screen.queryByText("corola --json meetings list")).toBeNull();
+    expect(screen.queryByText("corola mcp")).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "Copy config" }));
 
     await waitFor(() => expect(writeText).toHaveBeenCalledOnce());
     expect(JSON.parse(writeText.mock.calls[0][0])).toEqual({
       mcpServers: {
-        anarlog: {
-          command: "/Users/test/.local/bin/anarlog",
+        corola: {
+          command: "/Users/test/.local/bin/corola",
           args: ["mcp"],
         },
       },
@@ -234,8 +216,8 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: false,
-        commandName: "anarlog-dev",
-        installPath: "/Users/test/.local/bin/anarlog-dev",
+        commandName: "corola-dev",
+        installPath: "/Users/test/.local/bin/corola-dev",
         state: "unsupported",
         details: "Bundled CLI installation is currently available on macOS.",
       },
@@ -255,7 +237,7 @@ describe("SettingsDevelopers", () => {
     });
     expect(copyButton.hasAttribute("disabled")).toBe(true);
     expect(
-      screen.queryByText(/\/Users\/test\/\.local\/bin\/anarlog-dev/),
+      screen.queryByText(/\/Users\/test\/\.local\/bin\/corola-dev/),
     ).toBeNull();
   });
 
@@ -264,8 +246,8 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: false,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
+        commandName: "corola",
+        installPath: "/Users/test/.local/bin/corola",
         state: "unsupported",
         details: "Unavailable.",
       },
@@ -278,28 +260,28 @@ describe("SettingsDevelopers", () => {
           displayName: "Claude Code",
           detected: true,
           installed: true,
-          skillPath: "/Users/test/.claude/skills/anarlog",
+          skillPath: "/Users/test/.claude/skills/corola",
         },
         {
           agent: "codex",
           displayName: "Codex",
           detected: true,
           installed: false,
-          skillPath: "/Users/test/.codex/skills/anarlog",
+          skillPath: "/Users/test/.codex/skills/corola",
         },
         {
           agent: "cursor",
           displayName: "Cursor",
           detected: false,
           installed: false,
-          skillPath: "/Users/test/.cursor/skills/anarlog",
+          skillPath: "/Users/test/.cursor/skills/corola",
         },
         {
           agent: "opencode",
           displayName: "OpenCode",
           detected: true,
           installed: false,
-          skillPath: "/Users/test/.config/opencode/skills/anarlog",
+          skillPath: "/Users/test/.config/opencode/skills/corola",
         },
       ],
     });
@@ -355,7 +337,7 @@ describe("SettingsDevelopers", () => {
     expect(mocks.installAgentSkill).not.toHaveBeenCalledWith("cursor");
     await waitFor(() =>
       expect(mocks.toastSuccess).toHaveBeenCalledWith(
-        "Anarlog skill added to 3 agents",
+        "Corola skill added to 3 agents",
       ),
     );
   });
@@ -365,8 +347,8 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: false,
-        commandName: "anarlog",
-        installPath: "/Users/test/.local/bin/anarlog",
+        commandName: "corola",
+        installPath: "/Users/test/.local/bin/corola",
         state: "unsupported",
         details: "Unavailable.",
       },
@@ -379,7 +361,7 @@ describe("SettingsDevelopers", () => {
           displayName: "Codex",
           detected: true,
           installed: false,
-          skillPath: "/Users/test/.codex/skills/anarlog",
+          skillPath: "/Users/test/.codex/skills/corola",
         },
       ],
     });
@@ -390,7 +372,7 @@ describe("SettingsDevelopers", () => {
         displayName: "Codex",
         detected: true,
         installed: true,
-        skillPath: "/Users/test/.codex/skills/anarlog",
+        skillPath: "/Users/test/.codex/skills/corola",
       },
     });
 
@@ -410,7 +392,7 @@ describe("SettingsDevelopers", () => {
     );
     await waitFor(() =>
       expect(mocks.toastSuccess).toHaveBeenCalledWith(
-        "Anarlog skill added to Codex",
+        "Corola skill added to Codex",
       ),
     );
   });

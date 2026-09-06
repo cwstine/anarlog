@@ -206,7 +206,7 @@ function OnboardingScreenContent({
         ])}
       >
         <h1 className="font-hand text-foreground text-4xl leading-none font-semibold tracking-normal">
-          <Trans>Welcome to Anarlog</Trans>
+          <Trans>Welcome to Corola</Trans>
         </h1>
       </div>
 
@@ -218,13 +218,13 @@ function OnboardingScreenContent({
             description={
               currentPlatform === "macos" ? (
                 <Trans>
-                  Anarlog needs microphone and system audio to transcribe your
+                  Corola needs microphone and system audio to transcribe your
                   meetings, plus Accessibility to read meeting controls, visible
                   chat.
                 </Trans>
               ) : (
                 <Trans>
-                  Anarlog needs access to your microphone and system audio to
+                  Corola needs access to your microphone and system audio to
                   record and transcribe your meetings
                 </Trans>
               )

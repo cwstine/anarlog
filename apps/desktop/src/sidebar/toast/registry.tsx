@@ -157,7 +157,7 @@ export function createDesktopUpdateToast(
       // A new ID prevents Sonner from retaining the loading state used while
       // this update was downloading.
       id: `${id}:ready`,
-      description: t`Anarlog ${update.version} is ready to install`,
+      description: t`Corola ${update.version} is ready to install`,
       primaryAction: update.installing
         ? undefined
         : { label: t`Restart`, onClick: update.installUpdate },
@@ -172,7 +172,7 @@ export function createDesktopUpdateToast(
         : ` (${Math.round(update.progress * 100)}%)`;
     return {
       id: `${id}:downloading`,
-      description: t`Downloading Anarlog ${update.version}${progress}`,
+      description: t`Downloading Corola ${update.version}${progress}`,
       lifecycle: { type: "persistent", dismissal: "session" },
       loading: true,
     };
@@ -192,7 +192,7 @@ export function createDesktopUpdateToast(
 
   return {
     id: `${id}:available`,
-    description: t`Anarlog ${update.version} is available`,
+    description: t`Corola ${update.version} is available`,
     primaryAction: busy
       ? undefined
       : { label: t`Download`, onClick: update.downloadUpdate },

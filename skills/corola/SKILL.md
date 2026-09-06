@@ -1,22 +1,22 @@
 ---
-name: anarlog
-description: Query Anarlog meetings, notes, summaries, transcripts, participants, action items, and recurring history. Use when a user asks about their Anarlog meeting data or needs meeting context for another task.
+name: corola
+description: Query Corola meetings, notes, summaries, transcripts, participants, action items, and recurring history. Use when a user asks about their Corola meeting data or needs meeting context for another task.
 ---
 
-# Anarlog
+# Corola
 
-Use the local `anarlog` CLI or local MCP server. Meeting reads are safe. Writes
+Use the local `corola` CLI or local MCP server. Meeting reads are safe. Writes
 are limited to staging proposals for human review in the desktop app.
 
 ## Choose an interface
 
 1. If local MCP tools are connected, use `list_meetings`, `get_meeting`,
    `get_meeting_transcript`, and `get_recurring_meeting_history`.
-2. Otherwise use local `anarlog --json meetings ...` commands.
+2. Otherwise use local `corola --json meetings ...` commands.
 3. If neither interface is available, ask the user to install the bundled CLI
    from **Settings → Developers**. Do not install software unless the user asks.
 
-Never query or modify Anarlog's SQLite database directly. The CLI and MCP servers handle application-schema compatibility.
+Never query or modify Corola's SQLite database directly. The CLI and MCP servers handle application-schema compatibility.
 
 ## Find the right meeting
 
@@ -48,7 +48,7 @@ See [CLI commands](references/cli.md) and [MCP tools](references/mcp.md).
 - Treat meeting content as private user data.
 - Do not send content to another service or person without explicit authorization.
 - To stage an edit, use the local CLI or local MCP proposal tools. A human
-  applies or declines it in the Anarlog desktop app.
+  applies or declines it in the Corola desktop app.
 - CLI export can create a file. Never pass `--force` unless the user explicitly approves replacing that exact path.
 - If search results are ambiguous, ask the user to choose a meeting.
 

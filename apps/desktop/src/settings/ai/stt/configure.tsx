@@ -8,7 +8,7 @@ import { ProviderId, PROVIDERS } from "./shared";
 
 import {
   filterProviders,
-  NonAnarlogProviderCard,
+  NonCorolaProviderCard,
   ProviderSearch,
   StyledStreamdown,
 } from "~/settings/ai/shared";
@@ -39,7 +39,7 @@ export function ConfigureProviders() {
         onValueChange={setAccordionValue}
       >
         {providers.map((provider) => (
-          <NonAnarlogProviderCard
+          <NonCorolaProviderCard
             key={provider.id}
             config={provider}
             providerType="stt"
@@ -79,7 +79,7 @@ function ProviderContext({ providerId }: { providerId: ProviderId }) {
                   : providerId === "dashscope"
                     ? `Use Alibaba Cloud Model Studio's Qwen ASR for **live transcription**. The default endpoint is the Singapore region; change it under Advanced when your API key belongs to another region.`
                     : providerId === "zai"
-                      ? `Use [Z.AI GLM ASR](https://docs.z.ai/guides/audio/glm-asr-2512) for batch transcription. Anarlog automatically splits recordings to fit Z.AI's 30-second upload limit.`
+                      ? `Use [Z.AI GLM ASR](https://docs.z.ai/guides/audio/glm-asr-2512) for batch transcription. Corola automatically splits recordings to fit Z.AI's 30-second upload limit.`
                       : providerId === "siliconflow"
                         ? `Use [SiliconFlow](https://docs.siliconflow.com/en/api-reference/audio/create-audio-transcriptions) for batch transcription. The default endpoint is the international service; use \`https://api.siliconflow.cn/v1\` under Advanced for a China-region API key.`
                         : providerId === "cloudflare_workers_ai"
@@ -89,9 +89,9 @@ function ProviderContext({ providerId }: { providerId: ProviderId }) {
                             : providerId === "mistral"
                               ? `Use [Mistral](https://mistral.ai) for transcriptions. Keep the Base URL as \`https://api.mistral.ai/v1\` (Reset under Advanced if you pasted a transcriptions endpoint). **Voxtral Mini Transcribe 2** transcribes after recording; the realtime model is for live captions.`
                               : providerId === "cohere"
-                                ? `Use [Cohere Transcribe](https://docs.cohere.com/docs/transcribe) for batch transcription. Files must be 25 MB or smaller and use one selected language. Cohere does not return timestamps or speaker labels, so Anarlog estimates word timing.`
+                                ? `Use [Cohere Transcribe](https://docs.cohere.com/docs/transcribe) for batch transcription. Files must be 25 MB or smaller and use one selected language. Cohere does not return timestamps or speaker labels, so Corola estimates word timing.`
                                 : providerId === "google_generative_ai"
-                                  ? `Use [Gemini 3.5 Transcribe](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5-transcribe/) with a Google AI Studio API key. **3.5 Transcribe Live** captions during recording (preview sessions last up to 10 minutes). **3.5 Transcribe** runs after recording with speaker labels and word timestamps; Anarlog splits files past 15 minutes.`
+                                  ? `Use [Gemini 3.5 Transcribe](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5-transcribe/) with a Google AI Studio API key. **3.5 Transcribe Live** captions during recording (preview sessions last up to 10 minutes). **3.5 Transcribe** runs after recording with speaker labels and word timestamps; Corola splits files past 15 minutes.`
                                   : providerId === "google_cloud"
                                     ? `Use [Google Cloud Speech-to-Text](https://cloud.google.com/speech-to-text) synchronous recognition for recordings up to one minute and 10 MB. Paste an OAuth access token in the API key field; refresh it when it expires.`
                                     : providerId === "azure_speech"
@@ -101,7 +101,7 @@ function ProviderContext({ providerId }: { providerId: ProviderId }) {
                                         : providerId === "speechmatics"
                                           ? `Use [Speechmatics](https://docs.speechmatics.com/speech-to-text/batch/quickstart) enhanced batch transcription. The default endpoint uses the EU region and can be changed under Advanced.`
                                           : providerId === "revai"
-                                            ? `Use [Rev AI](https://docs.rev.ai/api/asynchronous/get-started) asynchronous transcription. Anarlog uploads the recording, waits for the job, and retrieves word timestamps and speaker labels.`
+                                            ? `Use [Rev AI](https://docs.rev.ai/api/asynchronous/get-started) asynchronous transcription. Corola uploads the recording, waits for the job, and retrieves word timestamps and speaker labels.`
                                             : providerId === "custom"
                                               ? `Point this at any **Deepgram-compatible** endpoint, including a server on this computer or your local network.`
                                               : "";

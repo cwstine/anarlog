@@ -33,6 +33,11 @@ static CRASH_REPORTING_ENABLED: AtomicBool = AtomicBool::new(true);
 const EXIT_FLUSH_FALLBACK_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
 const EXIT_HARD_FALLBACK_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(12);
 
+fn sentry_disabled() -> bool {
+    std::env::var_os("COROLA_DISABLE_SENTRY").is_some()
+        || std::env::var_os("ANARLOG_DISABLE_SENTRY").is_some()
+}
+
 pub(crate) struct CrashReportingState {
     client: Option<sentry::Client>,
     minidump: Mutex<Option<tauri_plugin_sentry::minidump::Handle>>,
@@ -78,9 +83,9 @@ fn start_minidump_reporting(
 fn run_crash_reporter_process() -> ! {
     let client = sentry::init(sentry::ClientOptions {
         dsn: option_env!("SENTRY_DSN")
-            .filter(|_| std::env::var_os("ANARLOG_DISABLE_SENTRY").is_none())
+            .filter(|_| !sentry_disabled())
             .and_then(|dsn| dsn.parse().ok()),
-        release: option_env!("APP_VERSION").map(|v| format!("anarlog-desktop@{}", v).into()),
+        release: option_env!("APP_VERSION").map(|v| format!("corola-desktop@{}", v).into()),
         auto_session_tracking: false,
         before_send: Some(Arc::new(|event| {
             tauri_plugin_tracing::redaction::sanitize_sentry_event(event)
@@ -152,7 +157,7 @@ pub fn main() {
     startup::apply_linux_webkit_workarounds();
     // Sentry minidump reporting re-execs this binary with --crash-reporter-server.
     // That helper must reach minidump::init instead of the launch lock, or it
-    // shows "Anarlog is already starting" on every launch and never serves dumps.
+    // shows "Corola is already starting" on every launch and never serves dumps.
     if startup::is_crash_reporter_process() {
         run_crash_reporter_process();
     }
@@ -210,7 +215,7 @@ pub fn main() {
         });
 
     let sentry_client = {
-        let dsn = if std::env::var_os("ANARLOG_DISABLE_SENTRY").is_some() {
+        let dsn = if sentry_disabled() {
             None
         } else {
             option_env!("SENTRY_DSN")
@@ -218,7 +223,7 @@ pub fn main() {
 
         if let Some(dsn) = dsn {
             let release =
-                option_env!("APP_VERSION").map(|v| format!("anarlog-desktop@{}", v).into());
+                option_env!("APP_VERSION").map(|v| format!("corola-desktop@{}", v).into());
 
             let client = sentry::init((
                 dsn,
@@ -242,7 +247,7 @@ pub fn main() {
             ));
 
             sentry::configure_scope(|scope| {
-                scope.set_tag("service.namespace", "anarlog");
+                scope.set_tag("service.namespace", "corola");
                 scope.set_tag("service.name", "desktop");
                 scope.set_tag("enduser.pseudo.id", anlg_host::fingerprint());
                 scope.set_user(Some(sentry::User {
@@ -585,7 +590,7 @@ pub fn main() {
 }
 
 fn startup_failure_message(error: &impl std::fmt::Display) -> String {
-    format!("Anarlog failed to start: {error}")
+    format!("Corola failed to start: {error}")
 }
 
 fn exit_after_startup_failure(identifier: &str, error: &impl std::fmt::Display) -> ! {
@@ -600,11 +605,11 @@ fn exit_after_startup_failure(identifier: &str, error: &impl std::fmt::Display) 
         // Startup can fail before the database is reachable, so the alert text
         // is fixed per failure class instead of embedding the error.
         let alert = if db::is_transient_lock_error(error) {
-            "display alert \"Anarlog is not ready yet\" message \"Another Anarlog process is still using your data, possibly finishing an update. Your existing data was left unchanged. Please wait a moment and open Anarlog again.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"Corola is not ready yet\" message \"Another Corola process is still using your data, possibly finishing an update. Your existing data was left unchanged. Please wait a moment and open Corola again.\" as critical buttons {\"OK\"} default button \"OK\""
         } else if db::is_newer_schema_error(error) {
-            "display alert \"Anarlog needs an update\" message \"Your data was created by a newer version of Anarlog, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of Anarlog.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"Corola needs an update\" message \"Your data was created by a newer version of Corola, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of Corola.\" as critical buttons {\"OK\"} default button \"OK\""
         } else {
-            "display alert \"Anarlog could not start\" message \"Your existing data was left unchanged. Please restart the app. If the problem continues, contact support.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"Corola could not start\" message \"Your existing data was left unchanged. Please restart the app. If the problem continues, contact support.\" as critical buttons {\"OK\"} default button \"OK\""
         };
         let _ = std::process::Command::new("/usr/bin/osascript")
             .args(["-e", alert])
@@ -636,7 +641,7 @@ fn append_startup_failure_to_log(identifier: &str, message: &str) {
             return;
         };
         let timestamp = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S%.6fZ");
-        let _ = writeln!(file, "{timestamp} ERROR anarlog::startup: {message}");
+        let _ = writeln!(file, "{timestamp} ERROR corola::startup: {message}");
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -653,7 +658,7 @@ fn report_startup_failure_to_sentry(message: &str) {
         return;
     }
 
-    if std::env::var_os("ANARLOG_DISABLE_SENTRY").is_some() {
+    if sentry_disabled() {
         return;
     }
     let Some(dsn) = option_env!("SENTRY_DSN") else {
@@ -662,7 +667,7 @@ fn report_startup_failure_to_sentry(message: &str) {
     let guard = sentry::init((
         dsn,
         sentry::ClientOptions {
-            release: option_env!("APP_VERSION").map(|v| format!("anarlog-desktop@{}", v).into()),
+            release: option_env!("APP_VERSION").map(|v| format!("corola-desktop@{}", v).into()),
             auto_session_tracking: false,
             before_send: Some(Arc::new(|event| {
                 tauri_plugin_tracing::redaction::sanitize_sentry_event(event)
@@ -772,7 +777,7 @@ mod test {
 
         assert_eq!(
             message,
-            "Anarlog failed to start: legacy import did not pass parity verification"
+            "Corola failed to start: legacy import did not pass parity verification"
         );
     }
 

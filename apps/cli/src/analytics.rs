@@ -66,7 +66,7 @@ pub fn capture_command_completed(command: &str, outcome: &str, duration: Duratio
 }
 
 pub fn telemetry_enabled() -> bool {
-    std::env::var("ANARLOG_ANALYTICS")
+    std::env::var("COROLA_ANALYTICS")
         .map(|value| matches!(value.to_ascii_lowercase().as_str(), "1" | "true" | "yes"))
         .unwrap_or(false)
 }
@@ -101,7 +101,7 @@ fn distinct_id() -> Option<String> {
 }
 
 fn analytics_id_path() -> Option<PathBuf> {
-    dirs::config_dir().map(|path| path.join("anarlog").join("analytics-id"))
+    dirs::config_dir().map(|path| path.join("corola").join("analytics-id"))
 }
 
 fn new_id() -> String {

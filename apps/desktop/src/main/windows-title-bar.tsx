@@ -3,7 +3,6 @@ import { Sidebar, SidebarSimple } from "@phosphor-icons/react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useCallback, useRef, useState } from "react";
 
-import { commands as openerCommands } from "@anlg/plugin-opener2";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -179,30 +178,6 @@ export function WindowsTitleBar() {
             <DropdownMenuItem onSelect={() => void toggleFullscreen()}>
               {t`Full Screen`}
               <DropdownMenuShortcut>F11</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </TitleBarMenu>
-          <TitleBarMenu label={t`Help`} onPointerDown={rememberEditTarget}>
-            <DropdownMenuItem
-              onSelect={() =>
-                void openerCommands.openUrl("https://docs.anarlog.so", null)
-              }
-            >
-              {t`Documentation`}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() =>
-                void openerCommands.openUrl("https://anarlog.so/discord", null)
-              }
-            >
-              {t`Report a Bug`}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() =>
-                void openerCommands.openUrl("https://anarlog.so/discord", null)
-              }
-            >
-              {t`Suggest a Feature`}
             </DropdownMenuItem>
           </TitleBarMenu>
         </nav>

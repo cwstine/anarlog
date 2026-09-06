@@ -7,7 +7,6 @@ export type CalendarProvider = {
   icon: ReactNode;
   badge?: string | null;
   platform?: "macos" | "all";
-  docsPath: string;
 };
 
 export const PROVIDERS: CalendarProvider[] = [
@@ -24,6 +23,5 @@ export const PROVIDERS: CalendarProvider[] = [
       />
     ),
     platform: "macos",
-    docsPath: "https://docs.anarlog.so/calendar#apple-calendar",
   },
 ];
