@@ -57,15 +57,6 @@ describe("resolveConfigValue", () => {
     ).toBe(false);
   });
 
-  test("keeps automatic updates on until explicitly disabled", () => {
-    expect(
-      resolveConfigValue("automatic_updates", {
-        values: {},
-        hasValues: new Set(),
-      }),
-    ).toBe(true);
-  });
-
   test("keeps remember speakers on until explicitly disabled", () => {
     expect(
       resolveConfigValue("remember_speakers", {

@@ -19,7 +19,6 @@ interface SettingItem {
 interface AppSettingsViewProps {
   appStoreBuild: boolean;
   autostart: SettingItem;
-  automaticUpdates: SettingItem;
   showAppInDock: SettingItem;
   showTrayIcon: SettingItem;
 }
@@ -27,7 +26,6 @@ interface AppSettingsViewProps {
 export function AppSettingsView({
   appStoreBuild,
   autostart,
-  automaticUpdates,
   showAppInDock,
   showTrayIcon,
 }: AppSettingsViewProps) {
@@ -42,22 +40,9 @@ export function AppSettingsView({
             <>
               <SettingSwitchRow
                 title={<Trans>Start Corola at login</Trans>}
-                description={
-                  <Trans>Have Corola ready when you sign in.</Trans>
-                }
+                description={<Trans>Have Corola ready when you sign in.</Trans>}
                 checked={autostart.value}
                 onChange={autostart.onChange}
-              />
-              <SettingSwitchRow
-                title={<Trans>Automatically install updates</Trans>}
-                description={
-                  <Trans>
-                    Stay current with updates installed the next time Corola
-                    opens.
-                  </Trans>
-                }
-                checked={automaticUpdates.value}
-                onChange={automaticUpdates.onChange}
               />
             </>
           )}

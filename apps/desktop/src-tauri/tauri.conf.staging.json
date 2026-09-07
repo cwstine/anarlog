@@ -8,9 +8,6 @@
       "desktop": {
         "schemes": ["corola-staging"]
       }
-    },
-    "updater": {
-      "active": false
     }
   },
   "bundle": {

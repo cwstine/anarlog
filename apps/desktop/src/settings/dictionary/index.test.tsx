@@ -99,10 +99,7 @@ describe("DictionarySettings", () => {
   it("removes saved terms", () => {
     const onSave = vi.fn();
     render(
-      <DictionarySettings
-        terms={["Corola", "Parakeet TDT"]}
-        onSave={onSave}
-      />,
+      <DictionarySettings terms={["Corola", "Parakeet TDT"]} onSave={onSave} />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Remove Corola" }));
@@ -115,7 +112,7 @@ describe("DictionarySettings", () => {
     render(<DictionarySettings terms={["Corola"]} onSave={onSave} />);
 
     fireEvent.change(screen.getByRole("textbox"), {
-      target: { value: "anarlog" },
+      target: { value: "corola" },
     });
 
     const addButton = screen.getByRole("button", {

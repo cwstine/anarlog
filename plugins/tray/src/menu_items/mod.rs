@@ -1,7 +1,6 @@
 mod app_info;
 mod app_new;
 mod tray_agenda;
-mod tray_check_update;
 mod tray_hide;
 mod tray_open;
 mod tray_quit;
@@ -14,7 +13,6 @@ mod tray_version;
 pub use app_info::AppInfo;
 pub use app_new::AppNew;
 pub use tray_agenda::{build_agenda_item, handle_agenda_menu_event};
-pub use tray_check_update::{TrayCheckUpdate, UpdateMenuState};
 pub use tray_hide::TrayHide;
 pub use tray_open::TrayOpen;
 pub use tray_quit::TrayQuit;
@@ -75,7 +73,6 @@ menu_items! {
     TrayStart => TrayStart,
     TraySettings => TraySettings,
     TrayShowEvents => TrayShowEvents,
-    TrayCheckUpdate => TrayCheckUpdate,
     TrayHide => TrayHide,
     TrayQuit => TrayQuit,
     TrayQuitCompletely => TrayQuitCompletely,

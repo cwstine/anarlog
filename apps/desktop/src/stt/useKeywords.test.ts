@@ -239,7 +239,7 @@ describe("dictionary term helpers", () => {
     expect(
       parseDictionaryTermsJson(JSON.stringify(["Corola", "Char"])),
     ).toEqual(["Corola", "Char"]);
-    expect(parseDictionaryTermsJson(["Corola", " anarlog "])).toEqual([
+    expect(parseDictionaryTermsJson(["Corola", " corola "])).toEqual([
       "Corola",
     ]);
     expect(parseDictionaryTermsJson("not-json")).toEqual([]);
@@ -252,7 +252,7 @@ describe("dictionary term helpers", () => {
   });
 
   it("normalizes duplicate terms while preserving first spelling", () => {
-    expect(normalizeKeywordList(["Corola", " anarlog ", "Parakeet"])).toEqual([
+    expect(normalizeKeywordList(["Corola", " corola ", "Parakeet"])).toEqual([
       "Corola",
       "Parakeet",
     ]);

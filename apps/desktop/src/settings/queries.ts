@@ -6,7 +6,6 @@ import { commands as detectCommands } from "@anlg/plugin-detect";
 import { commands as localSttCommands } from "@anlg/plugin-local-stt";
 import { commands as templateCommands } from "@anlg/plugin-template";
 import { commands as trayCommands } from "@anlg/plugin-tray";
-import { commands as updaterCommands } from "@anlg/plugin-updater2";
 import { commands as windowsCommands } from "@anlg/plugin-windows";
 
 import { executeTransaction, liveQueryClient, useLiveQuery } from "~/db";
@@ -458,11 +457,6 @@ function applySettingSideEffects(values: SettingValues): void {
   if (values.show_tray_icon !== undefined) {
     void trayCommands
       .setTrayIconVisible(values.show_tray_icon)
-      .catch(console.error);
-  }
-  if (values.automatic_updates !== undefined && !isAppStoreBuild()) {
-    void updaterCommands
-      .setAutomaticUpdatesEnabled(values.automatic_updates)
       .catch(console.error);
   }
   if (

@@ -179,9 +179,6 @@ importers:
       '@anlg/plugin-tray':
         specifier: workspace:*
         version: link:../../plugins/tray
-      '@anlg/plugin-updater2':
-        specifier: workspace:*
-        version: link:../../plugins/updater2
       '@anlg/plugin-windows':
         specifier: workspace:*
         version: link:../../plugins/windows
@@ -260,9 +257,6 @@ importers:
       '@tauri-apps/plugin-process':
         specifier: ^2.3.1
         version: 2.3.1
-      '@tauri-apps/plugin-updater':
-        specifier: ^2.10.1
-        version: 2.10.1
       '@uidotdev/usehooks':
         specifier: ^2.4.1
         version: 2.4.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)

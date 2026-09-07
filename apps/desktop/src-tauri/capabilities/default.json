@@ -37,8 +37,6 @@
     "analytics:default",
     "agent:default",
     "bedrock:default",
-    "updater:default",
-    "updater2:default",
     "deeplink2:default",
     "store:default",
     "store2:default",

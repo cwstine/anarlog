@@ -7,7 +7,7 @@ import {
 
 describe("preferred names guidance", () => {
   it("formats dictionary terms as exact-spelling instructions", () => {
-    expect(formatPreferredNamesGuidance(["Corola", "Char", "anarlog"])).toBe(
+    expect(formatPreferredNamesGuidance(["Corola", "Char", "corola"])).toBe(
       `# Preferred Names
 
 Use these names and terms exactly when they appear, even if the transcript or notes spell them differently:

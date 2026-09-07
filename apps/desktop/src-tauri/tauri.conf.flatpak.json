@@ -15,9 +15,6 @@
   "plugins": {
     "deep-link": {
       "desktop": { "schemes": ["corola"] }
-    },
-    "updater": {
-      "active": false
     }
   }
 }

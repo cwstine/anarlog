@@ -152,18 +152,16 @@ describe("AutomationsNav", () => {
     render(<AutomationsNav />);
 
     expect(screen.getByText("Get started")).toBeTruthy();
-    expect(screen.getByText("Share a meeting recap in Slack")).toBeTruthy();
-    expect(screen.getByText("Update project notes in Notion")).toBeTruthy();
-    expect(
-      screen.getByText("Turn action items into Linear issues"),
-    ).toBeTruthy();
     expect(screen.getByText("Export every meeting as Markdown")).toBeTruthy();
+    expect(screen.queryByText(/Slack/)).toBeNull();
+    expect(screen.queryByText(/Notion/)).toBeNull();
+    expect(screen.queryByText(/Linear/)).toBeNull();
 
     fireEvent.click(
-      screen.getByRole("button", { name: /Share a meeting recap in Slack/ }),
+      screen.getByRole("button", { name: /Export every meeting as Markdown/ }),
     );
 
-    expect(mocks.selectStarter).toHaveBeenCalledWith("slack-recap");
+    expect(mocks.selectStarter).toHaveBeenCalledWith("markdown-export");
   });
 
   it("marks the selected starter", () => {
@@ -201,14 +199,14 @@ describe("AutomationsNav", () => {
     render(<AutomationsNav />);
 
     fireEvent.contextMenu(
-      screen.getByRole("button", { name: /Share a meeting recap in Slack/ }),
+      screen.getByRole("button", { name: /Export every meeting as Markdown/ }),
     );
 
-    expect(mocks.selectStarter).toHaveBeenCalledWith("slack-recap");
+    expect(mocks.selectStarter).toHaveBeenCalledWith("markdown-export");
     expect(mocks.showContextMenu).toHaveBeenCalled();
 
-    findContextMenuItem("remove-automation-slack-recap")?.action();
-    expect(mocks.removeStarterDraft).toHaveBeenCalledWith("slack-recap");
+    findContextMenuItem("remove-automation-markdown-export")?.action();
+    expect(mocks.removeStarterDraft).toHaveBeenCalledWith("markdown-export");
   });
 
   it("offers edit and delete in the chat automation context menu", () => {
@@ -233,8 +231,7 @@ describe("AutomationsNav", () => {
       target: { value: "project" },
     });
 
-    expect(screen.queryByText("Share a meeting recap in Slack")).toBeNull();
-    expect(screen.getByText("Update project notes in Notion")).toBeTruthy();
+    expect(screen.queryByText("Export every meeting as Markdown")).toBeNull();
     expect(screen.queryByText("Share weekly recap")).toBeNull();
     expect(screen.getByText("Update project notes")).toBeTruthy();
 

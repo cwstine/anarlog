@@ -34,7 +34,6 @@ import { resolveConfigValue, resolveConfigValues } from "~/shared/config";
 
 const SETTINGS_FORM_KEYS = [
   "autostart",
-  "automatic_updates",
   "auto_join_scheduled_meetings",
   "auto_start_scheduled_meetings",
   "auto_stop_meetings",
@@ -57,7 +56,6 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
   const form = useForm({
     defaultValues: {
       autostart: settingsValue.autostart,
-      automatic_updates: settingsValue.automatic_updates,
       auto_join_scheduled_meetings: settingsValue.auto_join_scheduled_meetings,
       auto_start_scheduled_meetings:
         settingsValue.auto_start_scheduled_meetings,
@@ -96,7 +94,6 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
 
       setSettingValues({
         autostart: normalizedValue.autostart,
-        automatic_updates: normalizedValue.automatic_updates,
         auto_join_scheduled_meetings:
           normalizedValue.auto_join_scheduled_meetings,
         auto_start_scheduled_meetings:
@@ -115,7 +112,6 @@ function useSettingsForm(storedSettings: StoredSettingValues) {
       void analyticsCommands.event({
         event: "settings_changed",
         autostart: normalizedValue.autostart,
-        automatic_updates: normalizedValue.automatic_updates,
         auto_join_scheduled_meetings:
           normalizedValue.auto_join_scheduled_meetings,
         auto_start_scheduled_meetings:
@@ -217,11 +213,6 @@ function SettingsSectionContent({
                 autostart={{
                   value: values.autostart,
                   onChange: (value) => submitFieldValue("autostart", value),
-                }}
-                automaticUpdates={{
-                  value: values.automatic_updates,
-                  onChange: (value) =>
-                    submitFieldValue("automatic_updates", value),
                 }}
                 showAppInDock={{
                   value: values.show_app_in_dock,

@@ -11,8 +11,6 @@ import { createBatchCompletedNotificationKey } from "~/stt/batch-completed-notif
 
 const {
   notificationListenMock,
-  updaterListenMock,
-  maybeEmitUpdatedMock,
   getCurrentWebviewWindowLabelMock,
   liveQuerySubscribeMock,
   listenerSubscribeMock,
@@ -29,8 +27,6 @@ const {
   getListenerStateMock,
 } = vi.hoisted(() => ({
   notificationListenMock: vi.fn(),
-  updaterListenMock: vi.fn(),
-  maybeEmitUpdatedMock: vi.fn(),
   getCurrentWebviewWindowLabelMock: vi.fn(() => "main"),
   liveQuerySubscribeMock: vi.fn(),
   listenerSubscribeMock: vi.fn(),
@@ -51,17 +47,6 @@ vi.mock("@anlg/plugin-notification", () => ({
   events: {
     notificationEvent: {
       listen: notificationListenMock,
-    },
-  },
-}));
-
-vi.mock("@anlg/plugin-updater2", () => ({
-  commands: {
-    maybeEmitUpdated: maybeEmitUpdatedMock,
-  },
-  events: {
-    updatedEvent: {
-      listen: updaterListenMock,
     },
   },
 }));
@@ -122,8 +107,6 @@ describe("EventListeners notification events", () => {
     cancelAutoStopEndedNotification("session-1");
     cancelAutoStopEndedNotification("session-old");
     notificationListenMock.mockReset();
-    updaterListenMock.mockReset();
-    maybeEmitUpdatedMock.mockReset();
     getCurrentWebviewWindowLabelMock.mockReset();
     liveQuerySubscribeMock.mockReset();
     listenerSubscribeMock.mockReset();
@@ -141,7 +124,6 @@ describe("EventListeners notification events", () => {
 
     getCurrentWebviewWindowLabelMock.mockReturnValue("main");
     notificationListenMock.mockResolvedValue(() => {});
-    updaterListenMock.mockResolvedValue(() => {});
     createSessionMock.mockResolvedValue("session-new");
     getOrCreateSessionForEventIdMock.mockResolvedValue("session-event");
     getCalendarEventStartedAtMock.mockResolvedValue(null);
@@ -880,23 +862,5 @@ describe("EventListeners notification events", () => {
         state: { view: null, autoStart: true },
       }),
     );
-  });
-
-  test("cleans up an updater subscription that resolves after unmount", async () => {
-    let resolveUpdater: ((unlisten: () => void) => void) | undefined;
-    updaterListenMock.mockReturnValue(
-      new Promise<() => void>((resolve) => {
-        resolveUpdater = resolve;
-      }),
-    );
-    const unlisten = vi.fn();
-
-    const { unmount } = render(<EventListeners />);
-    await vi.waitFor(() => expect(updaterListenMock).toHaveBeenCalledOnce());
-    unmount();
-    resolveUpdater?.(unlisten);
-
-    await vi.waitFor(() => expect(unlisten).toHaveBeenCalledOnce());
-    expect(maybeEmitUpdatedMock).not.toHaveBeenCalled();
   });
 });

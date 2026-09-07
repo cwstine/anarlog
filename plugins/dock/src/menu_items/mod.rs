@@ -1,11 +1,9 @@
-mod check_update;
 mod new_note;
 mod open;
 mod quit;
 mod restart;
 mod settings;
 
-pub use check_update::DockCheckUpdate;
 pub use new_note::DockNewNote;
 pub use open::DockOpen;
 pub use quit::DockQuit;
@@ -100,7 +98,6 @@ dock_menu_items! {
     handleDockNewNote => DockNewNote,
     handleDockOpen => DockOpen,
     handleDockSettings => DockSettings,
-    handleDockCheckUpdate => DockCheckUpdate,
     handleDockRestart => DockRestart,
     handleDockQuit => DockQuit,
 }

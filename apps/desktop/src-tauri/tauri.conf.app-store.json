@@ -18,10 +18,5 @@
         "Resources/Assets.car": "./resources/app-store/Assets.car"
       }
     }
-  },
-  "plugins": {
-    "updater": {
-      "active": false
-    }
   }
 }

@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -18,22 +18,15 @@ function setting(value = true) {
   };
 }
 
-function renderAppSettings({
-  appStoreBuild = false,
-  automaticUpdates = setting(),
-} = {}) {
-  return {
-    ...render(
-      <AppSettingsView
-        appStoreBuild={appStoreBuild}
-        autostart={setting()}
-        automaticUpdates={automaticUpdates}
-        showAppInDock={setting()}
-        showTrayIcon={setting()}
-      />,
-    ),
-    automaticUpdates,
-  };
+function renderAppSettings({ appStoreBuild = false } = {}) {
+  return render(
+    <AppSettingsView
+      appStoreBuild={appStoreBuild}
+      autostart={setting()}
+      showAppInDock={setting()}
+      showTrayIcon={setting()}
+    />,
+  );
 }
 
 describe("AppSettingsView", () => {
@@ -67,20 +60,6 @@ describe("AppSettingsView", () => {
     ).toBeNull();
     expect(screen.queryByText("Open Corola from the menu bar.")).toBeNull();
     expect(screen.getByRole("switch", { name: "Show tray icon" })).toBeTruthy();
-  });
-
-  it("toggles automatic updates", () => {
-    const automaticUpdates = setting(false);
-    renderAppSettings({ automaticUpdates });
-
-    fireEvent.click(
-      screen.getByRole("switch", { name: "Automatically install updates" }),
-    );
-
-    expect(automaticUpdates.onChange).toHaveBeenCalledWith(true);
-    expect(
-      screen.getByText(/installed the next time Corola opens/),
-    ).toBeTruthy();
   });
 
   it("hides direct-distribution controls in App Store builds", () => {

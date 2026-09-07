@@ -91,10 +91,6 @@
       "desktop": {
         "schemes": ["corola-dev"]
       }
-    },
-    "updater": {
-      "active": false,
-      "dialog": false
     }
   }
 }

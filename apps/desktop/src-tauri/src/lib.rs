@@ -321,11 +321,6 @@ pub fn main() {
         .plugin(tauri_plugin_sidecar2::init())
         .plugin(tauri_plugin_permissions::init());
 
-    #[cfg(not(feature = "app-store"))]
-    {
-        builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
-    }
-
     builder = builder
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_deeplink2::init())
@@ -351,13 +346,8 @@ pub fn main() {
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_store2::init());
 
-    #[cfg(not(feature = "app-store"))]
-    {
-        builder = builder.plugin(tauri_plugin_updater2::init());
-    }
-
     builder = builder
-        .plugin(tauri_plugin_tray::init(!cfg!(feature = "app-store")))
+        .plugin(tauri_plugin_tray::init())
         .plugin(tauri_plugin_settings::init())
         .plugin(tauri_plugin_sfx::init())
         .plugin(tauri_plugin_shortcut::init())
@@ -855,11 +845,24 @@ mod test {
             assert!(!config.contains("desktop.anarlog.so"));
             assert!(!config.contains(r#""createUpdaterArtifacts": true"#));
             assert!(!config.contains(r#""pubkey""#));
-            assert_ne!(
-                parsed.pointer("/plugins/updater/active"),
-                Some(&serde_json::Value::Bool(true))
-            );
+            assert!(parsed.pointer("/plugins/updater").is_none());
         }
+
+        let runtime = include_str!("lib.rs");
+        let manifest = include_str!("../Cargo.toml");
+        let capability = include_str!("../capabilities/default.json");
+        let frontend_manifest = include_str!("../../package.json");
+        let frontend_main = include_str!("../../src/main.tsx");
+        let settings_schema = include_str!("../../src/settings/schema.ts");
+        assert!(!runtime.contains(&["tauri_plugin_", "updater::Builder"].concat()));
+        assert!(!runtime.contains(&["tauri_plugin_", "updater2::init"].concat()));
+        assert!(!manifest.contains("tauri-plugin-updater ="));
+        assert!(!manifest.contains("tauri-plugin-updater2 ="));
+        assert!(!capability.contains("\"updater:"));
+        assert!(!capability.contains("\"updater2:"));
+        assert!(!frontend_manifest.contains("plugin-updater"));
+        assert!(!frontend_main.contains("UpdaterMeetingSync"));
+        assert!(!settings_schema.contains("automatic_updates"));
     }
 
     #[test]

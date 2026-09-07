@@ -6,7 +6,6 @@ const mocks = vi.hoisted(() => ({
   getTemplateSource: vi.fn(),
   setDisabled: vi.fn(async () => ({ status: "ok", data: null })),
   setErrorReportingEnabled: vi.fn(async () => undefined),
-  setAutomaticUpdatesEnabled: vi.fn(async () => undefined),
   setProperties: vi.fn(async () => undefined),
   executeTransaction: vi.fn(
     (_statements: Array<{ sql: string; params: unknown[] }>) =>
@@ -34,12 +33,6 @@ vi.mock("@anlg/plugin-detect", () => ({
 vi.mock("@anlg/plugin-template", () => ({
   commands: {
     getTemplateSource: mocks.getTemplateSource,
-  },
-}));
-
-vi.mock("@anlg/plugin-updater2", () => ({
-  commands: {
-    setAutomaticUpdatesEnabled: mocks.setAutomaticUpdatesEnabled,
   },
 }));
 
@@ -189,15 +182,9 @@ describe("SQLite settings", () => {
     expect(result.hasValues.has("default_meeting_share_access" as never)).toBe(
       false,
     );
-    expect(result.hasValues.has("automation_slack_recap_enabled" as never)).toBe(
-      false,
-    );
-  });
-
-  it("applies the automatic update policy when it changes", async () => {
-    await setSettingValues({ automatic_updates: false });
-
-    expect(mocks.setAutomaticUpdatesEnabled).toHaveBeenCalledWith(false);
+    expect(
+      result.hasValues.has("automation_slack_recap_enabled" as never),
+    ).toBe(false);
   });
 
   it("disables PostHog after persisting the analytics opt-out", async () => {
