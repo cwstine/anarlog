@@ -16,11 +16,6 @@ import {
   useChatContextPipeline,
 } from "~/chat/context/use-chat-context-pipeline";
 import {
-  createChatPersistenceController,
-  guardChatTransport,
-  type GuardedChatPreflight,
-} from "~/chat/store/persistence-activity";
-import {
   consumeFailedChatGroupCreate,
   hasPendingChatPersist,
   waitForPendingChatPersists,
@@ -30,6 +25,11 @@ import {
   getVisibleChatMessages,
   shouldPersistFinishedMessage,
 } from "~/chat/store/persisted-messages";
+import {
+  createChatPersistenceController,
+  guardChatTransport,
+  type GuardedChatPreflight,
+} from "~/chat/store/persistence-activity";
 import {
   deleteChatMessage,
   deleteChatMessagesExcept,
@@ -475,7 +475,7 @@ function ChatSessionLifecycle({
           parts: [
             {
               type: "text",
-              text: t`This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription.`,
+              text: t`This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a live transcription model.`,
             },
           ],
           metadata: {
@@ -486,32 +486,29 @@ function ChatSessionLifecycle({
           },
         };
         chatSetMessages((current) => [...current, message, assistantMessage]);
-        const localResponse = chatPersistence.run(
-          message.id,
-          async () => {
-            try {
-              const trackedCompletions: Promise<unknown>[] = [];
-              await options?.beforeSend?.((completion) => {
-                trackedCompletions.push(completion);
-              });
-              await upsertChatMessage(
-                buildPersistedChatMessage({
-                  message: assistantMessage,
-                  chatGroupId: targetChatGroupId,
-                  ownerUserId,
-                  status: "ready",
-                }),
-              );
-              await Promise.allSettled(trackedCompletions);
-            } catch (error) {
-              await Promise.allSettled([
-                deleteChatMessage(targetChatGroupId, message.id),
-                deleteChatMessage(targetChatGroupId, assistantMessage.id),
-              ]);
-              throw error;
-            }
-          },
-        );
+        const localResponse = chatPersistence.run(message.id, async () => {
+          try {
+            const trackedCompletions: Promise<unknown>[] = [];
+            await options?.beforeSend?.((completion) => {
+              trackedCompletions.push(completion);
+            });
+            await upsertChatMessage(
+              buildPersistedChatMessage({
+                message: assistantMessage,
+                chatGroupId: targetChatGroupId,
+                ownerUserId,
+                status: "ready",
+              }),
+            );
+            await Promise.allSettled(trackedCompletions);
+          } catch (error) {
+            await Promise.allSettled([
+              deleteChatMessage(targetChatGroupId, message.id),
+              deleteChatMessage(targetChatGroupId, assistantMessage.id),
+            ]);
+            throw error;
+          }
+        });
         pendingFinishedChatPersistsRef.current.set(message.id, localResponse);
         void localResponse
           .catch((error) => {

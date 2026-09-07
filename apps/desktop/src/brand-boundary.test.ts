@@ -3,7 +3,14 @@ import { extname, join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const REPO_ROOT = resolve(process.cwd(), "../..");
-const SOURCE_EXTENSIONS = new Set([".html", ".md", ".rs", ".ts", ".tsx"]);
+const SOURCE_EXTENSIONS = new Set([
+  ".css",
+  ".html",
+  ".md",
+  ".rs",
+  ".ts",
+  ".tsx",
+]);
 const EXCLUDED_PATHS = new Set([
   "apps/desktop/src/shared/utils.ts",
   "apps/desktop/src-tauri/src/embedded_cli.rs",
@@ -60,6 +67,16 @@ describe("Corola brand boundary", () => {
       expect(source, relativePath).not.toMatch(
         /https?:\/\/(?:[^/]+\.)?anarlog\.so|github\.com\/fastrepl\/anarlog/,
       );
+    }
+  });
+
+  it("does not depend on removed account product packages", () => {
+    for (const relativePath of productSources) {
+      const source = readFileSync(join(REPO_ROOT, relativePath), "utf8");
+      expect(source, relativePath).not.toMatch(
+        /packages\/(?:auth|billing|pricing|sharing|sync|teams)(?:\/|\b)/,
+      );
+      expect(source, relativePath).not.toMatch(/\b(?:your|team) workspace\b/i);
     }
   });
 });

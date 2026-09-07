@@ -387,10 +387,6 @@ msgstr ""
 msgid "Automate what happens before, during, or after meetings based on the conditions you choose."
 msgstr ""
 
-#: src/settings/general/app-settings.tsx
-msgid "Automatically install updates"
-msgstr ""
-
 #: src/settings/automations/index.tsx
 msgid "Automation actions"
 msgstr ""
@@ -2969,10 +2965,6 @@ msgstr ""
 msgid "Starting…"
 msgstr ""
 
-#: src/settings/general/app-settings.tsx
-msgid "Stay current with updates installed the next time Corola opens."
-msgstr ""
-
 #: src/settings/automations/index.tsx
 msgid "Steps run from top to bottom."
 msgstr ""
@@ -3150,8 +3142,12 @@ msgid "This edit is no longer pending."
 msgstr ""
 
 #: src/chat/components/session-provider.tsx
-msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
+msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a live transcription model."
 msgstr ""
+
+#: src/chat/components/session-provider.tsx
+#~ msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
+#~ msgstr ""
 
 #. placeholder {0}: status.fileCount
 #. placeholder {1}: formatBytes(status.totalBytes)

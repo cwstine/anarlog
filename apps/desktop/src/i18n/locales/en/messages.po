@@ -387,10 +387,6 @@ msgstr "Auto summary format"
 msgid "Automate what happens before, during, or after meetings based on the conditions you choose."
 msgstr "Automate what happens before, during, or after meetings based on the conditions you choose."
 
-#: src/settings/general/app-settings.tsx
-msgid "Automatically install updates"
-msgstr "Automatically install updates"
-
 #: src/settings/automations/index.tsx
 msgid "Automation actions"
 msgstr "Automation actions"
@@ -2969,10 +2965,6 @@ msgstr "Starting voice input"
 msgid "Starting…"
 msgstr "Starting…"
 
-#: src/settings/general/app-settings.tsx
-msgid "Stay current with updates installed the next time Corola opens."
-msgstr "Stay current with updates installed the next time Corola opens."
-
 #: src/settings/automations/index.tsx
 msgid "Steps run from top to bottom."
 msgstr "Steps run from top to bottom."
@@ -3150,8 +3142,12 @@ msgid "This edit is no longer pending."
 msgstr "This edit is no longer pending."
 
 #: src/chat/components/session-provider.tsx
-msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
-msgstr "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
+msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a live transcription model."
+msgstr "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a live transcription model."
+
+#: src/chat/components/session-provider.tsx
+#~ msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
+#~ msgstr "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
 
 #. placeholder {0}: status.fileCount
 #. placeholder {1}: formatBytes(status.totalBytes)

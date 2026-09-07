@@ -14,7 +14,7 @@ function Component() {
   return (
     <Suspense
       fallback={
-        <BrandLoadingView detail="Loading your workspace. This should only take a moment." />
+        <BrandLoadingView detail="Loading your notes. This should only take a moment." />
       }
     >
       <MainAppLayout />
