@@ -3,7 +3,7 @@ import { SpeakerHigh, SpeakerX } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { platform } from "@tauri-apps/plugin-os";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { commands as sfxCommands } from "@anlg/plugin-sfx";
 import { cn } from "@anlg/utils";
@@ -84,7 +84,6 @@ function OnboardingScreenContent({
   const queryClient = useQueryClient();
   const [isMuted, setIsMuted] = useState(false);
   const [currentStep, setCurrentStep] = useState(getInitialStep);
-  const onboardingVideoRef = useRef<HTMLVideoElement>(null);
   const currentPlatform = platform();
 
   const goNext = useCallback(() => {
@@ -128,12 +127,6 @@ function OnboardingScreenContent({
     sfxCommands.setVolume("BGM", isMuted ? 0 : 0.2).catch(console.error);
   }, [isMuted]);
 
-  useEffect(() => {
-    if (onboardingVideoRef.current) {
-      onboardingVideoRef.current.playbackRate = 0.65;
-    }
-  }, []);
-
   const handleFinish = useCallback(
     (sessionId: string) => {
       trackAnalyticsEvent("onboarding_step_completed", {
@@ -155,18 +148,12 @@ function OnboardingScreenContent({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
         >
-          <video
-            ref={onboardingVideoRef}
-            className="absolute inset-0 h-full w-full object-cover object-bottom opacity-28"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
+          <img
+            src="/assets/corola-icon.png"
+            alt=""
+            className="absolute bottom-[-34%] left-1/2 size-[min(78vw,74vh)] -translate-x-1/2 opacity-24"
             aria-hidden="true"
-          >
-            <source src="/assets/onboarding-video.mp4" type="video/mp4" />
-          </video>
+          />
           <div className="from-background/8 via-background/18 absolute inset-0 bg-linear-to-t to-transparent" />
         </motion.div>
         <div className="absolute inset-x-0 top-0 h-[80%] [mask-image:linear-gradient(to_bottom,black,black_18%,rgba(0,0,0,0.9)_36%,rgba(0,0,0,0.6)_58%,transparent)] backdrop-blur-[32px]" />
