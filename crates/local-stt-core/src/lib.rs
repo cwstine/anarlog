@@ -4,9 +4,6 @@ pub static SUPPORTED_MODELS: &[LocalModel] = &[
     LocalModel::Soniqo(SoniqoModel::ParakeetStreaming),
     LocalModel::Soniqo(SoniqoModel::ParakeetBatch),
     LocalModel::AppleSpeech(AppleSpeechModel::Default),
-    LocalModel::Am(AmModel::ParakeetV2),
-    LocalModel::Am(AmModel::ParakeetV3),
-    LocalModel::Am(AmModel::WhisperLargeV3),
 ];
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -105,6 +102,15 @@ mod tests {
             .collect::<Vec<_>>();
 
         assert_eq!(supported_soniqo_models, SoniqoModel::selectable());
+    }
+
+    #[test]
+    fn supported_models_do_not_offer_models_without_upstream_downloads() {
+        assert!(
+            !SUPPORTED_MODELS
+                .iter()
+                .any(|model| matches!(model, LocalModel::Am(_)))
+        );
     }
 
     #[test]

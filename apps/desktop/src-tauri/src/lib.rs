@@ -5,6 +5,7 @@ mod commands;
 mod db;
 mod embedded_cli;
 mod ext;
+mod legacy_credentials;
 mod search_index;
 mod startup;
 mod store;
@@ -411,6 +412,7 @@ pub fn main() {
             let app_handle = app.handle().clone();
 
             specta_builder.mount_events(&app_handle);
+            legacy_credentials::clear_obsolete_account_credentials(&app_handle);
 
             #[cfg(any(windows, target_os = "linux"))]
             {

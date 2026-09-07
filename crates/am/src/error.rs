@@ -7,9 +7,6 @@ pub enum Error {
     Request(#[from] reqwest::Error),
 
     #[error(transparent)]
-    AnlgFile(#[from] anlg_file::Error),
-
-    #[error(transparent)]
     Json(#[from] serde_json::Error),
 
     #[error("Could not find home directory")]

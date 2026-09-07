@@ -28,13 +28,13 @@ impl GgufLlmModel {
     pub fn model_url(&self) -> &str {
         match self {
             GgufLlmModel::Llama3p2_3bQ4 => {
-                "https://models.anarlog.so/v0/lmstudio-community/Llama-3.2-3B-Instruct-GGUF/main/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
+                "https://huggingface.co/lmstudio-community/Llama-3.2-3B-Instruct-GGUF/resolve/c91307b5cf18c8106b1f8a6218c26ae4dbfee472/Llama-3.2-3B-Instruct-Q4_K_M.gguf"
             }
             GgufLlmModel::AnarlogLLM => {
-                "https://models.anarlog.so/v0/yujonglee/hypr-llm-sm/model_q4_k_m.gguf"
+                "https://huggingface.co/yujonglee/hypr-llm-sm/resolve/a8ba2559814e55bd714442592ba658c7b5844557/model_q4_k_m.gguf"
             }
             GgufLlmModel::Gemma3_4bQ4 => {
-                "https://models.anarlog.so/v0/unsloth/gemma-3-4b-it-GGUF/gemma-3-4b-it-Q4_K_M.gguf"
+                "https://huggingface.co/unsloth/gemma-3-4b-it-GGUF/resolve/5a3566e716d80f709ed7b79817eaf7733d2a1fce/gemma-3-4b-it-Q4_K_M.gguf"
             }
         }
     }
@@ -58,7 +58,7 @@ impl GgufLlmModel {
     pub fn display_name(&self) -> &'static str {
         match self {
             GgufLlmModel::Llama3p2_3bQ4 => "Llama 3.2 3B Q4",
-            GgufLlmModel::AnarlogLLM => "Anarlog LLM",
+            GgufLlmModel::AnarlogLLM => "Corola LLM",
             GgufLlmModel::Gemma3_4bQ4 => "Gemma 3 4B Q4",
         }
     }
@@ -124,9 +124,6 @@ impl LocalModel {
             LocalModel::Whisper(WhisperModel::QuantizedSmall),
             LocalModel::Whisper(WhisperModel::QuantizedSmallEn),
             LocalModel::Whisper(WhisperModel::QuantizedLargeTurbo),
-            LocalModel::Am(AmModel::ParakeetV2),
-            LocalModel::Am(AmModel::ParakeetV3),
-            LocalModel::Am(AmModel::WhisperLargeV3),
         ]);
 
         models.extend([
@@ -277,7 +274,9 @@ impl DownloadableModel for LocalModel {
         match self {
             LocalModel::Soniqo(_) | LocalModel::AppleSpeech(_) => None,
             LocalModel::Whisper(model) => Some(model.model_url().to_string()),
-            LocalModel::Am(model) => Some(model.tar_url().to_string()),
+            // Existing Argmax model installations remain usable, but Corola does not
+            // offer new downloads until those archives have a neutral upstream host.
+            LocalModel::Am(_) => None,
             LocalModel::GgufLlm(model) => model.download_url(),
         }
     }
@@ -286,7 +285,7 @@ impl DownloadableModel for LocalModel {
         match self {
             LocalModel::Soniqo(_) | LocalModel::AppleSpeech(_) => None,
             LocalModel::Whisper(model) => Some(model.checksum()),
-            LocalModel::Am(model) => Some(model.tar_checksum()),
+            LocalModel::Am(_) => None,
             LocalModel::GgufLlm(model) => model.download_checksum(),
         }
     }
@@ -384,18 +383,33 @@ mod tests {
     use super::*;
 
     #[test]
-    fn model_urls_use_anarlog_domain() {
+    fn downloadable_models_use_upstream_hosts() {
         for model in [
             GgufLlmModel::Llama3p2_3bQ4,
             GgufLlmModel::AnarlogLLM,
             GgufLlmModel::Gemma3_4bQ4,
         ] {
-            assert!(
-                model
-                    .model_url()
-                    .starts_with("https://models.anarlog.so/v0/")
-            );
+            assert!(model.model_url().starts_with("https://huggingface.co/"));
+            assert!(!model.model_url().contains("anarlog.so"));
+            assert!(!model.model_url().contains("/resolve/main/"));
         }
+    }
+
+    #[test]
+    fn models_without_an_upstream_archive_are_not_downloadable() {
+        for model in [
+            LocalModel::Am(AmModel::ParakeetV2),
+            LocalModel::Am(AmModel::ParakeetV3),
+            LocalModel::Am(AmModel::WhisperLargeV3),
+        ] {
+            assert_eq!(model.download_url(), None);
+            assert!(!LocalModel::all().contains(&model));
+        }
+    }
+
+    #[test]
+    fn retained_legacy_model_has_corola_display_name() {
+        assert_eq!(GgufLlmModel::AnarlogLLM.display_name(), "Corola LLM");
     }
 
     #[test]

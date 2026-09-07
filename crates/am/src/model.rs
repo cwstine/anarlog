@@ -94,24 +94,6 @@ impl AmModel {
         Ok(has_files)
     }
 
-    pub fn tar_url(&self) -> &str {
-        match self {
-            AmModel::ParakeetV2 => "https://models.anarlog.so/v0/nvidia_parakeet-v2_476MB.tar",
-            AmModel::ParakeetV3 => "https://models.anarlog.so/v0/nvidia_parakeet-v3_494MB.tar",
-            AmModel::WhisperLargeV3 => {
-                "https://models.anarlog.so/v0/openai_whisper-large-v3-v20240930_626MB.tar"
-            }
-        }
-    }
-
-    pub fn tar_checksum(&self) -> u32 {
-        match self {
-            AmModel::ParakeetV2 => 1906983049,
-            AmModel::ParakeetV3 => 3016060540,
-            AmModel::WhisperLargeV3 => 1964673816,
-        }
-    }
-
     pub fn tar_unpack_and_cleanup(
         &self,
         input_path: impl AsRef<std::path::Path>,
@@ -123,15 +105,6 @@ impl AmModel {
 
         extract_tar_file(&input_path, output_path)?;
         let _ = std::fs::remove_file(&input_path);
-        Ok(())
-    }
-
-    pub async fn download<F: Fn(anlg_download_interface::DownloadProgress) + Send + Sync>(
-        &self,
-        output_path: impl AsRef<std::path::Path>,
-        progress_callback: F,
-    ) -> Result<(), crate::Error> {
-        anlg_file::download_file_parallel(self.tar_url(), output_path, progress_callback).await?;
         Ok(())
     }
 }
@@ -151,17 +124,6 @@ fn extract_tar_file(
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn model_urls_use_anarlog_domain() {
-        for model in [
-            AmModel::ParakeetV2,
-            AmModel::ParakeetV3,
-            AmModel::WhisperLargeV3,
-        ] {
-            assert!(model.tar_url().starts_with("https://models.anarlog.so/v0/"));
-        }
-    }
 
     #[test]
     fn tar_unpack_and_cleanup_skips_checksum_verification() {

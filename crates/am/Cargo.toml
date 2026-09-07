@@ -8,8 +8,6 @@ tempfile = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros"] }
 
 [dependencies]
-anlg-download-interface = { workspace = true }
-anlg-file = { workspace = true }
 anlg-language = { workspace = true }
 
 reqwest = { workspace = true, features = ["json", "query"] }

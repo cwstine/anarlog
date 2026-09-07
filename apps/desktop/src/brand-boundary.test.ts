@@ -1,13 +1,13 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
-
 import { describe, expect, it } from "vitest";
 
 const REPO_ROOT = resolve(process.cwd(), "../..");
-const SOURCE_EXTENSIONS = new Set([".md", ".rs", ".ts", ".tsx"]);
+const SOURCE_EXTENSIONS = new Set([".html", ".md", ".rs", ".ts", ".tsx"]);
 const EXCLUDED_PATHS = new Set([
   "apps/desktop/src/shared/utils.ts",
   "apps/desktop/src-tauri/src/embedded_cli.rs",
+  "apps/desktop/src-tauri/src/legacy_credentials.rs",
   "plugins/tray/src/menu_items/tray_version.rs",
 ]);
 
@@ -36,6 +36,11 @@ describe("Corola brand boundary", () => {
     ...collectSourceFiles("apps/desktop/src-tauri/src"),
     ...collectSourceFiles("apps/cli/src"),
     ...collectSourceFiles("plugins/tray/src"),
+    ...collectSourceFiles("plugins/deeplink2/src"),
+    ...collectSourceFiles("plugins/importer/src"),
+    ...collectSourceFiles("plugins/windows/src"),
+    ...collectSourceFiles("plugins/local-api/src"),
+    ...collectSourceFiles("plugins/git/src"),
     "docs/agents/mcp.mdx",
     "docs/installation.mdx",
     "docs/reference/cli.mdx",
