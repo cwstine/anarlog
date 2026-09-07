@@ -16,9 +16,7 @@ const writeStoredThemePreference = vi.hoisted(() => vi.fn());
 const setDockIcon = vi.hoisted(() =>
   vi.fn(async () => ({ status: "ok", data: null })),
 );
-const getIdentifier = vi.hoisted(() =>
-  vi.fn(async () => "com.hyprnote.stable"),
-);
+const getIdentifier = vi.hoisted(() => vi.fn(async () => "com.corola.desktop"));
 const nativeTheme = vi.hoisted(() => vi.fn(async () => "light"));
 const setNativeTheme = vi.hoisted(() => vi.fn(async () => undefined));
 const onThemeChanged = vi.hoisted(() =>
@@ -81,7 +79,7 @@ describe("AppThemeProvider", () => {
     writeStoredThemePreference.mockClear();
     setDockIcon.mockClear();
     getIdentifier.mockReset();
-    getIdentifier.mockResolvedValue("com.hyprnote.stable");
+    getIdentifier.mockResolvedValue("com.corola.desktop");
     nativeTheme.mockReset();
     nativeTheme.mockResolvedValue("light");
     setNativeTheme.mockReset();
@@ -148,13 +146,11 @@ describe("AppThemeProvider", () => {
     );
     expect(setNativeTheme).toHaveBeenCalledWith(null);
     expect(writeStoredThemePreference).toHaveBeenCalledWith("system");
-    await waitFor(() =>
-      expect(setDockIcon).toHaveBeenCalledWith("stable-dark"),
-    );
+    await waitFor(() => expect(setDockIcon).toHaveBeenCalledWith("stable"));
   });
 
   it("uses the channel-specific default Dock icon", async () => {
-    getIdentifier.mockResolvedValue("com.hyprnote.staging");
+    getIdentifier.mockResolvedValue("com.corola.staging");
     themeState.settingsReady = true;
 
     render(
@@ -190,9 +186,7 @@ describe("AppThemeProvider", () => {
       </AppThemeProvider>,
     );
 
-    await waitFor(() =>
-      expect(setDockIcon).toHaveBeenCalledWith("anagram-dark"),
-    );
+    await waitFor(() => expect(setDockIcon).toHaveBeenCalledWith("stable"));
   });
 
   it("updates the Dock icon with the system theme when the appearance changes", async () => {
@@ -210,9 +204,7 @@ describe("AppThemeProvider", () => {
     const handleThemeChanged = onThemeChanged.mock.calls[0]?.[0];
     handleThemeChanged({ payload: "dark" });
 
-    await waitFor(() =>
-      expect(setDockIcon).toHaveBeenLastCalledWith("stable-dark"),
-    );
+    await waitFor(() => expect(setDockIcon).toHaveBeenLastCalledWith("stable"));
     expect(applyDocumentTheme).toHaveBeenLastCalledWith("system", true);
   });
 
@@ -240,7 +232,7 @@ describe("AppThemeProvider", () => {
       expect(applyDocumentTheme).toHaveBeenCalledWith("system", true),
     );
     expect(nativeTheme).toHaveBeenCalledOnce();
-    expect(setDockIcon).toHaveBeenCalledWith("stable-dark");
+    expect(setDockIcon).toHaveBeenCalledWith("stable");
   });
 
   it("pins the native appearance for an explicit theme", async () => {
@@ -321,7 +313,7 @@ describe("AppThemeProvider", () => {
     expect(nativeTheme).toHaveBeenCalledOnce();
     expect(applyDocumentTheme).toHaveBeenCalledWith("system", true);
     expect(writeStoredThemePreference).toHaveBeenCalledWith("system");
-    expect(setDockIcon).toHaveBeenCalledWith("stable-dark");
+    expect(setDockIcon).toHaveBeenCalledWith("stable");
   });
 
   it("applies an explicit selection and matching Dock icon immediately", async () => {
@@ -338,7 +330,7 @@ describe("AppThemeProvider", () => {
     await applyThemePreference("dark");
 
     expect(applyDocumentTheme).toHaveBeenCalledWith("dark", true);
-    expect(setDockIcon).toHaveBeenCalledWith("stable-dark");
+    expect(setDockIcon).toHaveBeenCalledWith("stable");
   });
 
   it("applies an icon selection using the system appearance", async () => {
@@ -347,7 +339,7 @@ describe("AppThemeProvider", () => {
     await applyAppIconPreference("anagram");
 
     expect(nativeTheme).toHaveBeenCalledOnce();
-    expect(setDockIcon).toHaveBeenCalledWith("anagram-dark");
+    expect(setDockIcon).toHaveBeenCalledWith("stable");
   });
 
   it("applies an icon selection using an explicit theme", async () => {
@@ -355,6 +347,6 @@ describe("AppThemeProvider", () => {
 
     await applyAppIconPreference("anagram", "light");
 
-    expect(setDockIcon).toHaveBeenCalledWith("anagram");
+    expect(setDockIcon).toHaveBeenCalledWith("stable");
   });
 });

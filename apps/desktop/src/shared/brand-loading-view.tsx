@@ -1,6 +1,6 @@
 import { cn } from "@anlg/utils";
 
-import { CorolaMark } from "./anarlog-mark";
+import { CorolaMark } from "./corola-mark";
 
 export function BrandLoadingView({ detail }: { detail?: string }) {
   return (

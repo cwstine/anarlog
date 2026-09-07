@@ -288,10 +288,6 @@ msgstr ""
 msgid "An unexpected error occurred."
 msgstr ""
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Anagram"
-msgstr ""
-
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Analyzing structure..."
 msgstr ""
@@ -311,10 +307,6 @@ msgstr ""
 #: src/sidebar/settings.tsx
 msgid "App"
 msgstr "Апликација"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "App icon"
-msgstr ""
 
 #: src/settings/appearance/index.tsx
 #: src/sidebar/settings.tsx
@@ -447,10 +439,6 @@ msgstr ""
 
 #: src/chat/components/body/empty.tsx
 msgid "Beta"
-msgstr ""
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Blueprint"
 msgstr ""
 
 #: src/settings/general/notification.tsx
@@ -605,10 +593,6 @@ msgstr ""
 
 #: src/templates/auto-form.tsx
 msgid "Choose how Auto structures and styles your summaries."
-msgstr ""
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Choose how Corola appears in the Dock."
 msgstr ""
 
 #: src/settings/appearance/theme.tsx
@@ -1030,7 +1014,6 @@ msgid "Decline"
 msgstr ""
 
 #: src/settings/ai/llm/select.tsx
-#: src/settings/appearance/app-icon.tsx
 msgid "Default"
 msgstr ""
 
@@ -1322,10 +1305,6 @@ msgstr ""
 
 #: src/templates/details.tsx
 msgid "Favorite template"
-msgstr ""
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Field Journal"
 msgstr ""
 
 #: src/main/windows-title-bar.tsx
@@ -2111,10 +2090,6 @@ msgstr ""
 msgid "Note is Locked"
 msgstr ""
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Notepad"
-msgstr ""
-
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "notes"
 msgstr ""
@@ -2366,10 +2341,6 @@ msgstr ""
 
 #: src/settings/general/app-settings.tsx
 msgid "Privacy"
-msgstr ""
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Production"
 msgstr ""
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
@@ -2897,10 +2868,6 @@ msgstr ""
 msgid "Signing secret copied"
 msgstr ""
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Sketch"
-msgstr ""
-
 #: src/settings/developers/skills.tsx
 msgid "Skill installed"
 msgstr ""
@@ -3008,10 +2975,6 @@ msgstr ""
 
 #: src/settings/automations/index.tsx
 msgid "Steps run from top to bottom."
-msgstr ""
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Stone"
 msgstr ""
 
 #: src/composer/index.tsx
@@ -3285,10 +3248,6 @@ msgstr ""
 msgid "Turn on Corola in System Settings → Privacy & Security → Calendars, then return here."
 msgstr ""
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Typewriter Key"
-msgstr ""
-
 #: src/settings/developers/cli.tsx
 msgid "Unavailable"
 msgstr ""
@@ -3439,10 +3398,6 @@ msgstr ""
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Waiting for authorization in your browser…"
-msgstr ""
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Walnut"
 msgstr ""
 
 #: src/settings/developers/webhooks.tsx

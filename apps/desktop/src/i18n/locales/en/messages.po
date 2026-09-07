@@ -288,10 +288,6 @@ msgstr "All Notes"
 msgid "An unexpected error occurred."
 msgstr "An unexpected error occurred."
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Anagram"
-msgstr "Anagram"
-
 #: src/session/components/note-input/enhanced/streaming.tsx
 msgid "Analyzing structure..."
 msgstr "Analyzing structure..."
@@ -311,10 +307,6 @@ msgstr "API key saved"
 #: src/sidebar/settings.tsx
 msgid "App"
 msgstr "App"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "App icon"
-msgstr "App icon"
 
 #: src/settings/appearance/index.tsx
 #: src/sidebar/settings.tsx
@@ -448,10 +440,6 @@ msgstr "Best for this Mac"
 #: src/chat/components/body/empty.tsx
 msgid "Beta"
 msgstr "Beta"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Blueprint"
-msgstr "Blueprint"
 
 #: src/settings/general/notification.tsx
 msgid "Bounce app icon"
@@ -606,10 +594,6 @@ msgstr "Choose folder icon"
 #: src/templates/auto-form.tsx
 msgid "Choose how Auto structures and styles your summaries."
 msgstr "Choose how Auto structures and styles your summaries."
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Choose how Corola appears in the Dock."
-msgstr "Choose how Corola appears in the Dock."
 
 #: src/settings/appearance/theme.tsx
 msgid "Choose how Corola looks on this device."
@@ -1030,7 +1014,6 @@ msgid "Decline"
 msgstr "Decline"
 
 #: src/settings/ai/llm/select.tsx
-#: src/settings/appearance/app-icon.tsx
 msgid "Default"
 msgstr "Default"
 
@@ -1323,10 +1306,6 @@ msgstr "Failed to load pull request"
 #: src/templates/details.tsx
 msgid "Favorite template"
 msgstr "Favorite template"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Field Journal"
-msgstr "Field Journal"
 
 #: src/main/windows-title-bar.tsx
 msgid "File"
@@ -2111,10 +2090,6 @@ msgstr "note"
 msgid "Note is Locked"
 msgstr "Note is Locked"
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Notepad"
-msgstr "Notepad"
-
 #: src/sidebar/toast/undo-delete-toast.tsx
 msgid "notes"
 msgstr "notes"
@@ -2367,10 +2342,6 @@ msgstr "Previous match"
 #: src/settings/general/app-settings.tsx
 msgid "Privacy"
 msgstr "Privacy"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Production"
-msgstr "Production"
 
 #: src/session/components/note-input/transcript/screens/empty.tsx
 msgid "Re-transcribe"
@@ -2897,10 +2868,6 @@ msgstr "Sign in with your Claude account. After you authorize, copy the code and
 msgid "Signing secret copied"
 msgstr "Signing secret copied"
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Sketch"
-msgstr "Sketch"
-
 #: src/settings/developers/skills.tsx
 msgid "Skill installed"
 msgstr "Skill installed"
@@ -3009,10 +2976,6 @@ msgstr "Stay current with updates installed the next time Corola opens."
 #: src/settings/automations/index.tsx
 msgid "Steps run from top to bottom."
 msgstr "Steps run from top to bottom."
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Stone"
-msgstr "Stone"
 
 #: src/composer/index.tsx
 #: src/session/components/outer-header/index.tsx
@@ -3285,10 +3248,6 @@ msgstr "Try speaking a little closer to the microphone."
 msgid "Turn on Corola in System Settings → Privacy & Security → Calendars, then return here."
 msgstr "Turn on Corola in System Settings → Privacy & Security → Calendars, then return here."
 
-#: src/settings/appearance/app-icon.tsx
-msgid "Typewriter Key"
-msgstr "Typewriter Key"
-
 #: src/settings/developers/cli.tsx
 msgid "Unavailable"
 msgstr "Unavailable"
@@ -3440,10 +3399,6 @@ msgstr "Wait until the transcript and note are complete."
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Waiting for authorization in your browser…"
 msgstr "Waiting for authorization in your browser…"
-
-#: src/settings/appearance/app-icon.tsx
-msgid "Walnut"
-msgstr "Walnut"
 
 #: src/settings/developers/webhooks.tsx
 msgid "Webhooks"

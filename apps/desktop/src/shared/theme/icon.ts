@@ -1,4 +1,4 @@
-import { resolveIsDarkMode, type ThemePreference } from "./resolve";
+import type { ThemePreference } from "./resolve";
 
 export type AppIconPreference =
   | "default"
@@ -13,31 +13,16 @@ export type AppIconPreference =
   | "walnut";
 
 export function normalizeAppIconPreference(
-  value: string | null | undefined,
+  _value: string | null | undefined,
 ): AppIconPreference {
-  switch (value) {
-    case "stable":
-    case "anagram":
-    case "dev":
-    case "staging":
-    case "journal":
-    case "notepad":
-    case "stone":
-    case "typewriter-key":
-    case "walnut":
-      return value;
-    default:
-      return "default";
-  }
+  return "default";
 }
 
 export function resolveAppIconName(
   icon: AppIconPreference,
   appIdentifier: string,
 ): Exclude<AppIconPreference, "default"> {
-  if (icon !== "default") {
-    return icon;
-  }
+  void icon;
   if (appIdentifier.endsWith(".dev")) {
     return "dev";
   }
@@ -54,19 +39,7 @@ export function resolveDockIconName(
   systemIsDark: boolean,
   appIdentifier: string,
 ): string {
-  const name = resolveAppIconName(icon, appIdentifier);
-  return hasDarkAppIconVariant(name) && resolveIsDarkMode(theme, systemIsDark)
-    ? `${name}-dark`
-    : name;
-}
-
-export function hasDarkAppIconVariant(
-  name: Exclude<AppIconPreference, "default">,
-): boolean {
-  return (
-    name === "stable" ||
-    name === "anagram" ||
-    name === "dev" ||
-    name === "staging"
-  );
+  void theme;
+  void systemIsDark;
+  return resolveAppIconName(icon, appIdentifier);
 }

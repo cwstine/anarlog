@@ -50,13 +50,13 @@ describe("ThemeSelector", () => {
     expect(mocks.setTheme).toHaveBeenCalledWith("dark");
   });
 
-  it("carries the selected icon into the theme change", () => {
+  it("normalizes a retired icon preference during a theme change", () => {
     mocks.appIcon = "anagram";
 
     render(<ThemeSelector />);
 
     fireEvent.click(screen.getByRole("radio", { name: /Light/ }));
 
-    expect(mocks.applyThemePreference).toHaveBeenCalledWith("light", "anagram");
+    expect(mocks.applyThemePreference).toHaveBeenCalledWith("light", "default");
   });
 });

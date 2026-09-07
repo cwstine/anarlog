@@ -1,6 +1,6 @@
-# Anarlog Overview
+# Corola Overview
 
-Anarlog is an AI-powered notepad designed for private meetings with complete on-device processing. No data leaves your computer, with optional telemetry.
+Corola is an AI-powered notepad designed for private meetings with complete on-device processing. No data leaves your computer, with optional telemetry.
 
 # How It Works
 
@@ -12,12 +12,11 @@ Anarlog is an AI-powered notepad designed for private meetings with complete on-
 
 # Key Features
 
-- **100% Private**: No wifi, cloud, or third-party services required
+- **Local-First**: Notes, recordings, transcription, and app data stay on this device
 - **Live Transcription**: Real-time speech-to-text during meetings
 - **AI Summaries**: Automatic synthesis of notes and transcripts
 - **Additional Tools**: AI chat, meeting templates, customizable workflow settings
 
 # Getting Started
 
-- Documentation available for detailed guidance
-- Discord community for support and feedback
+- Create a note, choose your local or direct AI provider settings, and start recording
