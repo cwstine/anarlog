@@ -105,8 +105,8 @@ export const useUndoDelete = create<UndoDeleteState>((set, get) => ({
   },
 }));
 
-// App exit must not strand notes soft-deleted with live shared links: confirm
-// every pending deletion now and let the caller await the finalize work.
+// App exit must not strand soft-deleted notes: confirm every pending deletion
+// now and let the caller await the finalize work.
 export function confirmAllPendingDeletions(): Promise<void> {
   const { pendingDeletions, confirmDeletion } = useUndoDelete.getState();
   return Promise.allSettled(

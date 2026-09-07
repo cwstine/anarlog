@@ -54,8 +54,8 @@ async function flushApplicationStateWithin(timeoutMs: number): Promise<void> {
 async function flushAndExit(): Promise<void> {
   try {
     // Confirm pending undo-deletions first: quitting inside the undo window
-    // must not leave a note soft-deleted with its shared link still live.
-    // Bounded so a slow revoke cannot hang exit.
+    // must not leave a note soft-deleted after the app exits.
+    // Bounded so slow finalization cannot hang exit.
     await Promise.race([
       confirmAllPendingDeletions(),
       new Promise((resolve) =>
