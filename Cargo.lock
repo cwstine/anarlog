@@ -17409,12 +17409,10 @@ dependencies = [
  "docs",
  "open",
  "serde",
- "serde_json",
  "serde_qs",
  "serde_yaml",
  "specta",
  "specta-typescript",
- "strum 0.28.0",
  "tauri",
  "tauri-plugin",
  "tauri-plugin-deep-link",
@@ -17423,7 +17421,6 @@ dependencies = [
  "tokio",
  "tracing",
  "url",
- "uuid",
 ]
 
 [[package]]

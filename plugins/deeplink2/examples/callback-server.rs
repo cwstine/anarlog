@@ -13,7 +13,7 @@ use axum::response::Html;
 use axum::routing::get;
 use tauri_plugin_deeplink2::server::render_html_from_callback;
 
-const SCHEME: &str = "char";
+const SCHEME: &str = "corola";
 
 struct Scenario {
     id: &'static str,
@@ -24,48 +24,14 @@ struct Scenario {
     callback_query: &'static str,
 }
 
-const SCENARIOS: &[Scenario] = &[
-    Scenario {
-        id: "auth-success",
-        label: "Auth",
-        badge_label: "success",
-        badge_class: "ok",
-        callback_path: "/auth/callback",
-        callback_query: "access_token=tok_example&refresh_token=ref_example",
-    },
-    Scenario {
-        id: "billing-success",
-        label: "Billing",
-        badge_label: "success",
-        badge_class: "ok",
-        callback_path: "/billing/refresh",
-        callback_query: "",
-    },
-    Scenario {
-        id: "integration-success",
-        label: "Integration",
-        badge_label: "success",
-        badge_class: "ok",
-        callback_path: "/integration/callback",
-        callback_query: "integration_id=example&status=success",
-    },
-    Scenario {
-        id: "integration-upgrade-required",
-        label: "Integration",
-        badge_label: "upgrade required",
-        badge_class: "err",
-        callback_path: "/integration/callback",
-        callback_query: "integration_id=example&status=upgrade_required",
-    },
-    Scenario {
-        id: "integration-failure",
-        label: "Integration",
-        badge_label: "failure",
-        badge_class: "err",
-        callback_path: "/integration/callback",
-        callback_query: "integration_id=example&status=error",
-    },
-];
+const SCENARIOS: &[Scenario] = &[Scenario {
+    id: "provider-oauth-success",
+    label: "Provider OAuth",
+    badge_label: "success",
+    badge_class: "ok",
+    callback_path: "/auth/callback",
+    callback_query: "code=code_example&state=state_example",
+}];
 
 const INDEX_TEMPLATE: &str = r#"<!DOCTYPE html>
 <html>

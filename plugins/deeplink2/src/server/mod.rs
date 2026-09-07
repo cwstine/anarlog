@@ -107,8 +107,8 @@ pub(crate) fn subscription_auth_deeplink(
     scheme: &str,
     search: &AuthCallbackSearch,
 ) -> Option<String> {
-    let code = search.code.as_deref()?.trim();
-    if code.is_empty() || !search.access_token.is_empty() || !search.refresh_token.is_empty() {
+    let code = search.code.trim();
+    if code.is_empty() {
         return None;
     }
 
@@ -138,49 +138,10 @@ fn default_ui_content() -> (bool, &'static str, &'static str) {
 
 fn ui_content(deep_link: &DeepLink) -> (bool, &'static str, &'static str) {
     match deep_link {
-        DeepLink::AuthCallback(search)
-            if search
-                .code
-                .as_deref()
-                .is_some_and(|code| !code.trim().is_empty())
-                && search.access_token.is_empty()
-                && search.refresh_token.is_empty() =>
-        {
-            (
-                true,
-                "Connected successfully",
-                "Returning to Corola to finish connecting.",
-            )
-        }
         DeepLink::AuthCallback(_) => (
             true,
-            "Signed in successfully",
-            "Click the button below to return to the app.",
-        ),
-        DeepLink::BillingRefresh(_) => (
-            true,
-            "Subscription updated",
-            "Click the button below to return to the app.",
-        ),
-        DeepLink::IntegrationCallback(s) if s.status == "success" => (
-            true,
             "Connected successfully",
-            "Click the button below to return to the app.",
-        ),
-        DeepLink::IntegrationCallback(s) if s.status == "upgrade_required" => (
-            false,
-            "Upgrade required",
-            "You can close this window and upgrade your plan to connect this integration.",
-        ),
-        DeepLink::IntegrationCallback(_) => (
-            false,
-            "Connection failed",
-            "Something went wrong. Please close this window and try again.",
-        ),
-        DeepLink::OnboardingDemoComplete(_) => (
-            true,
-            "Demo complete",
-            "Corola is finishing your transcript and creating your summary.",
+            "Returning to Corola to finish connecting.",
         ),
     }
 }
@@ -220,9 +181,8 @@ async fn handle_request<R: tauri::Runtime>(
     emit_deeplink(&app, parse_result, path);
     shutdown.notify_one();
 
-    // Subscription codes bounce through `{scheme}://auth/callback?code=…` so
-    // the OS opens the app. Token logins stay focus-only to avoid a second
-    // auth callback with the same secrets.
+    // Provider authorization codes bounce through the custom scheme so the OS
+    // brings Corola back to the foreground after the loopback callback.
     Html(html)
 }
 
@@ -339,7 +299,7 @@ mod tests {
 
     fn subscription_search() -> AuthCallbackSearch {
         AuthCallbackSearch {
-            code: Some("ac_nf5hq".to_string()),
+            code: "ac_nf5hq".to_string(),
             state: Some("state-1".to_string()),
             ..AuthCallbackSearch::default()
         }
@@ -348,32 +308,16 @@ mod tests {
     #[test]
     fn subscription_code_bounces_through_custom_scheme_deeplink() {
         assert_eq!(
-            subscription_auth_deeplink("anarlog", &subscription_search()).as_deref(),
-            Some("anarlog://auth/callback?code=ac_nf5hq&state=state-1")
+            subscription_auth_deeplink("corola", &subscription_search()).as_deref(),
+            Some("corola://auth/callback?code=ac_nf5hq&state=state-1")
         );
-        let html = render_html(&DeepLink::AuthCallback(subscription_search()), "anarlog");
-        assert!(html.contains("anarlog://auth/callback?code=ac_nf5hq"));
+        let html = render_html(&DeepLink::AuthCallback(subscription_search()), "corola");
+        assert!(html.contains("corola://auth/callback?code=ac_nf5hq"));
         assert!(html.contains("state=state-1"));
         assert!(html.contains(r#"id="open-app""#));
         assert!(html.contains(r#"document.getElementById("open-app")?.click()"#));
         assert!(html.contains("Connected successfully"));
-        assert!(!html.contains("anarlog://focus"));
-    }
-
-    #[test]
-    fn token_login_stays_focus_only() {
-        let html = render_html(
-            &DeepLink::AuthCallback(AuthCallbackSearch {
-                access_token: "access".to_string(),
-                refresh_token: "refresh".to_string(),
-                code: Some("should-ignore".to_string()),
-                ..AuthCallbackSearch::default()
-            }),
-            "anarlog-dev",
-        );
-        assert!(html.contains("anarlog-dev://focus"));
-        assert!(!html.contains("code=should-ignore"));
-        assert!(html.contains("Signed in successfully"));
+        assert!(!html.contains("corola://focus"));
     }
 
     #[test]
@@ -381,9 +325,9 @@ mod tests {
         let html = render_html_from_callback(
             "/auth/callback",
             "code=codex-code&state=s1&scope=openid",
-            "anarlog",
+            "corola",
         );
-        assert!(html.contains("anarlog://auth/callback?code=codex-code"));
+        assert!(html.contains("corola://auth/callback?code=codex-code"));
         assert!(html.contains("state=s1"));
     }
 }
