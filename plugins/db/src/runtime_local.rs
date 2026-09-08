@@ -99,6 +99,8 @@ pub struct PluginDbRuntime {
 impl PluginDbRuntime {
     pub fn new(db: std::sync::Arc<Db>) -> Self {
         let (startup_tx, _) = tokio::sync::watch::channel(None);
+        let tauri_runtime = tauri::async_runtime::handle();
+        let _runtime_guard = tauri_runtime.inner().enter();
         Self {
             db: std::sync::Arc::clone(&db),
             schema_ready: tokio::sync::OnceCell::new(),
