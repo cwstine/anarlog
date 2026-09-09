@@ -1,12 +1,12 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Corola Staging",
-  "mainBinaryName": "corola-staging",
-  "identifier": "com.corola.staging",
+  "productName": "MinutesWise Staging",
+  "mainBinaryName": "minuteswise-staging",
+  "identifier": "com.minuteswise.staging",
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["corola-staging"]
+        "schemes": ["minuteswise-staging"]
       }
     }
   },

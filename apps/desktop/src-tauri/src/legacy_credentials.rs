@@ -3,6 +3,9 @@ use std::path::{Path, PathBuf};
 use tauri::Manager;
 
 const LEGACY_APP_IDENTIFIERS: &[&str] = &[
+    "com.corola.desktop",
+    "com.corola.staging",
+    "com.corola.dev",
     "com.hyprnote.Hyprnote",
     "com.hyprnote.stable",
     "com.hyprnote.staging",

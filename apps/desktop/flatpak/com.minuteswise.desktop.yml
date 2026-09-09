@@ -1,8 +1,8 @@
-# Flatpak manifest for Corola.
+# Flatpak manifest for MinutesWise.
 # Flatpak remains an internal candidate until the sandboxed audio, credentials,
 # and desktop-integration release gates in ANLG-169 pass.
 
-id: com.corola.desktop
+id: com.minuteswise.desktop
 
 runtime: org.gnome.Platform
 runtime-version: "50"
@@ -12,7 +12,7 @@ sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
   - org.freedesktop.Sdk.Extension.node24
 
-command: corola
+command: minuteswise
 
 finish-args:
   - --socket=wayland
@@ -25,22 +25,22 @@ finish-args:
   - --talk-name=org.freedesktop.Notifications
   - --talk-name=org.kde.StatusNotifierWatcher
   - --talk-name=org.freedesktop.secrets
-  - --own-name=com.corola.desktop
+  - --own-name=com.minuteswise.desktop
   - --env=FLATPAK=1
 
 build-options:
-  append-path: /usr/lib/sdk/llvm21/bin:/usr/lib/sdk/node24/bin:/usr/lib/sdk/rust-stable/bin:/run/build/corola/pnpm-cli/bin
+  append-path: /usr/lib/sdk/llvm21/bin:/usr/lib/sdk/node24/bin:/usr/lib/sdk/rust-stable/bin:/run/build/minuteswise/pnpm-cli/bin
   env:
-    CARGO_HOME: /run/build/corola/cargo
+    CARGO_HOME: /run/build/minuteswise/cargo
     CARGO_NET_OFFLINE: "true"
     LIBCLANG_PATH: /usr/lib/sdk/llvm21/lib
-    ORT_LIB_LOCATION: /run/build/corola/flatpak-onnxruntime/lib
+    ORT_LIB_LOCATION: /run/build/minuteswise/flatpak-onnxruntime/lib
     npm_config_nodedir: /usr/lib/sdk/node24
     npm_config_offline: "true"
-    XDG_CACHE_HOME: /run/build/corola/cache
+    XDG_CACHE_HOME: /run/build/minuteswise/cache
 
 modules:
-  - name: corola
+  - name: minuteswise
     buildsystem: simple
 
     sources:
@@ -85,17 +85,17 @@ modules:
         dest-filename: pnpm-11.1.1.tgz
 
     build-commands:
-      - npm install --offline --global --prefix=/run/build/corola/pnpm-cli ./pnpm-11.1.1.tgz
+      - npm install --offline --global --prefix=/run/build/minuteswise/pnpm-cli ./pnpm-11.1.1.tgz
       - pnpm install --offline --frozen-lockfile
-      - cargo build --locked --offline --release -p corola-cli
+      - cargo build --locked --offline --release -p minuteswise-cli
       - pnpm -F desktop tauri build --no-bundle --config src-tauri/tauri.conf.flatpak.json
-      - install -Dm755 apps/desktop/src-tauri/target/release/corola /app/bin/corola
-      - install -Dm755 target/release/corola /app/libexec/corola-cli
-      - install -Dm755 apps/desktop/flatpak/corola-cli /app/bin/corola-cli
-      - install -Dm644 apps/desktop/flatpak/com.corola.desktop.desktop /app/share/applications/com.corola.desktop.desktop
-      - install -Dm644 apps/desktop/flatpak/com.corola.desktop.metainfo.xml /app/share/metainfo/com.corola.desktop.metainfo.xml
-      - install -Dm644 apps/desktop/src-tauri/icons/stable/32x32.png /app/share/icons/hicolor/32x32/apps/com.corola.desktop.png
-      - install -Dm644 apps/desktop/src-tauri/icons/stable/64x64.png /app/share/icons/hicolor/64x64/apps/com.corola.desktop.png
-      - install -Dm644 apps/desktop/src-tauri/icons/stable/128x128.png /app/share/icons/hicolor/128x128/apps/com.corola.desktop.png
-      - install -Dm644 apps/desktop/src-tauri/icons/stable/128x128@2x.png /app/share/icons/hicolor/256x256/apps/com.corola.desktop.png
-      - install -Dm644 apps/desktop/src-tauri/icons/stable/icon.png /app/share/icons/hicolor/512x512/apps/com.corola.desktop.png
+      - install -Dm755 apps/desktop/src-tauri/target/release/minuteswise /app/bin/minuteswise
+      - install -Dm755 target/release/minuteswise /app/libexec/minuteswise-cli
+      - install -Dm755 apps/desktop/flatpak/minuteswise-cli /app/bin/minuteswise-cli
+      - install -Dm644 apps/desktop/flatpak/com.minuteswise.desktop.desktop /app/share/applications/com.minuteswise.desktop.desktop
+      - install -Dm644 apps/desktop/flatpak/com.minuteswise.desktop.metainfo.xml /app/share/metainfo/com.minuteswise.desktop.metainfo.xml
+      - install -Dm644 apps/desktop/src-tauri/icons/stable/32x32.png /app/share/icons/hicolor/32x32/apps/com.minuteswise.desktop.png
+      - install -Dm644 apps/desktop/src-tauri/icons/stable/64x64.png /app/share/icons/hicolor/64x64/apps/com.minuteswise.desktop.png
+      - install -Dm644 apps/desktop/src-tauri/icons/stable/128x128.png /app/share/icons/hicolor/128x128/apps/com.minuteswise.desktop.png
+      - install -Dm644 apps/desktop/src-tauri/icons/stable/128x128@2x.png /app/share/icons/hicolor/256x256/apps/com.minuteswise.desktop.png
+      - install -Dm644 apps/desktop/src-tauri/icons/stable/icon.png /app/share/icons/hicolor/512x512/apps/com.minuteswise.desktop.png

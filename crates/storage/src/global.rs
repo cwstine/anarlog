@@ -1,8 +1,9 @@
 use std::path::{Path, PathBuf};
 
 pub const VAULT_CONFIG_FILENAME: &str = "global.json";
-const STAGING_BUNDLE_ID: &str = "com.corola.staging";
-const RELEASE_APP_FOLDER: &str = "corola";
+const STAGING_BUNDLE_ID: &str = "com.minuteswise.staging";
+const RELEASE_APP_FOLDER: &str = "minuteswise";
+const PREVIOUS_RELEASE_APP_FOLDER: &str = "corola";
 const LEGACY_RELEASE_APP_FOLDER: &str = "anarlog";
 const OLDEST_RELEASE_APP_FOLDER: &str = "hyprnote";
 
@@ -21,6 +22,8 @@ fn resolve_app_folder<'a>(data_dir: &Path, bundle_id: &'a str, is_debug: bool) -
         bundle_id
     } else if has_app_data(&data_dir.join(RELEASE_APP_FOLDER)) {
         RELEASE_APP_FOLDER
+    } else if has_app_data(&data_dir.join(PREVIOUS_RELEASE_APP_FOLDER)) {
+        PREVIOUS_RELEASE_APP_FOLDER
     } else if has_app_data(&data_dir.join(LEGACY_RELEASE_APP_FOLDER)) {
         LEGACY_RELEASE_APP_FOLDER
     } else if has_app_data(&data_dir.join(OLDEST_RELEASE_APP_FOLDER)) {
@@ -42,12 +45,12 @@ mod tests {
     use tempfile::tempdir;
 
     #[test]
-    fn resolve_app_folder_uses_corola_for_new_stable_installs() {
+    fn resolve_app_folder_uses_minuteswise_for_new_stable_installs() {
         let temp = tempdir().unwrap();
 
         assert_eq!(
-            resolve_app_folder(temp.path(), "com.corola.desktop", false),
-            "corola"
+            resolve_app_folder(temp.path(), "com.minuteswise.desktop", false),
+            "minuteswise"
         );
     }
 
@@ -59,23 +62,36 @@ mod tests {
         std::fs::write(legacy_base.join("store.json"), "{}").unwrap();
 
         assert_eq!(
-            resolve_app_folder(temp.path(), "com.corola.desktop", false),
+            resolve_app_folder(temp.path(), "com.minuteswise.desktop", false),
             "hyprnote"
         );
     }
 
     #[test]
-    fn resolve_app_folder_prefers_corola_when_new_folder_has_data() {
+    fn resolve_app_folder_prefers_minuteswise_when_new_folder_has_data() {
         let temp = tempdir().unwrap();
         let legacy_base = temp.path().join(LEGACY_RELEASE_APP_FOLDER);
-        let new_base = temp.path().join(RELEASE_APP_FOLDER);
+        let new_base = temp.path().join("minuteswise");
         std::fs::create_dir_all(&legacy_base).unwrap();
         std::fs::create_dir_all(&new_base).unwrap();
         std::fs::write(legacy_base.join("store.json"), "{}").unwrap();
         std::fs::write(new_base.join("app.db"), "").unwrap();
 
         assert_eq!(
-            resolve_app_folder(temp.path(), "com.corola.desktop", false),
+            resolve_app_folder(temp.path(), "com.minuteswise.desktop", false),
+            "minuteswise"
+        );
+    }
+
+    #[test]
+    fn resolve_app_folder_keeps_populated_corola_data() {
+        let temp = tempdir().unwrap();
+        let corola_base = temp.path().join("corola");
+        std::fs::create_dir_all(&corola_base).unwrap();
+        std::fs::write(corola_base.join("app.db"), "").unwrap();
+
+        assert_eq!(
+            resolve_app_folder(temp.path(), "com.minuteswise.desktop", false),
             "corola"
         );
     }
@@ -86,18 +102,18 @@ mod tests {
         std::fs::create_dir_all(temp.path().join(OLDEST_RELEASE_APP_FOLDER)).unwrap();
 
         assert_eq!(
-            resolve_app_folder(temp.path(), "com.corola.desktop", false),
-            "corola"
+            resolve_app_folder(temp.path(), "com.minuteswise.desktop", false),
+            "minuteswise"
         );
     }
 
     #[test]
-    fn resolve_app_folder_uses_corola_for_other_release_bundle_ids() {
+    fn resolve_app_folder_uses_minuteswise_for_other_release_bundle_ids() {
         let temp = tempdir().unwrap();
 
         assert_eq!(
             resolve_app_folder(temp.path(), "com.example.release", false),
-            "corola"
+            "minuteswise"
         );
     }
 
@@ -112,8 +128,8 @@ mod tests {
     #[test]
     fn resolve_app_folder_returns_bundle_id_in_debug_builds() {
         assert_eq!(
-            resolve_app_folder(Path::new("/tmp"), "com.corola.desktop", true),
-            "com.corola.desktop"
+            resolve_app_folder(Path::new("/tmp"), "com.minuteswise.desktop", true),
+            "com.minuteswise.desktop"
         );
     }
 }

@@ -92,9 +92,9 @@ mod tests {
     }
 
     #[test]
-    fn dev_uses_an_isolated_persistent_database() {
-        let db_dir = desktop_db_dir("com.corola.dev").unwrap();
+    fn minuteswise_dev_uses_an_isolated_persistent_database() {
+        let db_dir = desktop_db_dir("com.minuteswise.dev").unwrap();
 
-        assert!(db_dir.ends_with("com.corola.dev"));
+        assert!(db_dir.ends_with("com.minuteswise.dev"));
     }
 }

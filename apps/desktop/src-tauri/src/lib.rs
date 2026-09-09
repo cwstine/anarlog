@@ -25,7 +25,7 @@ use tauri_plugin_permissions::{Permission, PermissionsPluginExt};
 use tauri_plugin_windows::AppWindow;
 
 #[cfg(any(feature = "dev", feature = "devtools"))]
-const STAGING_BUNDLE_ID: &str = "com.corola.staging";
+const STAGING_BUNDLE_ID: &str = "com.minuteswise.staging";
 
 const APP_EXIT_REQUESTED_EVENT: &str = "app-exit-requested";
 static EXIT_FLUSH_COMPLETE: AtomicBool = AtomicBool::new(false);
@@ -806,37 +806,50 @@ mod test {
     }
 
     #[test]
-    fn desktop_configs_use_corola_identity_without_anarlog_updater() {
+    fn desktop_configs_use_minuteswise_identity_without_anarlog_updater() {
         let dev = include_str!("../tauri.conf.json");
         let stable = include_str!("../tauri.conf.stable.json");
         let staging = include_str!("../tauri.conf.staging.json");
         let flatpak = include_str!("../tauri.conf.flatpak.json");
         let app_store = include_str!("../tauri.conf.app-store.json");
         let stable_macos = include_str!("../tauri.conf.stable-macos.json");
-        let flatpak_manifest = include_str!("../../flatpak/com.corola.desktop.yml");
-        let flatpak_desktop = include_str!("../../flatpak/com.corola.desktop.desktop");
-        let flatpak_metadata = include_str!("../../flatpak/com.corola.desktop.metainfo.xml");
+        let flatpak_manifest = std::fs::read_to_string(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../flatpak/com.minuteswise.desktop.yml"
+        ))
+        .unwrap();
+        let flatpak_desktop = std::fs::read_to_string(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../flatpak/com.minuteswise.desktop.desktop"
+        ))
+        .unwrap();
+        let flatpak_metadata = std::fs::read_to_string(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../flatpak/com.minuteswise.desktop.metainfo.xml"
+        ))
+        .unwrap();
         let configs = [dev, stable, staging, flatpak, app_store, stable_macos];
 
-        assert!(dev.contains(r#""productName": "Corola Dev""#));
-        assert!(dev.contains(r#""mainBinaryName": "corola-dev""#));
-        assert!(dev.contains(r#""identifier": "com.corola.dev""#));
-        assert!(dev.contains(r#""schemes": ["corola-dev"]"#));
-        assert!(stable.contains(r#""productName": "Corola""#));
-        assert!(stable.contains(r#""mainBinaryName": "corola""#));
-        assert!(stable.contains(r#""identifier": "com.corola.desktop""#));
-        assert!(stable.contains(r#""schemes": ["corola"]"#));
-        assert!(staging.contains(r#""productName": "Corola Staging""#));
-        assert!(staging.contains(r#""mainBinaryName": "corola-staging""#));
-        assert!(staging.contains(r#""identifier": "com.corola.staging""#));
-        assert!(staging.contains(r#""schemes": ["corola-staging"]"#));
-        assert!(flatpak.contains(r#""identifier": "com.corola.desktop""#));
-        assert!(app_store.contains(r#""identifier": "com.corola.desktop""#));
-        assert!(flatpak_manifest.contains("id: com.corola.desktop"));
-        assert!(flatpak_manifest.contains("command: corola"));
-        assert!(flatpak_desktop.contains("Name=Corola"));
-        assert!(flatpak_metadata.contains("<name>Corola</name>"));
-        for flatpak_file in [flatpak_manifest, flatpak_desktop, flatpak_metadata] {
+        assert!(dev.contains(r#""productName": "MinutesWise Dev""#));
+        assert!(dev.contains(r#""mainBinaryName": "minuteswise-dev""#));
+        assert!(dev.contains(r#""identifier": "com.minuteswise.dev""#));
+        assert!(dev.contains(r#""schemes": ["minuteswise-dev"]"#));
+        assert!(stable.contains(r#""productName": "MinutesWise""#));
+        assert!(stable.contains(r#""mainBinaryName": "minuteswise""#));
+        assert!(stable.contains(r#""identifier": "com.minuteswise.desktop""#));
+        assert!(stable.contains(r#""schemes": ["minuteswise"]"#));
+        assert!(staging.contains(r#""productName": "MinutesWise Staging""#));
+        assert!(staging.contains(r#""mainBinaryName": "minuteswise-staging""#));
+        assert!(staging.contains(r#""identifier": "com.minuteswise.staging""#));
+        assert!(staging.contains(r#""schemes": ["minuteswise-staging"]"#));
+        assert!(flatpak.contains(r#""identifier": "com.minuteswise.desktop""#));
+        assert!(app_store.contains(r#""identifier": "com.minuteswise.desktop""#));
+        assert!(flatpak_manifest.contains("id: com.minuteswise.desktop"));
+        assert!(flatpak_manifest.contains("command: minuteswise"));
+        assert!(flatpak_desktop.contains("Name=MinutesWise"));
+        assert!(flatpak_metadata.contains("<name>MinutesWise</name>"));
+        for flatpak_file in [&flatpak_manifest, &flatpak_desktop, &flatpak_metadata] {
+            assert!(!flatpak_file.contains("com.corola"));
             assert!(!flatpak_file.contains("anarlog.so"));
             assert!(!flatpak_file.contains("so.anarlog"));
             assert!(!flatpak_file.contains("com.hyprnote"));

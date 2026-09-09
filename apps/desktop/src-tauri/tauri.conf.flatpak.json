@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Corola",
-  "mainBinaryName": "corola",
-  "identifier": "com.corola.desktop",
+  "productName": "MinutesWise",
+  "mainBinaryName": "minuteswise",
+  "identifier": "com.minuteswise.desktop",
   "bundle": {
     "icon": [
       "icons/stable/32x32.png",
@@ -14,7 +14,7 @@
   },
   "plugins": {
     "deep-link": {
-      "desktop": { "schemes": ["corola"] }
+      "desktop": { "schemes": ["minuteswise"] }
     }
   }
 }

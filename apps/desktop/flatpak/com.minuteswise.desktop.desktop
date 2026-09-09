@@ -1,14 +1,14 @@
 [Desktop Entry]
-Name=Corola
+Name=MinutesWise
 GenericName=AI Meeting Notes
 Comment=The AI notepad for private meetings
-Exec=corola %U
-Icon=com.corola.desktop
+Exec=minuteswise %U
+Icon=com.minuteswise.desktop
 Terminal=false
 Type=Application
 Categories=Office;
 Keywords=notes;meeting;transcription;ai;audio;recording;
 StartupNotify=true
-StartupWMClass=corola
-MimeType=x-scheme-handler/corola;
+StartupWMClass=minuteswise
+MimeType=x-scheme-handler/minuteswise;
 X-GNOME-UsesNotifications=true
