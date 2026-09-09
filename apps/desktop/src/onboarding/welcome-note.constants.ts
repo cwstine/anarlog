@@ -1,1 +1,1 @@
-export const WELCOME_NOTE_TRACKING_ID = "corola-welcome-v1";
+export const WELCOME_NOTE_TRACKING_ID = "minuteswise-welcome-v1";

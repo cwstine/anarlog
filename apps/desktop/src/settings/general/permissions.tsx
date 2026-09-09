@@ -208,7 +208,7 @@ function MacOSPermissions() {
         title={t`Accessibility`}
         description={
           accessibilityGuidance
-            ? t`Opens System Settings and guides you to add Corola to the ${accessibilityGuidance.paneTitle ?? "Privacy"} list.`
+            ? t`Opens System Settings and guides you to add MinutesWise to the ${accessibilityGuidance.paneTitle ?? "Privacy"} list.`
             : t`Read meeting controls and visible chat.`
         }
         status={accessibility.status}
@@ -222,7 +222,7 @@ function MacOSPermissions() {
         <PermissionRow
           permission="calendar"
           title={t`Calendar`}
-          description={t`Show Apple Calendar events in Corola.`}
+          description={t`Show Apple Calendar events in MinutesWise.`}
           status={calendar.status}
           isPending={calendar.isPending}
           onRequest={calendar.request}

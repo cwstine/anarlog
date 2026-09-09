@@ -20,8 +20,8 @@ Transcript limits are measured in words. The default is 200 and the maximum is 5
 
 Available resources:
 
-- `corola://meetings/{meeting_id}`
-- `corola://meetings/{meeting_id}/transcript{?offset,limit}`
-- `corola://series/{series_id}`
+- `minuteswise://meetings/{meeting_id}`
+- `minuteswise://meetings/{meeting_id}/transcript{?offset,limit}`
+- `minuteswise://series/{series_id}`
 
 Prefer tools when the workflow needs structured JSON. Use resources when the client needs concise Markdown or plain-text context. Transcript resources default to 200 words (cap 500) and return plain text only.

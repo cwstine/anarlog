@@ -339,12 +339,12 @@ msgid "Ask anything"
 msgstr "Ask anything"
 
 #: src/composer/index.tsx
-msgid "Ask Corola AI anything"
-msgstr "Ask Corola AI anything"
+msgid "Ask MinutesWise AI anything"
+msgstr "Ask MinutesWise AI anything"
 
 #: src/shared/chat-cta.tsx
-msgid "Ask Corola anything"
-msgstr "Ask Corola anything"
+msgid "Ask MinutesWise anything"
+msgstr "Ask MinutesWise anything"
 
 #: src/task/resource-view.tsx
 msgid "Assignees:"
@@ -355,8 +355,8 @@ msgid "Attach Markdown or text"
 msgstr "Attach Markdown or text"
 
 #: src/templates/auto-format-examples-dialog.tsx
-msgid "Attach up to three past summaries you like. Corola will learn how you prefer meeting notes to be structured and written."
-msgstr "Attach up to three past summaries you like. Corola will learn how you prefer meeting notes to be structured and written."
+msgid "Attach up to three past summaries you like. MinutesWise will learn how you prefer meeting notes to be structured and written."
+msgstr "Attach up to three past summaries you like. MinutesWise will learn how you prefer meeting notes to be structured and written."
 
 #: src/settings/general/index.tsx
 #: src/settings/general/permissions.tsx
@@ -591,13 +591,13 @@ msgstr "Choose folder icon"
 msgid "Choose how Auto structures and styles your summaries."
 msgstr "Choose how Auto structures and styles your summaries."
 
-#: src/settings/appearance/theme.tsx
-msgid "Choose how Corola looks on this device."
-msgstr "Choose how Corola looks on this device."
-
 #: src/settings/general/audio-settings.tsx
 msgid "Choose how long recordings stay on this device."
 msgstr "Choose how long recordings stay on this device."
+
+#: src/settings/appearance/theme.tsx
+msgid "Choose how MinutesWise looks on this device."
+msgstr "Choose how MinutesWise looks on this device."
 
 #: src/settings/general/summary-length.tsx
 msgid "Choose how much detail generated meeting summaries include."
@@ -783,8 +783,8 @@ msgid "Continue"
 msgstr "Continue"
 
 #: src/settings/general/meeting-settings.tsx
-msgid "Control listening without reopening Corola."
-msgstr "Control listening without reopening Corola."
+msgid "Control listening without reopening MinutesWise."
+msgstr "Control listening without reopening MinutesWise."
 
 #: src/main/windows-title-bar.tsx
 #: src/session/components/note-input/transcript/renderer/selection-menu.tsx
@@ -804,58 +804,6 @@ msgstr "Copy message"
 #: src/settings/developers/webhooks.tsx
 msgid "Copy this signing secret now — it is only shown once."
 msgstr "Copy this signing secret now — it is only shown once."
-
-#. placeholder {0}: update.version
-#: src/sidebar/toast/registry.tsx
-msgid "Corola {0} is available"
-msgstr "Corola {0} is available"
-
-#. placeholder {0}: update.version
-#: src/sidebar/toast/registry.tsx
-msgid "Corola {0} is ready to install"
-msgstr "Corola {0} is ready to install"
-
-#: src/onboarding/permissions.tsx
-msgid "Corola can hear others"
-msgstr "Corola can hear others"
-
-#: src/onboarding/permissions.tsx
-msgid "Corola can hear your voice"
-msgstr "Corola can hear your voice"
-
-#: src/onboarding/permissions.tsx
-msgid "Corola can read meeting details"
-msgstr "Corola can read meeting details"
-
-#: src/settings/developers/cli.tsx
-msgid "Corola CLI"
-msgstr "Corola CLI"
-
-#: src/lock/gate.tsx
-msgid "Corola is Locked"
-msgstr "Corola is Locked"
-
-#: src/onboarding/index.tsx
-msgid "Corola needs access to your microphone and system audio to record and transcribe your meetings"
-msgstr "Corola needs access to your microphone and system audio to record and transcribe your meetings"
-
-#: src/onboarding/index.tsx
-msgid "Corola needs microphone and system audio to transcribe your meetings, plus Accessibility to read meeting controls, visible chat."
-msgstr "Corola needs microphone and system audio to transcribe your meetings, plus Accessibility to read meeting controls, visible chat."
-
-#. placeholder {0}: statuses[0].displayName
-#: src/settings/developers/skills.tsx
-msgid "Corola skill added to {0}"
-msgstr "Corola skill added to {0}"
-
-#. placeholder {0}: statuses.length
-#: src/settings/developers/skills.tsx
-msgid "Corola skill added to {0} agents"
-msgstr "Corola skill added to {0} agents"
-
-#: src/settings/general/storage/legacy-cleanup.tsx
-msgid "Corola will retry automatically. This does not affect your notes."
-msgstr "Corola will retry automatically. This does not affect your notes."
 
 #. placeholder {0}: error.message
 #: src/settings/developers/cli.tsx
@@ -1135,8 +1083,8 @@ msgstr "Downloading {downloadingModel}"
 
 #. placeholder {0}: update.version
 #: src/sidebar/toast/registry.tsx
-msgid "Downloading Corola {0}{progress}"
-msgstr "Downloading Corola {0}{progress}"
+msgid "Downloading MinutesWise {0}{progress}"
+msgstr "Downloading MinutesWise {0}{progress}"
 
 #: src/sidebar/toast/registry.tsx
 msgid "Downloading model"
@@ -1397,8 +1345,8 @@ msgid "Get started"
 msgstr "Get started"
 
 #: src/settings/general/notification.tsx
-msgid "Get your attention when Corola finishes work in the background."
-msgstr "Get your attention when Corola finishes work in the background."
+msgid "Get your attention when MinutesWise finishes work in the background."
+msgstr "Get your attention when MinutesWise finishes work in the background."
 
 #: src/sidebar/timeline/index.tsx
 msgid "Go back to now"
@@ -1437,8 +1385,8 @@ msgid "Grouping, {groupingLabel}"
 msgstr "Grouping, {groupingLabel}"
 
 #: src/settings/general/app-settings.tsx
-msgid "Have Corola ready when you sign in."
-msgstr "Have Corola ready when you sign in."
+msgid "Have MinutesWise ready when you sign in."
+msgstr "Have MinutesWise ready when you sign in."
 
 #: src/calendar/components/apple/permission.tsx
 msgid "Having trouble?"
@@ -1448,25 +1396,25 @@ msgstr "Having trouble?"
 msgid "Having trouble? Paste the redirect URL"
 msgstr "Having trouble? Paste the redirect URL"
 
-#: src/onboarding/permissions.tsx
-msgid "Help Corola listen to others"
-msgstr "Help Corola listen to others"
-
-#: src/onboarding/permissions.tsx
-msgid "Help Corola listen to you"
-msgstr "Help Corola listen to you"
-
-#: src/onboarding/permissions.tsx
-msgid "Help Corola read meeting activity"
-msgstr "Help Corola read meeting activity"
-
 #: src/settings/general/app-settings.tsx
-msgid "Help improve Corola with anonymous usage data."
-msgstr "Help improve Corola with anonymous usage data."
+msgid "Help improve MinutesWise with anonymous usage data."
+msgstr "Help improve MinutesWise with anonymous usage data."
+
+#: src/onboarding/permissions.tsx
+msgid "Help MinutesWise listen to others"
+msgstr "Help MinutesWise listen to others"
+
+#: src/onboarding/permissions.tsx
+msgid "Help MinutesWise listen to you"
+msgstr "Help MinutesWise listen to you"
+
+#: src/onboarding/permissions.tsx
+msgid "Help MinutesWise read meeting activity"
+msgstr "Help MinutesWise read meeting activity"
 
 #: src/chat/components/body/empty.tsx
-msgid "Hi, I'm Corola AI. Set up a language model and I'll be ready to help."
-msgstr "Hi, I'm Corola AI. Set up a language model and I'll be ready to help."
+msgid "Hi, I'm MinutesWise AI. Set up a language model and I'll be ready to help."
+msgstr "Hi, I'm MinutesWise AI. Set up a language model and I'll be ready to help."
 
 #: src/sidebar/timeline/index.tsx
 msgid "Hide Deleted Events"
@@ -1707,8 +1655,8 @@ msgid "Low-light canvas"
 msgstr "Low-light canvas"
 
 #: src/settings/ai/shared/index.tsx
-msgid "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before Corola retries this API key."
-msgstr "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before Corola retries this API key."
+msgid "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before MinutesWise retries this API key."
+msgstr "macOS cannot access your login Keychain. Repairing briefly locks it and asks for your Mac password before MinutesWise retries this API key."
 
 #: src/settings/general/main-language.tsx
 msgid "Main language"
@@ -1810,8 +1758,8 @@ msgid "Merged"
 msgstr "Merged"
 
 #: src/composer/index.tsx
-msgid "Message Corola AI"
-msgstr "Message Corola AI"
+msgid "Message MinutesWise AI"
+msgstr "Message MinutesWise AI"
 
 #: src/session/components/outer-header/overflow/export-modal.tsx
 msgid "Metadata"
@@ -1846,6 +1794,58 @@ msgstr "Migration status unavailable"
 #: src/main/windows-title-bar.tsx
 msgid "Minimize"
 msgstr "Minimize"
+
+#. placeholder {0}: update.version
+#: src/sidebar/toast/registry.tsx
+msgid "MinutesWise {0} is available"
+msgstr "MinutesWise {0} is available"
+
+#. placeholder {0}: update.version
+#: src/sidebar/toast/registry.tsx
+msgid "MinutesWise {0} is ready to install"
+msgstr "MinutesWise {0} is ready to install"
+
+#: src/onboarding/permissions.tsx
+msgid "MinutesWise can hear others"
+msgstr "MinutesWise can hear others"
+
+#: src/onboarding/permissions.tsx
+msgid "MinutesWise can hear your voice"
+msgstr "MinutesWise can hear your voice"
+
+#: src/onboarding/permissions.tsx
+msgid "MinutesWise can read meeting details"
+msgstr "MinutesWise can read meeting details"
+
+#: src/settings/developers/cli.tsx
+msgid "MinutesWise CLI"
+msgstr "MinutesWise CLI"
+
+#: src/lock/gate.tsx
+msgid "MinutesWise is Locked"
+msgstr "MinutesWise is Locked"
+
+#: src/onboarding/index.tsx
+msgid "MinutesWise needs access to your microphone and system audio to record and transcribe your meetings"
+msgstr "MinutesWise needs access to your microphone and system audio to record and transcribe your meetings"
+
+#: src/onboarding/index.tsx
+msgid "MinutesWise needs microphone and system audio to transcribe your meetings, plus Accessibility to read meeting controls, visible chat."
+msgstr "MinutesWise needs microphone and system audio to transcribe your meetings, plus Accessibility to read meeting controls, visible chat."
+
+#. placeholder {0}: statuses[0].displayName
+#: src/settings/developers/skills.tsx
+msgid "MinutesWise skill added to {0}"
+msgstr "MinutesWise skill added to {0}"
+
+#. placeholder {0}: statuses.length
+#: src/settings/developers/skills.tsx
+msgid "MinutesWise skill added to {0} agents"
+msgstr "MinutesWise skill added to {0} agents"
+
+#: src/settings/general/storage/legacy-cleanup.tsx
+msgid "MinutesWise will retry automatically. This does not affect your notes."
+msgstr "MinutesWise will retry automatically. This does not affect your notes."
 
 #: src/settings/ai/llm/select.tsx
 #: src/settings/ai/stt/select.tsx
@@ -2164,18 +2164,6 @@ msgstr "Open calendar"
 msgid "Open calendar account actions"
 msgstr "Open calendar account actions"
 
-#: src/composer/index.tsx
-#: src/onboarding/final.tsx
-#: src/services/enhancer/summary-notification.ts
-#: src/services/event-notification/index.ts
-#: src/store/zustand/listener/general-batch.ts
-msgid "Open Corola"
-msgstr "Open Corola"
-
-#: src/settings/general/app-settings.tsx
-msgid "Open Corola from the menu bar."
-msgstr "Open Corola from the menu bar."
-
 #: src/session/components/outer-header/overflow/index.tsx
 msgid "Open floating panel"
 msgstr "Open floating panel"
@@ -2188,6 +2176,18 @@ msgstr "Open in New Window"
 #: src/chat/components/toolbar-controls.tsx
 msgid "Open in right panel"
 msgstr "Open in right panel"
+
+#: src/composer/index.tsx
+#: src/onboarding/final.tsx
+#: src/services/enhancer/summary-notification.ts
+#: src/services/event-notification/index.ts
+#: src/store/zustand/listener/general-batch.ts
+msgid "Open MinutesWise"
+msgstr "Open MinutesWise"
+
+#: src/settings/general/app-settings.tsx
+msgid "Open MinutesWise from the menu bar."
+msgstr "Open MinutesWise from the menu bar."
 
 #: src/task/resource-view.tsx
 msgid "Open on GitHub"
@@ -2207,13 +2207,13 @@ msgstr "Opening sign-in…"
 
 #. placeholder {0}: accessibilityGuidance.paneTitle ?? "Privacy"
 #: src/onboarding/permissions.tsx
-msgid "Opens System Settings and guides you to add Corola to the {0} list"
-msgstr "Opens System Settings and guides you to add Corola to the {0} list"
+msgid "Opens System Settings and guides you to add MinutesWise to the {0} list"
+msgstr "Opens System Settings and guides you to add MinutesWise to the {0} list"
 
 #. placeholder {0}: accessibilityGuidance.paneTitle ?? "Privacy"
 #: src/settings/general/permissions.tsx
-msgid "Opens System Settings and guides you to add Corola to the {0} list."
-msgstr "Opens System Settings and guides you to add Corola to the {0} list."
+msgid "Opens System Settings and guides you to add MinutesWise to the {0} list."
+msgstr "Opens System Settings and guides you to add MinutesWise to the {0} list."
 
 #: src/calendar/components/apple/permission.tsx
 #: src/settings/ai/shared/index.tsx
@@ -2501,12 +2501,12 @@ msgid "Request {0} permission"
 msgstr "Request {0} permission"
 
 #: src/settings/privacy/index.tsx
-msgid "Require Touch ID or your password when opening Corola."
-msgstr "Require Touch ID or your password when opening Corola."
+msgid "Require Touch ID or your password when opening MinutesWise."
+msgstr "Require Touch ID or your password when opening MinutesWise."
 
 #: src/settings/privacy/index.tsx
-msgid "Require Windows Hello face, PIN, or password when opening Corola."
-msgstr "Require Windows Hello face, PIN, or password when opening Corola."
+msgid "Require Windows Hello face, PIN, or password when opening MinutesWise."
+msgstr "Require Windows Hello face, PIN, or password when opening MinutesWise."
 
 #: src/calendar/components/apple/permission.tsx
 #: src/settings/ai/shared/index.tsx
@@ -2727,8 +2727,8 @@ msgid "Send message"
 msgstr "Send message"
 
 #: src/settings/privacy/index.tsx
-msgid "Send sanitized crash and error reports to help improve Corola."
-msgstr "Send sanitized crash and error reports to help improve Corola."
+msgid "Send sanitized crash and error reports to help improve MinutesWise."
+msgstr "Send sanitized crash and error reports to help improve MinutesWise."
 
 #: src/session/components/note-input/meeting-chat-highlights.tsx
 msgid "sent"
@@ -2782,12 +2782,8 @@ msgid "Show app in Dock"
 msgstr "Show app in Dock"
 
 #: src/settings/general/permissions.tsx
-msgid "Show Apple Calendar events in Corola."
-msgstr "Show Apple Calendar events in Corola."
-
-#: src/settings/general/app-settings.tsx
-msgid "Show Corola in the Dock and app switcher."
-msgstr "Show Corola in the Dock and app switcher."
+msgid "Show Apple Calendar events in MinutesWise."
+msgstr "Show Apple Calendar events in MinutesWise."
 
 #: src/sidebar/timeline/index.tsx
 msgid "Show Deleted Events"
@@ -2811,6 +2807,10 @@ msgstr "Show in Finder"
 #: src/sidebar/timeline/item.tsx
 msgid "Show in folder"
 msgstr "Show in folder"
+
+#: src/settings/general/app-settings.tsx
+msgid "Show MinutesWise in the Dock and app switcher."
+msgstr "Show MinutesWise in the Dock and app switcher."
 
 #: src/main/windows-title-bar.tsx
 msgid "Show sidebar"
@@ -2845,8 +2845,8 @@ msgid "Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your b
 msgstr "Sign in with ChatGPT Plus or Pro, then paste the redirect URL from your browser."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
-msgid "Sign in with ChatGPT Plus or Pro. We'll open Corola and finish connecting."
-msgstr "Sign in with ChatGPT Plus or Pro. We'll open Corola and finish connecting."
+msgid "Sign in with ChatGPT Plus or Pro. We'll open MinutesWise and finish connecting."
+msgstr "Sign in with ChatGPT Plus or Pro. We'll open MinutesWise and finish connecting."
 
 #: src/settings/ai/llm/subscriptions/connect.tsx
 msgid "Sign in with GitHub Copilot and enter the code below."
@@ -2909,13 +2909,13 @@ msgstr "SQLite migration verification is incomplete"
 msgid "Stack another destination. Steps run top to bottom."
 msgstr "Stack another destination. Steps run top to bottom."
 
-#: src/settings/general/app-settings.tsx
-msgid "Start Corola at login"
-msgstr "Start Corola at login"
-
 #: src/settings/general/meeting-settings.tsx
 msgid "Start listening when a scheduled meeting begins."
 msgstr "Start listening when a scheduled meeting begins."
+
+#: src/settings/general/app-settings.tsx
+msgid "Start MinutesWise at login"
+msgstr "Start MinutesWise at login"
 
 #: src/main/empty.tsx
 msgid "Start Recording"
@@ -3073,8 +3073,8 @@ msgid "Tags"
 msgstr "Tags"
 
 #: src/settings/developers/skills.tsx
-msgid "Teach coding agents when and how to use the Corola CLI and MCP"
-msgstr "Teach coding agents when and how to use the Corola CLI and MCP"
+msgid "Teach coding agents when and how to use the MinutesWise CLI and MCP"
+msgstr "Teach coding agents when and how to use the MinutesWise CLI and MCP"
 
 #: src/settings/general/meeting-settings.tsx
 msgid "Tell participants when listening starts; this does not confirm consent."
@@ -3145,10 +3145,6 @@ msgstr "This edit is no longer pending."
 msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a live transcription model."
 msgstr "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a live transcription model."
 
-#: src/chat/components/session-provider.tsx
-#~ msgid "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
-#~ msgstr "This recording is using batch transcription, so the transcript isn't available to chat yet. Ask again after transcription finishes, or switch to a Pro model for live transcription."
-
 #. placeholder {0}: status.fileCount
 #. placeholder {1}: formatBytes(status.totalBytes)
 #: src/settings/general/storage/legacy-cleanup.tsx
@@ -3168,8 +3164,8 @@ msgid "Tip: Add teammate names, acronyms, company jargon, and product terms."
 msgstr "Tip: Add teammate names, acronyms, company jargon, and product terms."
 
 #: src/session/components/note-input/enhanced/streaming.tsx
-msgid "Tip: The Corola team loves our users!"
-msgstr "Tip: The Corola team loves our users!"
+msgid "Tip: The MinutesWise team loves our users!"
+msgstr "Tip: The MinutesWise team loves our users!"
 
 #: src/sidebar/timeline/utils/index.ts
 msgid "Today"
@@ -3241,8 +3237,8 @@ msgid "Try speaking a little closer to the microphone."
 msgstr "Try speaking a little closer to the microphone."
 
 #: src/calendar/components/apple/permission.tsx
-msgid "Turn on Corola in System Settings → Privacy & Security → Calendars, then return here."
-msgstr "Turn on Corola in System Settings → Privacy & Security → Calendars, then return here."
+msgid "Turn on MinutesWise in System Settings → Privacy & Security → Calendars, then return here."
+msgstr "Turn on MinutesWise in System Settings → Privacy & Security → Calendars, then return here."
 
 #: src/settings/developers/cli.tsx
 msgid "Unavailable"
@@ -3271,8 +3267,8 @@ msgid "Unlock Note"
 msgstr "Unlock Note"
 
 #: src/settings/ai/shared/index.tsx
-msgid "Unlock your login Keychain in the macOS prompt. Corola will retry saving this API key automatically."
-msgstr "Unlock your login Keychain in the macOS prompt. Corola will retry saving this API key automatically."
+msgid "Unlock your login Keychain in the macOS prompt. MinutesWise will retry saving this API key automatically."
+msgstr "Unlock your login Keychain in the macOS prompt. MinutesWise will retry saving this API key automatically."
 
 #: src/contacts/details.tsx
 #: src/contacts/organization-details.tsx
@@ -3368,21 +3364,21 @@ msgstr "Verifying the SQLite migration status"
 msgid "View"
 msgstr "View"
 
-#: src/lock/gate.tsx
-msgid "View Corola"
-msgstr "View Corola"
-
 #: src/contacts/organization-details.tsx
 msgid "View LinkedIn profile"
 msgstr "View LinkedIn profile"
+
+#: src/lock/gate.tsx
+msgid "View MinutesWise"
+msgstr "View MinutesWise"
 
 #: src/lock/screen.tsx
 msgid "View Note"
 msgstr "View Note"
 
 #: src/chat/components/input/use-dictation.ts
-msgid "Voice input is unavailable while Corola is recording a meeting."
-msgstr "Voice input is unavailable while Corola is recording a meeting."
+msgid "Voice input is unavailable while MinutesWise is recording a meeting."
+msgstr "Voice input is unavailable while MinutesWise is recording a meeting."
 
 #: src/settings/general/notification.tsx
 msgid "Wait before treating microphone activity as a meeting."
@@ -3405,8 +3401,8 @@ msgid "Week starts on"
 msgstr "Week starts on"
 
 #: src/onboarding/index.tsx
-msgid "Welcome to Corola"
-msgstr "Welcome to Corola"
+msgid "Welcome to MinutesWise"
+msgstr "Welcome to MinutesWise"
 
 #: src/chat/components/body/empty.tsx
 msgid "What are my action items from this meeting?"

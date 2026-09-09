@@ -130,26 +130,26 @@ chat on 2026-09-09.
 - Produces: the `minuteswise` CLI/MCP command, installed `minuteswise` agent
   skill, and MinutesWise-only active UI/native copy.
 
-- [ ] **Step 1: Strengthen the failing brand boundary**
+- [x] **Step 1: Strengthen the failing brand boundary**
 
   Rename the suite to `MinutesWise brand boundary`, add `Corola` to the banned
   former product names, and keep a narrow exclusion list only for explicit
   compatibility modules. Update CLI contract assertions to require
   `minuteswise`, `MINUTESWISE_BASE`, and `MINUTESWISE_DB_PATH`.
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
   Run `brand-boundary.test.ts` and the CLI contract tests. Expected: failures
   point at remaining active Corola copy and CLI identity.
 
-- [ ] **Step 3: Replace active branding**
+- [x] **Step 3: Replace active branding**
 
   Rename user-visible desktop/native strings, telemetry namespaces, local
   storage keys, CLI help, MCP server metadata, docs, and packaged agent skill.
   Retain old storage keys only as read-side aliases where needed. Regenerate
   Insta snapshots and Lingui catalogs from the renamed source strings.
 
-- [ ] **Step 4: Verify GREEN and commit**
+- [x] **Step 4: Verify GREEN and commit**
 
   Run desktop tests/typecheck/lint, CLI tests, i18n stability checks, and
   formatting; commit as `refactor: rename product surfaces to MinutesWise`,

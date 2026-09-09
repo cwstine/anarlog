@@ -17,9 +17,7 @@ import { flushAutomaticRelaunch } from "~/shared/relaunch";
 import { commands } from "~/types/tauri.gen";
 
 export function FinalDescription() {
-  return (
-    <Trans>Everything is ready. Your notes stay on this device.</Trans>
-  );
+  return <Trans>Everything is ready. Your notes stay on this device.</Trans>;
 }
 
 export function FinalSection({
@@ -59,17 +57,17 @@ export function FinalSection({
         {status === "loading" ? (
           <span className="flex items-center gap-2">
             <CircleNotch className="size-4 animate-spin" />
-            <Trans>Open Corola</Trans>
+            <Trans>Open MinutesWise</Trans>
           </span>
         ) : (
-          <Trans>Open Corola</Trans>
+          <Trans>Open MinutesWise</Trans>
         )}
       </OnboardingButton>
       {status === "error" && (
         <p className="text-sm text-red-500" role="alert">
           {translate({
             id: "onboarding.finish-error",
-            message: "Couldn't open Corola. Please try again.",
+            message: "Couldn't open MinutesWise. Please try again.",
           })}
         </p>
       )}

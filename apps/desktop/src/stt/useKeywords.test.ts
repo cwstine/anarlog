@@ -170,9 +170,9 @@ describe("getSessionKeywords", () => {
     await expect(
       getSessionKeywords({
         sessionId: "session-1",
-        dictionaryTerms: ["Corola"],
+        dictionaryTerms: ["MinutesWise"],
       }),
-    ).resolves.toEqual(expect.arrayContaining(["Corola", "Launch"]));
+    ).resolves.toEqual(expect.arrayContaining(["MinutesWise", "Launch"]));
   });
 
   it("prioritizes mapped participants and attached event attendees", async () => {
@@ -200,10 +200,14 @@ describe("getSessionKeywords", () => {
 
     const result = await getSessionKeywords({
       sessionId: "session-1",
-      dictionaryTerms: ["Corola"],
+      dictionaryTerms: ["MinutesWise"],
     });
 
-    expect(result.slice(0, 3)).toEqual(["Alice Kim", "Mina Park", "Corola"]);
+    expect(result.slice(0, 3)).toEqual([
+      "Alice Kim",
+      "Mina Park",
+      "MinutesWise",
+    ]);
     expect(result).toEqual(expect.arrayContaining(["Launch"]));
     expect(result).not.toContain("John Jeong");
   });
@@ -237,30 +241,29 @@ describe("buildKeywords", () => {
 describe("dictionary term helpers", () => {
   it("parses stored JSON dictionary terms", () => {
     expect(
-      parseDictionaryTermsJson(JSON.stringify(["Corola", "Char"])),
-    ).toEqual(["Corola", "Char"]);
-    expect(parseDictionaryTermsJson(["Corola", " corola "])).toEqual([
-      "Corola",
+      parseDictionaryTermsJson(JSON.stringify(["MinutesWise", "Char"])),
+    ).toEqual(["MinutesWise", "Char"]);
+    expect(parseDictionaryTermsJson(["MinutesWise", " minuteswise "])).toEqual([
+      "MinutesWise",
     ]);
     expect(parseDictionaryTermsJson("not-json")).toEqual([]);
   });
 
   it("parses newline and comma separated terms", () => {
     expect(
-      parseDictionaryTermsText("Corola\nFastConformer, Parakeet TDT"),
-    ).toEqual(["Corola", "FastConformer", "Parakeet TDT"]);
+      parseDictionaryTermsText("MinutesWise\nFastConformer, Parakeet TDT"),
+    ).toEqual(["MinutesWise", "FastConformer", "Parakeet TDT"]);
   });
 
   it("normalizes duplicate terms while preserving first spelling", () => {
-    expect(normalizeKeywordList(["Corola", " corola ", "Parakeet"])).toEqual([
-      "Corola",
-      "Parakeet",
-    ]);
+    expect(
+      normalizeKeywordList(["MinutesWise", " minuteswise ", "Parakeet"]),
+    ).toEqual(["MinutesWise", "Parakeet"]);
   });
 
   it("formats stored terms one per line", () => {
-    expect(formatDictionaryTerms(["Corola", "Parakeet TDT"])).toBe(
-      "Corola\nParakeet TDT",
+    expect(formatDictionaryTerms(["MinutesWise", "Parakeet TDT"])).toBe(
+      "MinutesWise\nParakeet TDT",
     );
   });
 });

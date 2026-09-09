@@ -53,7 +53,7 @@ describe("checkEventNotifications", () => {
     expect(mocks.showNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         source: { type: "calendar_event", event_id: "event-1" },
-        action_label: "Open Corola",
+        action_label: "Open MinutesWise",
         participants: null,
         event_details: null,
         options: null,

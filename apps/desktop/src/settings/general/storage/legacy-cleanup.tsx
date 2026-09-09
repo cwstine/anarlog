@@ -131,7 +131,7 @@ export function LegacyMigrationCleanupRow() {
     return {
       state: "unavailable" as const,
       label: t`Migration status unavailable`,
-      description: t`Corola will retry automatically. This does not affect your notes.`,
+      description: t`MinutesWise will retry automatically. This does not affect your notes.`,
     };
   })();
 

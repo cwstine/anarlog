@@ -198,8 +198,8 @@ function PermissionsSectionContent({
 
       <div className="flex flex-col gap-2">
         <PermissionBlock
-          enabledLabel={t`Corola can hear your voice`}
-          enableLabel={t`Help Corola listen to you`}
+          enabledLabel={t`MinutesWise can hear your voice`}
+          enableLabel={t`Help MinutesWise listen to you`}
           enabledBody={t`Microphone access turned on`}
           enableBody={mic.error ?? t`Use your microphone to capture your voice`}
           Icon={Microphone}
@@ -216,8 +216,8 @@ function PermissionsSectionContent({
         />
 
         <PermissionBlock
-          enabledLabel={t`Corola can hear others`}
-          enableLabel={t`Help Corola listen to others`}
+          enabledLabel={t`MinutesWise can hear others`}
+          enableLabel={t`Help MinutesWise listen to others`}
           enabledBody={t`System audio enabled`}
           enableBody={
             systemAudio.error ?? t`Use system audio to capture other speakers`
@@ -239,12 +239,12 @@ function PermissionsSectionContent({
 
         {accessibility && (
           <PermissionBlock
-            enabledLabel={t`Corola can read meeting details`}
-            enableLabel={t`Help Corola read meeting activity`}
+            enabledLabel={t`MinutesWise can read meeting details`}
+            enableLabel={t`Help MinutesWise read meeting activity`}
             enabledBody={t`Meeting details access turned on`}
             enableBody={
               accessibilityGuidance
-                ? t`Opens System Settings and guides you to add Corola to the ${accessibilityGuidance.paneTitle ?? "Privacy"} list`
+                ? t`Opens System Settings and guides you to add MinutesWise to the ${accessibilityGuidance.paneTitle ?? "Privacy"} list`
                 : t`Read meeting controls and visible chat`
             }
             Icon={Cursor}

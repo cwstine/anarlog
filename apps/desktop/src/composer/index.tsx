@@ -100,7 +100,7 @@ export function ComposerScreen() {
               }
               onStop={sessionProps.stop}
               onSendMessage={sendMessage}
-              title={currentChatGroup?.title || t`Ask Corola AI anything`}
+              title={currentChatGroup?.title || t`Ask MinutesWise AI anything`}
             />
           ) : (
             <ComposerSettingsCard />
@@ -226,7 +226,7 @@ function ComposerInput({
             ])}
           >
             <ArrowUpRight className="size-3.5" />
-            {t`Open Corola`}
+            {t`Open MinutesWise`}
           </button>
           <button
             type="button"
@@ -307,7 +307,7 @@ function ComposerInput({
 
 const composerPlaceholder: PlaceholderFunction = ({ node, pos }) => {
   if (node.type.name === "paragraph" && pos === 0) {
-    return t`Message Corola AI`;
+    return t`Message MinutesWise AI`;
   }
 
   return "";

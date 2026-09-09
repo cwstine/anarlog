@@ -75,13 +75,13 @@ import {
 describe("buildMcpConfiguration", () => {
   it("uses the exact installed CLI path", () => {
     const configuration = JSON.parse(
-      buildMcpConfiguration("/Users/test/.local/bin/corola"),
+      buildMcpConfiguration("/Users/test/.local/bin/minuteswise"),
     );
 
     expect(configuration).toEqual({
       mcpServers: {
-        corola: {
-          command: "/Users/test/.local/bin/corola",
+        minuteswise: {
+          command: "/Users/test/.local/bin/minuteswise",
           args: ["mcp"],
         },
       },
@@ -94,12 +94,12 @@ describe("getCliInstallNotification", () => {
     expect(
       getCliInstallNotification({
         supported: true,
-        commandName: "corola",
-        installPath: "/Users/test/.local/bin/corola",
+        commandName: "minuteswise",
+        installPath: "/Users/test/.local/bin/minuteswise",
         state: "installed",
         details: "Installed.",
       }),
-    ).toEqual({ type: "success", message: "corola is ready to use" });
+    ).toEqual({ type: "success", message: "minuteswise is ready to use" });
   });
 
   it.each(["resource_missing", "unsupported"] as const)(
@@ -108,8 +108,8 @@ describe("getCliInstallNotification", () => {
       expect(
         getCliInstallNotification({
           supported: false,
-          commandName: "corola",
-          installPath: "/Users/test/.local/bin/corola",
+          commandName: "minuteswise",
+          installPath: "/Users/test/.local/bin/minuteswise",
           state,
           details: "The CLI is unavailable in this build.",
         }),
@@ -142,8 +142,8 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: true,
-        commandName: "corola",
-        installPath: "/Users/test/.local/bin/corola",
+        commandName: "minuteswise",
+        installPath: "/Users/test/.local/bin/minuteswise",
         state: "installed",
         details: "Installed.",
       },
@@ -172,11 +172,11 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: true,
-        commandName: "corola",
-        installPath: "/Users/test/.local/bin/corola",
+        commandName: "minuteswise",
+        installPath: "/Users/test/.local/bin/minuteswise",
         state: "installed",
         details:
-          "Installed at /Users/test/.local/bin/corola and managed by Corola.",
+          "Installed at /Users/test/.local/bin/minuteswise and managed by MinutesWise.",
       },
     });
 
@@ -193,18 +193,18 @@ describe("SettingsDevelopers", () => {
     expect(screen.getByLabelText("Installed")).toBeTruthy();
     expect(screen.queryByText("Installed")).toBeNull();
     expect(
-      screen.queryByText(/\/Users\/test\/\.local\/bin\/corola/),
+      screen.queryByText(/\/Users\/test\/\.local\/bin\/minuteswise/),
     ).toBeNull();
-    expect(screen.queryByText("corola --json meetings list")).toBeNull();
-    expect(screen.queryByText("corola mcp")).toBeNull();
+    expect(screen.queryByText("minuteswise --json meetings list")).toBeNull();
+    expect(screen.queryByText("minuteswise mcp")).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: "Copy config" }));
 
     await waitFor(() => expect(writeText).toHaveBeenCalledOnce());
     expect(JSON.parse(writeText.mock.calls[0][0])).toEqual({
       mcpServers: {
-        corola: {
-          command: "/Users/test/.local/bin/corola",
+        minuteswise: {
+          command: "/Users/test/.local/bin/minuteswise",
           args: ["mcp"],
         },
       },
@@ -216,8 +216,8 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: false,
-        commandName: "corola-dev",
-        installPath: "/Users/test/.local/bin/corola-dev",
+        commandName: "minuteswise-dev",
+        installPath: "/Users/test/.local/bin/minuteswise-dev",
         state: "unsupported",
         details: "Bundled CLI installation is currently available on macOS.",
       },
@@ -237,7 +237,7 @@ describe("SettingsDevelopers", () => {
     });
     expect(copyButton.hasAttribute("disabled")).toBe(true);
     expect(
-      screen.queryByText(/\/Users\/test\/\.local\/bin\/corola-dev/),
+      screen.queryByText(/\/Users\/test\/\.local\/bin\/minuteswise-dev/),
     ).toBeNull();
   });
 
@@ -246,8 +246,8 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: false,
-        commandName: "corola",
-        installPath: "/Users/test/.local/bin/corola",
+        commandName: "minuteswise",
+        installPath: "/Users/test/.local/bin/minuteswise",
         state: "unsupported",
         details: "Unavailable.",
       },
@@ -260,28 +260,28 @@ describe("SettingsDevelopers", () => {
           displayName: "Claude Code",
           detected: true,
           installed: true,
-          skillPath: "/Users/test/.claude/skills/corola",
+          skillPath: "/Users/test/.claude/skills/minuteswise",
         },
         {
           agent: "codex",
           displayName: "Codex",
           detected: true,
           installed: false,
-          skillPath: "/Users/test/.codex/skills/corola",
+          skillPath: "/Users/test/.codex/skills/minuteswise",
         },
         {
           agent: "cursor",
           displayName: "Cursor",
           detected: false,
           installed: false,
-          skillPath: "/Users/test/.cursor/skills/corola",
+          skillPath: "/Users/test/.cursor/skills/minuteswise",
         },
         {
           agent: "opencode",
           displayName: "OpenCode",
           detected: true,
           installed: false,
-          skillPath: "/Users/test/.config/opencode/skills/corola",
+          skillPath: "/Users/test/.config/opencode/skills/minuteswise",
         },
       ],
     });
@@ -337,7 +337,7 @@ describe("SettingsDevelopers", () => {
     expect(mocks.installAgentSkill).not.toHaveBeenCalledWith("cursor");
     await waitFor(() =>
       expect(mocks.toastSuccess).toHaveBeenCalledWith(
-        "Corola skill added to 3 agents",
+        "MinutesWise skill added to 3 agents",
       ),
     );
   });
@@ -347,8 +347,8 @@ describe("SettingsDevelopers", () => {
       status: "ok",
       data: {
         supported: false,
-        commandName: "corola",
-        installPath: "/Users/test/.local/bin/corola",
+        commandName: "minuteswise",
+        installPath: "/Users/test/.local/bin/minuteswise",
         state: "unsupported",
         details: "Unavailable.",
       },
@@ -361,7 +361,7 @@ describe("SettingsDevelopers", () => {
           displayName: "Codex",
           detected: true,
           installed: false,
-          skillPath: "/Users/test/.codex/skills/corola",
+          skillPath: "/Users/test/.codex/skills/minuteswise",
         },
       ],
     });
@@ -372,7 +372,7 @@ describe("SettingsDevelopers", () => {
         displayName: "Codex",
         detected: true,
         installed: true,
-        skillPath: "/Users/test/.codex/skills/corola",
+        skillPath: "/Users/test/.codex/skills/minuteswise",
       },
     });
 
@@ -392,7 +392,7 @@ describe("SettingsDevelopers", () => {
     );
     await waitFor(() =>
       expect(mocks.toastSuccess).toHaveBeenCalledWith(
-        "Corola skill added to Codex",
+        "MinutesWise skill added to Codex",
       ),
     );
   });

@@ -98,7 +98,7 @@ export function WebhooksSection() {
             {(field) => (
               <Input
                 className="h-8 max-w-md text-sm"
-                placeholder="https://example.com/webhooks/corola"
+                placeholder="https://example.com/webhooks/minuteswise"
                 value={field.state.value}
                 onChange={(event) => field.handleChange(event.target.value)}
               />

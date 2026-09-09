@@ -1,23 +1,23 @@
 ---
 title: "CLI reference"
-description: "Commands and global options available in the Corola CLI."
+description: "Commands and global options available in the MinutesWise CLI."
 ---
 
 ## Global syntax
 
 ```text
-corola [--base DIR] [--db-path FILE] [--json] <command>
+minuteswise [--base DIR] [--db-path FILE] [--json] <command>
 ```
 
 | Option | Environment variable | Behavior |
 | --- | --- | --- |
-| `--base DIR` | `COROLA_BASE` | Use `DIR/app.db`. |
-| `--db-path FILE` | `COROLA_DB_PATH` | Use an explicit SQLite file. |
+| `--base DIR` | `MINUTESWISE_BASE` | Use `DIR/app.db`. |
+| `--db-path FILE` | `MINUTESWISE_DB_PATH` | Use an explicit SQLite file. |
 | `--json` | — | Emit a versioned JSON response or machine-readable JSON error. |
 
-`--db-path` takes precedence over `--base`. Without either option, the CLI uses Corola's platform application-data directory and recognized legacy locations.
+`--db-path` takes precedence over `--base`. Without either option, the CLI uses MinutesWise's platform application-data directory and recognized legacy locations.
 
-On Flatpak, the host command is `corola-cli`. On DEB, AppImage, macOS, Windows, and Settings-installed builds, the command is `corola`. Substitute `corola-cli` only when that is the command on your PATH.
+On Flatpak, the host command is `minuteswise-cli`. On DEB, AppImage, macOS, Windows, and Settings-installed builds, the command is `minuteswise`. Substitute `minuteswise-cli` only when that is the command on your PATH.
 
 All commands operate on the local database. The CLI has no account, login, or
 hosted meeting source.
@@ -60,7 +60,7 @@ Pagination includes `offset`, `limit`, `returned`, optional `total`, and optiona
 ## Doctor command
 
 ```bash
-corola --json doctor
+minuteswise --json doctor
 ```
 
 Checks the resolved database path, read-only access, and required schema without changing data. It exits with status 0 when `ready` is true and status 1 when `ready` is false.
@@ -68,7 +68,7 @@ Checks the resolved database path, read-only access, and required schema without
 ## MCP command
 
 ```bash
-corola mcp
+minuteswise mcp
 ```
 
 Starts the local MCP server over stdio. Meeting reads are idempotent. Proposal tools stage or decline pending edits without applying them to the meeting. Do not write other output to the server's stdout.
@@ -76,8 +76,8 @@ Starts the local MCP server over stdio. Meeting reads are idempotent. Proposal t
 ## Help and version
 
 ```bash
-corola --help
-corola meetings --help
-corola meetings list --help
-corola --version
+minuteswise --help
+minuteswise meetings --help
+minuteswise meetings list --help
+minuteswise --version
 ```

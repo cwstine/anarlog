@@ -78,7 +78,7 @@ describe("DictionarySettings", () => {
 
   it("adds entered terms and keeps them normalized", async () => {
     const onSave = vi.fn();
-    render(<DictionarySettings terms={["Corola"]} onSave={onSave} />);
+    render(<DictionarySettings terms={["MinutesWise"]} onSave={onSave} />);
 
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: " FastConformer, Parakeet TDT " },
@@ -91,7 +91,7 @@ describe("DictionarySettings", () => {
 
     await waitFor(() =>
       expect(onSave).toHaveBeenCalledWith(
-        JSON.stringify(["Corola", "FastConformer", "Parakeet TDT"]),
+        JSON.stringify(["MinutesWise", "FastConformer", "Parakeet TDT"]),
       ),
     );
   });
@@ -99,20 +99,23 @@ describe("DictionarySettings", () => {
   it("removes saved terms", () => {
     const onSave = vi.fn();
     render(
-      <DictionarySettings terms={["Corola", "Parakeet TDT"]} onSave={onSave} />,
+      <DictionarySettings
+        terms={["MinutesWise", "Parakeet TDT"]}
+        onSave={onSave}
+      />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Remove Corola" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove MinutesWise" }));
 
     expect(onSave).toHaveBeenCalledWith(JSON.stringify(["Parakeet TDT"]));
   });
 
   it("does not enable adding duplicate terms", async () => {
     const onSave = vi.fn();
-    render(<DictionarySettings terms={["Corola"]} onSave={onSave} />);
+    render(<DictionarySettings terms={["MinutesWise"]} onSave={onSave} />);
 
     fireEvent.change(screen.getByRole("textbox"), {
-      target: { value: "corola" },
+      target: { value: "minuteswise" },
     });
 
     const addButton = screen.getByRole("button", {
@@ -126,7 +129,7 @@ describe("DictionarySettings", () => {
   it("filters saved terms while typing", async () => {
     render(
       <DictionarySettings
-        terms={["Corola", "FastConformer", "Parakeet TDT"]}
+        terms={["MinutesWise", "FastConformer", "Parakeet TDT"]}
         onSave={vi.fn()}
       />,
     );
@@ -136,7 +139,7 @@ describe("DictionarySettings", () => {
     });
 
     await waitFor(() => expect(screen.getByText("FastConformer")).toBeTruthy());
-    expect(screen.queryByText("Corola")).toBeNull();
+    expect(screen.queryByText("MinutesWise")).toBeNull();
     expect(screen.queryByText("Parakeet TDT")).toBeNull();
   });
 });

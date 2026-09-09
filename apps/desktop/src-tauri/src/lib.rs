@@ -35,7 +35,8 @@ const EXIT_FLUSH_FALLBACK_TIMEOUT: std::time::Duration = std::time::Duration::fr
 const EXIT_HARD_FALLBACK_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(12);
 
 fn sentry_disabled() -> bool {
-    std::env::var_os("COROLA_DISABLE_SENTRY").is_some()
+    std::env::var_os("MINUTESWISE_DISABLE_SENTRY").is_some()
+        || std::env::var_os("COROLA_DISABLE_SENTRY").is_some()
         || std::env::var_os("ANARLOG_DISABLE_SENTRY").is_some()
 }
 
@@ -86,7 +87,7 @@ fn run_crash_reporter_process() -> ! {
         dsn: option_env!("SENTRY_DSN")
             .filter(|_| !sentry_disabled())
             .and_then(|dsn| dsn.parse().ok()),
-        release: option_env!("APP_VERSION").map(|v| format!("corola-desktop@{}", v).into()),
+        release: option_env!("APP_VERSION").map(|v| format!("minuteswise-desktop@{}", v).into()),
         auto_session_tracking: false,
         before_send: Some(Arc::new(|event| {
             tauri_plugin_tracing::redaction::sanitize_sentry_event(event)
@@ -158,7 +159,7 @@ pub fn main() {
     startup::apply_linux_webkit_workarounds();
     // Sentry minidump reporting re-execs this binary with --crash-reporter-server.
     // That helper must reach minidump::init instead of the launch lock, or it
-    // shows "Corola is already starting" on every launch and never serves dumps.
+    // shows "MinutesWise is already starting" on every launch and never serves dumps.
     if startup::is_crash_reporter_process() {
         run_crash_reporter_process();
     }
@@ -224,7 +225,7 @@ pub fn main() {
 
         if let Some(dsn) = dsn {
             let release =
-                option_env!("APP_VERSION").map(|v| format!("corola-desktop@{}", v).into());
+                option_env!("APP_VERSION").map(|v| format!("minuteswise-desktop@{}", v).into());
 
             let client = sentry::init((
                 dsn,
@@ -248,7 +249,7 @@ pub fn main() {
             ));
 
             sentry::configure_scope(|scope| {
-                scope.set_tag("service.namespace", "corola");
+                scope.set_tag("service.namespace", "minuteswise");
                 scope.set_tag("service.name", "desktop");
                 scope.set_tag("enduser.pseudo.id", anlg_host::fingerprint());
                 scope.set_user(Some(sentry::User {
@@ -582,7 +583,7 @@ pub fn main() {
 }
 
 fn startup_failure_message(error: &impl std::fmt::Display) -> String {
-    format!("Corola failed to start: {error}")
+    format!("MinutesWise failed to start: {error}")
 }
 
 fn exit_after_startup_failure(identifier: &str, error: &impl std::fmt::Display) -> ! {
@@ -597,11 +598,11 @@ fn exit_after_startup_failure(identifier: &str, error: &impl std::fmt::Display) 
         // Startup can fail before the database is reachable, so the alert text
         // is fixed per failure class instead of embedding the error.
         let alert = if db::is_transient_lock_error(error) {
-            "display alert \"Corola is not ready yet\" message \"Another Corola process is still using your data, possibly finishing an update. Your existing data was left unchanged. Please wait a moment and open Corola again.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"MinutesWise is not ready yet\" message \"Another MinutesWise process is still using your data, possibly finishing an update. Your existing data was left unchanged. Please wait a moment and open MinutesWise again.\" as critical buttons {\"OK\"} default button \"OK\""
         } else if db::is_newer_schema_error(error) {
-            "display alert \"Corola needs an update\" message \"Your data was created by a newer version of Corola, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of Corola.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"MinutesWise needs an update\" message \"Your data was created by a newer version of MinutesWise, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of MinutesWise.\" as critical buttons {\"OK\"} default button \"OK\""
         } else {
-            "display alert \"Corola could not start\" message \"Your existing data was left unchanged. Please restart the app. If the problem continues, contact support.\" as critical buttons {\"OK\"} default button \"OK\""
+            "display alert \"MinutesWise could not start\" message \"Your existing data was left unchanged. Please restart the app. If the problem continues, contact support.\" as critical buttons {\"OK\"} default button \"OK\""
         };
         let _ = std::process::Command::new("/usr/bin/osascript")
             .args(["-e", alert])
@@ -633,7 +634,7 @@ fn append_startup_failure_to_log(identifier: &str, message: &str) {
             return;
         };
         let timestamp = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S%.6fZ");
-        let _ = writeln!(file, "{timestamp} ERROR corola::startup: {message}");
+        let _ = writeln!(file, "{timestamp} ERROR minuteswise::startup: {message}");
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -659,7 +660,8 @@ fn report_startup_failure_to_sentry(message: &str) {
     let guard = sentry::init((
         dsn,
         sentry::ClientOptions {
-            release: option_env!("APP_VERSION").map(|v| format!("corola-desktop@{}", v).into()),
+            release: option_env!("APP_VERSION")
+                .map(|v| format!("minuteswise-desktop@{}", v).into()),
             auto_session_tracking: false,
             before_send: Some(Arc::new(|event| {
                 tauri_plugin_tracing::redaction::sanitize_sentry_event(event)
@@ -769,7 +771,7 @@ mod test {
 
         assert_eq!(
             message,
-            "Corola failed to start: legacy import did not pass parity verification"
+            "MinutesWise failed to start: legacy import did not pass parity verification"
         );
     }
 
@@ -849,7 +851,7 @@ mod test {
         assert!(flatpak_desktop.contains("Name=MinutesWise"));
         assert!(flatpak_metadata.contains("<name>MinutesWise</name>"));
         for flatpak_file in [&flatpak_manifest, &flatpak_desktop, &flatpak_metadata] {
-            assert!(!flatpak_file.contains("com.corola"));
+            assert!(!flatpak_file.contains(&["com.", "co", "rola"].concat()));
             assert!(!flatpak_file.contains("anarlog.so"));
             assert!(!flatpak_file.contains("so.anarlog"));
             assert!(!flatpak_file.contains("com.hyprnote"));

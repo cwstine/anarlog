@@ -11,7 +11,7 @@ import {
 } from "./meeting-consent";
 
 const DISCLOSURE =
-  "I'm using Corola to record and transcribe this meeting.";
+  "I'm using MinutesWise to record and transcribe this meeting.";
 
 function attempt(
   delivery: DisclosureAttempt["delivery"] = "sent",

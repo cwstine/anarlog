@@ -3,7 +3,7 @@ source: apps/cli/src/cli.rs
 expression: canonicalize_json(contract)
 ---
 {
-  "about": "Access Corola from the command line",
+  "about": "Access MinutesWise from the command line",
   "global_options": [
     {
       "flags": "--base",
@@ -23,7 +23,7 @@ expression: canonicalize_json(contract)
       "required": false
     }
   ],
-  "name": "corola",
+  "name": "minuteswise",
   "options": [
     {
       "flags": "-h, --help",
@@ -41,7 +41,7 @@ expression: canonicalize_json(contract)
   "subcommands": [
     {
       "about": "Check the local CLI and database connection without changing data",
-      "name": "corola doctor",
+      "name": "minuteswise doctor",
       "options": [
         {
           "flags": "-h, --help",
@@ -50,11 +50,11 @@ expression: canonicalize_json(contract)
           "required": false
         }
       ],
-      "synopsis": "corola doctor [-h]"
+      "synopsis": "minuteswise doctor [-h]"
     },
     {
       "about": "Browse and export meetings",
-      "name": "corola meetings",
+      "name": "minuteswise meetings",
       "options": [
         {
           "flags": "-h, --help",
@@ -66,7 +66,7 @@ expression: canonicalize_json(contract)
       "subcommands": [
         {
           "about": "List meetings, optionally filtered by text or recurring series",
-          "name": "corola meetings list",
+          "name": "minuteswise meetings list",
           "options": [
             {
               "flags": "-q, --query",
@@ -103,7 +103,7 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola meetings list [-q] [--series-id] [--limit] [--offset] [-h]"
+          "synopsis": "minuteswise meetings list [-q] [--series-id] [--limit] [--offset] [-h]"
         },
         {
           "about": "Show meeting metadata, notes, summaries, people, and action items",
@@ -113,7 +113,7 @@ expression: canonicalize_json(contract)
               "required": true
             }
           ],
-          "name": "corola meetings get",
+          "name": "minuteswise meetings get",
           "options": [
             {
               "flags": "-h, --help",
@@ -122,7 +122,7 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola meetings get [-h] <id>"
+          "synopsis": "minuteswise meetings get [-h] <id>"
         },
         {
           "about": "Show the note or generated summaries for a meeting",
@@ -132,7 +132,7 @@ expression: canonicalize_json(contract)
               "required": true
             }
           ],
-          "name": "corola meetings note",
+          "name": "minuteswise meetings note",
           "options": [
             {
               "default": "note",
@@ -153,7 +153,7 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola meetings note [--kind] [-h] <id>"
+          "synopsis": "minuteswise meetings note [--kind] [-h] <id>"
         },
         {
           "about": "Show a bounded page of a meeting transcript",
@@ -163,7 +163,7 @@ expression: canonicalize_json(contract)
               "required": true
             }
           ],
-          "name": "corola meetings transcript",
+          "name": "minuteswise meetings transcript",
           "options": [
             {
               "default": "200",
@@ -188,7 +188,7 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola meetings transcript [--limit] [--offset] [-h] <id>"
+          "synopsis": "minuteswise meetings transcript [--limit] [--offset] [-h] <id>"
         },
         {
           "about": "List meetings from the same recurring series",
@@ -198,7 +198,7 @@ expression: canonicalize_json(contract)
               "required": true
             }
           ],
-          "name": "corola meetings history",
+          "name": "minuteswise meetings history",
           "options": [
             {
               "default": "20",
@@ -223,7 +223,7 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola meetings history [--limit] [--offset] [-h] <id>"
+          "synopsis": "minuteswise meetings history [--limit] [--offset] [-h] <id>"
         },
         {
           "about": "Export a meeting to Markdown or JSON",
@@ -233,7 +233,7 @@ expression: canonicalize_json(contract)
               "required": true
             }
           ],
-          "name": "corola meetings export",
+          "name": "minuteswise meetings export",
           "options": [
             {
               "default": "markdown",
@@ -265,14 +265,14 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola meetings export [--format] [-o] [--force] [-h] <id>"
+          "synopsis": "minuteswise meetings export [--format] [-o] [--force] [-h] <id>"
         }
       ],
-      "synopsis": "corola meetings [-h] <command>"
+      "synopsis": "minuteswise meetings [-h] <command>"
     },
     {
       "about": "Propose meeting edits for desktop review",
-      "name": "corola proposals",
+      "name": "minuteswise proposals",
       "options": [
         {
           "flags": "-h, --help",
@@ -284,7 +284,7 @@ expression: canonicalize_json(contract)
       "subcommands": [
         {
           "about": "Stage a summary or memo replacement for desktop review",
-          "name": "corola proposals create",
+          "name": "minuteswise proposals create",
           "options": [
             {
               "flags": "--meeting",
@@ -327,11 +327,11 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola proposals create <--meeting> <--kind> [--target] [--content] [--content-file] [-h]"
+          "synopsis": "minuteswise proposals create <--meeting> <--kind> [--target] [--content] [--content-file] [-h]"
         },
         {
           "about": "List staged meeting proposals",
-          "name": "corola proposals list",
+          "name": "minuteswise proposals list",
           "options": [
             {
               "flags": "--meeting",
@@ -368,7 +368,7 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola proposals list [--meeting] [--status] [--limit] [--offset] [-h]"
+          "synopsis": "minuteswise proposals list [--meeting] [--status] [--limit] [--offset] [-h]"
         },
         {
           "about": "Show one proposal and its unified diff",
@@ -378,7 +378,7 @@ expression: canonicalize_json(contract)
               "required": true
             }
           ],
-          "name": "corola proposals show",
+          "name": "minuteswise proposals show",
           "options": [
             {
               "flags": "-h, --help",
@@ -387,7 +387,7 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola proposals show [-h] <id>"
+          "synopsis": "minuteswise proposals show [-h] <id>"
         },
         {
           "about": "Decline a pending proposal without changing the meeting",
@@ -397,7 +397,7 @@ expression: canonicalize_json(contract)
               "required": true
             }
           ],
-          "name": "corola proposals decline",
+          "name": "minuteswise proposals decline",
           "options": [
             {
               "flags": "-h, --help",
@@ -406,14 +406,14 @@ expression: canonicalize_json(contract)
               "required": false
             }
           ],
-          "synopsis": "corola proposals decline [-h] <id>"
+          "synopsis": "minuteswise proposals decline [-h] <id>"
         }
       ],
-      "synopsis": "corola proposals [-h] <command>"
+      "synopsis": "minuteswise proposals [-h] <command>"
     },
     {
-      "about": "Run the Corola MCP server over stdio",
-      "name": "corola mcp",
+      "about": "Run the MinutesWise MCP server over stdio",
+      "name": "minuteswise mcp",
       "options": [
         {
           "flags": "-h, --help",
@@ -422,8 +422,8 @@ expression: canonicalize_json(contract)
           "required": false
         }
       ],
-      "synopsis": "corola mcp [-h]"
+      "synopsis": "minuteswise mcp [-h]"
     }
   ],
-  "synopsis": "corola [--base] [--db-path] [--json] [-h] [-V] <command>"
+  "synopsis": "minuteswise [--base] [--db-path] [--json] [-h] [-V] <command>"
 }

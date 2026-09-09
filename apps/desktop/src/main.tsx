@@ -49,6 +49,7 @@ import { startInteractionProfiler } from "./shared/perf/interaction-profiler";
 import { bootstrapThemeFromSettings } from "./shared/theme/apply";
 import { AppThemeProvider } from "./shared/theme/provider";
 import type { ThemePreference } from "./shared/theme/resolve";
+import { LEGACY_ANALYTICS_FIRST_OPEN_KEY } from "./shared/utils";
 import { createAITaskStore } from "./store/zustand/ai-task";
 import { listenerStore } from "./store/zustand/listener/instance";
 
@@ -140,12 +141,17 @@ const isMainWindow = getCurrentWebviewWindowLabel() === "main";
 if (isMainWindow) {
   void analyticsCommands.eventFireAndForget({ event: "app_started" });
   try {
-    const firstOpenKey = "corola:analytics:first-opened";
-    if (localStorage.getItem(firstOpenKey) === null) {
+    const firstOpenKey = "minuteswise:analytics:first-opened";
+    const wasOpenedBefore =
+      localStorage.getItem(firstOpenKey) !== null ||
+      localStorage.getItem(LEGACY_ANALYTICS_FIRST_OPEN_KEY) !== null;
+    if (!wasOpenedBefore) {
       localStorage.setItem(firstOpenKey, "1");
       trackAnalyticsEvent("app_first_opened", {
         first_open_marker: "local_install",
       });
+    } else if (localStorage.getItem(firstOpenKey) === null) {
+      localStorage.setItem(firstOpenKey, "1");
     }
   } catch {}
   void initializeAppExitFlush().catch((error) => {

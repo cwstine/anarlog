@@ -176,7 +176,7 @@ describe("isOnDeviceSttModel", () => {
     );
   });
 
-  test("keeps legacy Corola local selections working during migration", () => {
+  test("keeps legacy MinutesWise local selections working during migration", () => {
     expect(isOnDeviceSttModel("anarlog", "soniqo-parakeet-streaming")).toBe(
       true,
     );

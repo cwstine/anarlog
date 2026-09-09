@@ -185,11 +185,7 @@ export function ToastNotifications() {
             onOpenSTTSettings: handleOpenSTTSettings,
           })
         : null,
-    [
-      devtoolsPreview,
-      handleOpenLLMSettings,
-      handleOpenSTTSettings,
-    ],
+    [devtoolsPreview, handleOpenLLMSettings, handleOpenSTTSettings],
   );
 
   const registryPriorityToast =
@@ -330,7 +326,7 @@ function SonnerNotification({
 }
 
 const DAY_TOAST_SNOOZE_MS = 24 * 60 * 60 * 1_000;
-const DAY_TOAST_SNOOZE_KEY_PREFIX = "corola:toast:snoozed-until:";
+const DAY_TOAST_SNOOZE_KEY_PREFIX = "minuteswise:toast:snoozed-until:";
 
 function hasActiveDayToastSnooze(id: string): boolean {
   try {

@@ -88,7 +88,7 @@ export function StreamingView({
                 appears.
               </Trans>
             ) : (
-              <Trans>Tip: The Corola team loves our users!</Trans>
+              <Trans>Tip: The MinutesWise team loves our users!</Trans>
             )}
           </span>
         </p>

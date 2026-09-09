@@ -596,7 +596,7 @@ describe("runBatchSession", () => {
           title: "Transcription complete",
           message: "Your transcript is ready.",
           timeout: { secs: 15, nanos: 0 },
-          action_label: "Open Corola",
+          action_label: "Open MinutesWise",
           source: { type: "session", session_id: "session-1" },
         }),
       );

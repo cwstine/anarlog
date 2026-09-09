@@ -110,9 +110,9 @@ mod test {
     #[test]
     fn redacts_query_and_fragment_from_logged_urls() {
         let value = redact_url(
-            "corola://auth/callback?code=secret-code&state=secret-state#secret-fragment",
+            "minuteswise://auth/callback?code=secret-code&state=secret-state#secret-fragment",
         );
-        assert_eq!(value, "corola://auth/callback");
+        assert_eq!(value, "minuteswise://auth/callback");
     }
 
     fn export_docs() {

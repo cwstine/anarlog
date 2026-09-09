@@ -47,8 +47,8 @@ export function SettingsPrivacy() {
   const lockAppDescription = !authAvailable
     ? t`Device authentication is not available on this computer.`
     : platform() === "windows"
-      ? t`Require Windows Hello face, PIN, or password when opening Corola.`
-      : t`Require Touch ID or your password when opening Corola.`;
+      ? t`Require Windows Hello face, PIN, or password when opening MinutesWise.`
+      : t`Require Touch ID or your password when opening MinutesWise.`;
 
   return (
     <div className="flex flex-col gap-8">
@@ -83,7 +83,7 @@ export function SettingsPrivacy() {
         />
         <SettingSwitchRow
           title={t`Sentry`}
-          description={t`Send sanitized crash and error reports to help improve Corola.`}
+          description={t`Send sanitized crash and error reports to help improve MinutesWise.`}
           checked={sentryEnabled}
           onChange={(crashReportingConsent) => {
             setSettingValues({

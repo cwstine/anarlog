@@ -372,7 +372,7 @@ describe("SQLite settings", () => {
     ["soniqo-parakeet-streaming", "soniqo"],
     ["apple-speech", "apple_speech"],
   ])(
-    "moves the legacy Corola %s selection to its on-device provider",
+    "moves the legacy MinutesWise %s selection to its on-device provider",
     async (model, provider) => {
       let rows = [
         {
@@ -508,7 +508,7 @@ Start with decisions.`);
     mocks.execute.mockResolvedValue([
       {
         id: "personalization_dictionary_terms",
-        value_json: JSON.stringify(JSON.stringify(["Corola"])),
+        value_json: JSON.stringify(JSON.stringify(["MinutesWise"])),
       },
     ]);
 
@@ -517,7 +517,7 @@ Start with decisions.`);
       (current) => JSON.stringify([...JSON.parse(current ?? "[]"), "Erebor"]),
     );
 
-    expect(next).toBe(JSON.stringify(["Corola", "Erebor"]));
+    expect(next).toBe(JSON.stringify(["MinutesWise", "Erebor"]));
     const statement = mocks.executeTransaction.mock.calls[0][0][0];
     expect(statement.params.slice(0, 2)).toEqual([
       "personalization_dictionary_terms",

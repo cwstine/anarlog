@@ -12,7 +12,7 @@ use crate::Error;
 use anlg_agent_access as access;
 
 #[derive(Clone)]
-struct CorolaMcpServer {
+struct MinutesWiseMcpServer {
     db: Arc<anlg_db_core::Db>,
 }
 
@@ -31,17 +31,17 @@ enum ResourceRequest {
     },
 }
 
-impl CorolaMcpServer {
+impl MinutesWiseMcpServer {
     fn new(db: Arc<anlg_db_core::Db>) -> Self {
         Self { db }
     }
 }
 
 #[tool_router]
-impl CorolaMcpServer {
+impl MinutesWiseMcpServer {
     #[tool(
         title = "List meetings",
-        description = "List recent Corola meetings with pagination metadata. Use query to narrow by title or meeting id, then pass next_offset as offset to continue.",
+        description = "List recent MinutesWise meetings with pagination metadata. Use query to narrow by title or meeting id, then pass next_offset as offset to continue.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::MeetingPage>(),
         annotations(
             read_only_hint = true,
@@ -62,7 +62,7 @@ impl CorolaMcpServer {
 
     #[tool(
         title = "Get meeting",
-        description = "Get one Corola meeting with its canonical note, summaries, participants, and action items. Use get_meeting_transcript separately for transcript words.",
+        description = "Get one MinutesWise meeting with its canonical note, summaries, participants, and action items. Use get_meeting_transcript separately for transcript words.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::Meeting>(),
         annotations(
             read_only_hint = true,
@@ -83,7 +83,7 @@ impl CorolaMcpServer {
 
     #[tool(
         title = "Get meeting transcript",
-        description = "Get a bounded page of transcript words and readable text for a Corola meeting. Pass pagination.next_offset as offset to continue.",
+        description = "Get a bounded page of transcript words and readable text for a MinutesWise meeting. Pass pagination.next_offset as offset to continue.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::TranscriptPage>(),
         annotations(
             read_only_hint = true,
@@ -125,7 +125,7 @@ impl CorolaMcpServer {
 
     #[tool(
         title = "Export meeting",
-        description = "Get a complete Corola meeting export with notes, summaries, participants, action items, and transcripts.",
+        description = "Get a complete MinutesWise meeting export with notes, summaries, participants, action items, and transcripts.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::MeetingExport>(),
         annotations(
             read_only_hint = true,
@@ -146,7 +146,7 @@ impl CorolaMcpServer {
 
     #[tool(
         title = "Propose summary edit",
-        description = "Propose a complete summary replacement. The proposal stays pending until a human applies it in the Corola desktop app. Specify target_id when the meeting has multiple summaries.",
+        description = "Propose a complete summary replacement. The proposal stays pending until a human applies it in the MinutesWise desktop app. Specify target_id when the meeting has multiple summaries.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::Proposal>(),
         annotations(
             read_only_hint = false,
@@ -176,7 +176,7 @@ impl CorolaMcpServer {
 
     #[tool(
         title = "Propose memo edit",
-        description = "Propose a complete memo replacement. The proposal stays pending until a human applies it in the Corola desktop app.",
+        description = "Propose a complete memo replacement. The proposal stays pending until a human applies it in the MinutesWise desktop app.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::Proposal>(),
         annotations(
             read_only_hint = false,
@@ -206,7 +206,7 @@ impl CorolaMcpServer {
 
     #[tool(
         title = "List proposals",
-        description = "List staged Corola meeting proposals. Defaults to pending proposals. Pass status all to include applied and declined rows, and next_offset as offset to continue.",
+        description = "List staged MinutesWise meeting proposals. Defaults to pending proposals. Pass status all to include applied and declined rows, and next_offset as offset to continue.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::ProposalPage>(),
         annotations(
             read_only_hint = true,
@@ -227,7 +227,7 @@ impl CorolaMcpServer {
 
     #[tool(
         title = "Get proposal",
-        description = "Get one staged Corola proposal, including its unified diff. The proposal is not applied.",
+        description = "Get one staged MinutesWise proposal, including its unified diff. The proposal is not applied.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::Proposal>(),
         annotations(
             read_only_hint = true,
@@ -284,7 +284,7 @@ struct ProposeMemoInput {
 }
 
 #[tool_handler]
-impl ServerHandler for CorolaMcpServer {
+impl ServerHandler for MinutesWiseMcpServer {
     fn get_info(&self) -> ServerInfo {
         ServerInfo::new(
             ServerCapabilities::builder()
@@ -294,11 +294,11 @@ impl ServerHandler for CorolaMcpServer {
         )
         .with_protocol_version(ProtocolVersion::LATEST)
         .with_server_info(Implementation::new(
-            "corola",
+            "minuteswise",
             env!("CARGO_PKG_VERSION"),
         ))
         .with_instructions(
-            "Local access to Corola meeting data. Start with list_meetings to resolve a meeting_id, then call get_meeting for notes, summaries, participants, and action items. Request transcript pages with get_meeting_transcript and continue with pagination.next_offset; each page is capped at 500 words. Use get_recurring_meeting_history for series context. Use export_meeting only when the task needs the complete record including transcripts. To persist an edit, call propose_summary_edit or propose_memo_edit; the result stays pending until a human applies it in the desktop app. List or inspect staged work with list_proposals and get_proposal. decline_proposal discards a pending proposal without changing the meeting. Never invent meeting titles, dates, or ids. If list_meetings returns no meetings, say so. Never access SQLite directly, or claim a proposal was applied.",
+            "Local access to MinutesWise meeting data. Start with list_meetings to resolve a meeting_id, then call get_meeting for notes, summaries, participants, and action items. Request transcript pages with get_meeting_transcript and continue with pagination.next_offset; each page is capped at 500 words. Use get_recurring_meeting_history for series context. Use export_meeting only when the task needs the complete record including transcripts. To persist an edit, call propose_summary_edit or propose_memo_edit; the result stays pending until a human applies it in the desktop app. List or inspect staged work with list_proposals and get_proposal. decline_proposal discards a pending proposal without changing the meeting. Never invent meeting titles, dates, or ids. If list_meetings returns no meetings, say so. Never access SQLite directly, or claim a proposal was applied.",
         )
     }
 
@@ -339,8 +339,8 @@ impl ServerHandler for CorolaMcpServer {
                 } else {
                     meeting.title
                 };
-                RawResource::new(format!("corola://meetings/{}", meeting.id), name)
-                    .with_description("Corola meeting context")
+                RawResource::new(format!("minuteswise://meetings/{}", meeting.id), name)
+                    .with_description("MinutesWise meeting context")
                     .with_mime_type("text/markdown")
                     .no_annotation()
             })
@@ -361,21 +361,24 @@ impl ServerHandler for CorolaMcpServer {
         use rmcp::model::AnnotateAble;
 
         Ok(ListResourceTemplatesResult::with_all_items(vec![
-            RawResourceTemplate::new("corola://meetings/{meeting_id}", "Corola meeting")
+            RawResourceTemplate::new("minuteswise://meetings/{meeting_id}", "MinutesWise meeting")
                 .with_description("Meeting metadata, note, summaries, people, and action items")
                 .with_mime_type("text/markdown")
                 .no_annotation(),
             RawResourceTemplate::new(
-                "corola://meetings/{meeting_id}/transcript{?offset,limit}",
-                "Corola meeting transcript",
+                "minuteswise://meetings/{meeting_id}/transcript{?offset,limit}",
+                "MinutesWise meeting transcript",
             )
             .with_description("A bounded page of meeting transcript text")
             .with_mime_type("text/plain")
             .no_annotation(),
-            RawResourceTemplate::new("corola://series/{series_id}", "Corola meeting series")
-                .with_description("Recurring meeting history")
-                .with_mime_type("text/markdown")
-                .no_annotation(),
+            RawResourceTemplate::new(
+                "minuteswise://series/{series_id}",
+                "MinutesWise meeting series",
+            )
+            .with_description("Recurring meeting history")
+            .with_mime_type("text/markdown")
+            .no_annotation(),
         ]))
     }
 
@@ -437,7 +440,10 @@ impl ServerHandler for CorolaMcpServer {
                         } else {
                             &meeting.started_at
                         };
-                        format!("- {date} — [{title}](corola://meetings/{})", meeting.id)
+                        format!(
+                            "- {date} — [{title}](minuteswise://meetings/{})",
+                            meeting.id
+                        )
                     })
                     .collect::<Vec<_>>()
                     .join("\n");
@@ -450,7 +456,7 @@ impl ServerHandler for CorolaMcpServer {
 }
 
 pub async fn serve(db: Arc<anlg_db_core::Db>) -> crate::Result<()> {
-    let running = CorolaMcpServer::new(db)
+    let running = MinutesWiseMcpServer::new(db)
         .serve(rmcp::transport::stdio())
         .await
         .map_err(|error| Error::operation("start MCP server", error.to_string()))?;
@@ -463,10 +469,10 @@ pub async fn serve(db: Arc<anlg_db_core::Db>) -> crate::Result<()> {
 
 fn parse_resource_uri(uri: &str) -> std::result::Result<ResourceRequest, McpError> {
     let url = url::Url::parse(uri)
-        .map_err(|_| McpError::invalid_params("invalid Corola resource URI", None))?;
-    if url.scheme() != "corola" {
+        .map_err(|_| McpError::invalid_params("invalid MinutesWise resource URI", None))?;
+    if url.scheme() != "minuteswise" {
         return Err(McpError::invalid_params(
-            "resource URI must use the corola scheme",
+            "resource URI must use the minuteswise scheme",
             None,
         ));
     }
@@ -514,7 +520,7 @@ fn parse_resource_uri(uri: &str) -> std::result::Result<ResourceRequest, McpErro
             series_id: (*series_id).to_string(),
         }),
         _ => Err(McpError::invalid_params(
-            "unsupported Corola resource URI",
+            "unsupported MinutesWise resource URI",
             None,
         )),
     }
@@ -547,13 +553,13 @@ mod tests {
     #[test]
     fn parses_supported_resource_uris_and_bounds_transcript_limit() {
         assert_eq!(
-            parse_resource_uri("corola://meetings/meeting-1").unwrap(),
+            parse_resource_uri("minuteswise://meetings/meeting-1").unwrap(),
             ResourceRequest::Meeting {
                 meeting_id: "meeting-1".to_string()
             }
         );
         assert_eq!(
-            parse_resource_uri("corola://meetings/meeting-1/transcript?offset=4&limit=900")
+            parse_resource_uri("minuteswise://meetings/meeting-1/transcript?offset=4&limit=900")
                 .unwrap(),
             ResourceRequest::Transcript {
                 meeting_id: "meeting-1".to_string(),
@@ -567,7 +573,7 @@ mod tests {
     #[tokio::test]
     async fn server_advertises_tools_and_resources() {
         let db = Arc::new(anlg_db_core::Db::connect_memory_plain().await.unwrap());
-        let info = CorolaMcpServer::new(db).get_info();
+        let info = MinutesWiseMcpServer::new(db).get_info();
         assert!(info.capabilities.tools.is_some());
         assert!(info.capabilities.resources.is_some());
         let instructions = info.instructions.unwrap();
@@ -588,7 +594,7 @@ mod tests {
         .execute(db.pool())
         .await
         .unwrap();
-        let server = CorolaMcpServer::new(Arc::new(db));
+        let server = MinutesWiseMcpServer::new(Arc::new(db));
 
         let result = server
             .list_meetings(Parameters(access::ListMeetingsInput {
@@ -618,7 +624,7 @@ mod tests {
         .await
         .unwrap();
         let (server_transport, client_transport) = tokio::io::duplex(64 * 1024);
-        let server = CorolaMcpServer::new(Arc::new(db));
+        let server = MinutesWiseMcpServer::new(Arc::new(db));
         let info = server.get_info();
         let server_handle = tokio::spawn(async move { server.serve(server_transport).await });
 
@@ -657,7 +663,7 @@ mod tests {
             ]
         );
         let mcp_docs = include_str!("../../../docs/reference/mcp.mdx");
-        let mcp_skill = include_str!("../../../skills/corola/references/mcp.md");
+        let mcp_skill = include_str!("../../../skills/minuteswise/references/mcp.md");
         for tool_name in &tool_names {
             assert!(
                 mcp_docs.contains(tool_name),
@@ -665,7 +671,7 @@ mod tests {
             );
             assert!(
                 mcp_skill.contains(tool_name),
-                "Corola skill is missing `{tool_name}`"
+                "MinutesWise skill is missing `{tool_name}`"
             );
         }
         for tool in tools {
@@ -713,29 +719,32 @@ mod tests {
             template_contract,
             [
                 (
-                    "Corola meeting".to_string(),
-                    "corola://meetings/{meeting_id}".to_string(),
+                    "MinutesWise meeting".to_string(),
+                    "minuteswise://meetings/{meeting_id}".to_string(),
                     None,
                 ),
                 (
-                    "Corola meeting transcript".to_string(),
-                    "corola://meetings/{meeting_id}/transcript{?offset,limit}".to_string(),
+                    "MinutesWise meeting transcript".to_string(),
+                    "minuteswise://meetings/{meeting_id}/transcript{?offset,limit}".to_string(),
                     None,
                 ),
                 (
-                    "Corola meeting series".to_string(),
-                    "corola://series/{series_id}".to_string(),
+                    "MinutesWise meeting series".to_string(),
+                    "minuteswise://series/{series_id}".to_string(),
                     None,
                 ),
             ]
         );
         for (_, uri, _) in &template_contract {
             assert!(mcp_docs.contains(uri), "MCP docs are missing `{uri}`");
-            assert!(mcp_skill.contains(uri), "Corola skill is missing `{uri}`");
+            assert!(
+                mcp_skill.contains(uri),
+                "MinutesWise skill is missing `{uri}`"
+            );
         }
         assert_eq!(resources.len(), 1);
         assert_eq!(resources[0].raw.name, "Planning");
-        assert_eq!(resources[0].raw.uri, "corola://meetings/meeting-1");
+        assert_eq!(resources[0].raw.uri, "minuteswise://meetings/meeting-1");
         assert!(resources[0].annotations.is_none());
 
         client.cancel().await.unwrap();

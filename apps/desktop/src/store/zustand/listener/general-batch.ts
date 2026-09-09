@@ -56,7 +56,7 @@ export async function showBatchCompletedNotification(
       start_time: null,
       participants: null,
       event_details: null,
-      action_label: t`Open Corola`,
+      action_label: t`Open MinutesWise`,
       action_variant: null,
       options: null,
       footer: null,

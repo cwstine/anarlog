@@ -6,15 +6,15 @@ use anlg_agent_access::{DEFAULT_TRANSCRIPT_LIMIT, MAX_TRANSCRIPT_LIMIT};
 
 #[derive(Debug, Parser)]
 #[command(
-    name = "corola",
+    name = "minuteswise",
     version,
-    about = "Access Corola from the command line"
+    about = "Access MinutesWise from the command line"
 )]
 pub struct Args {
     #[arg(
         long,
         global = true,
-        env = "COROLA_BASE",
+        env = "MINUTESWISE_BASE",
         hide_env_values = true,
         value_name = "DIR"
     )]
@@ -23,7 +23,7 @@ pub struct Args {
     #[arg(
         long,
         global = true,
-        env = "COROLA_DB_PATH",
+        env = "MINUTESWISE_DB_PATH",
         hide_env_values = true,
         value_name = "FILE"
     )]
@@ -82,7 +82,7 @@ pub enum Command {
         #[command(subcommand)]
         command: ProposalCommand,
     },
-    /// Run the Corola MCP server over stdio
+    /// Run the MinutesWise MCP server over stdio
     Mcp,
 }
 
@@ -201,11 +201,19 @@ pub enum ExportFormat {
 mod tests {
     use super::*;
     use clap::CommandFactory;
+    use std::ffi::OsStr;
 
     #[test]
     fn parses_meeting_list_filters() {
         let args = Args::parse_from([
-            "corola", "--json", "meetings", "list", "--query", "planning", "--limit", "10",
+            "minuteswise",
+            "--json",
+            "meetings",
+            "list",
+            "--query",
+            "planning",
+            "--limit",
+            "10",
         ]);
 
         assert!(args.json);
@@ -222,7 +230,22 @@ mod tests {
     #[test]
     fn help_exposes_mcp_and_export() {
         let help = Args::command().render_long_help().to_string();
-        assert_eq!(env!("CARGO_PKG_NAME"), "corola-cli");
+        assert_eq!(env!("CARGO_PKG_NAME"), "minuteswise-cli");
+        let command = Args::command();
+        assert_eq!(
+            command
+                .get_arguments()
+                .find(|argument| argument.get_id() == "base")
+                .and_then(|argument| argument.get_env()),
+            Some(OsStr::new("MINUTESWISE_BASE"))
+        );
+        assert_eq!(
+            command
+                .get_arguments()
+                .find(|argument| argument.get_id() == "db_path")
+                .and_then(|argument| argument.get_env()),
+            Some(OsStr::new("MINUTESWISE_DB_PATH"))
+        );
         assert!(!help.contains("auth"));
         assert!(!help.contains("--source"));
         assert!(help.contains("meetings"));
@@ -231,7 +254,7 @@ mod tests {
         assert!(help.contains("proposals"));
 
         let Command::Meetings { command } = Args::parse_from([
-            "corola",
+            "minuteswise",
             "meetings",
             "export",
             "meeting-1",
@@ -254,7 +277,7 @@ mod tests {
     #[test]
     fn parses_transcript_and_history_pagination() {
         let Command::Meetings { command } = Args::parse_from([
-            "corola",
+            "minuteswise",
             "meetings",
             "transcript",
             "meeting-1",
@@ -277,7 +300,7 @@ mod tests {
         ));
 
         let Command::Meetings { command } = Args::parse_from([
-            "corola",
+            "minuteswise",
             "meetings",
             "history",
             "meeting-1",
@@ -297,7 +320,8 @@ mod tests {
     #[test]
     fn export_force_requires_an_output_path() {
         assert!(
-            Args::try_parse_from(["corola", "meetings", "export", "meeting-1", "--force"]).is_err()
+            Args::try_parse_from(["minuteswise", "meetings", "export", "meeting-1", "--force"])
+                .is_err()
         );
     }
 
@@ -305,8 +329,8 @@ mod tests {
     fn public_docs_and_skill_cover_the_command_contract() {
         let docs = include_str!("../../../docs/reference/cli.mdx");
         let skill = concat!(
-            include_str!("../../../skills/corola/references/cli.md"),
-            include_str!("../../../skills/corola/references/setup.md"),
+            include_str!("../../../skills/minuteswise/references/cli.md"),
+            include_str!("../../../skills/minuteswise/references/setup.md"),
         );
         let command = Args::command();
         let mut paths = Vec::new();
@@ -314,7 +338,10 @@ mod tests {
 
         for path in paths {
             assert!(docs.contains(&path), "CLI docs are missing `{path}`");
-            assert!(skill.contains(&path), "Corola skill is missing `{path}`");
+            assert!(
+                skill.contains(&path),
+                "MinutesWise skill is missing `{path}`"
+            );
         }
         assert_options_are_documented(&command, docs);
     }

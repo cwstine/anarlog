@@ -13,6 +13,9 @@ const SOURCE_EXTENSIONS = new Set([
 ]);
 const EXCLUDED_PATHS = new Set([
   "apps/desktop/src/shared/utils.ts",
+  "apps/desktop/src/shared/brand-loading-view.tsx",
+  "apps/desktop/src/shared/corola-mark.tsx",
+  "apps/cli/src/db.rs",
   "apps/desktop/src-tauri/src/embedded_cli.rs",
   "apps/desktop/src-tauri/src/legacy_credentials.rs",
   "plugins/tray/src/menu_items/tray_version.rs",
@@ -37,7 +40,7 @@ function collectSourceFiles(relativePath: string): string[] {
   });
 }
 
-describe("Corola brand boundary", () => {
+describe("MinutesWise brand boundary", () => {
   const productSources = [
     ...collectSourceFiles("apps/desktop/src"),
     ...collectSourceFiles("apps/desktop/src-tauri/src"),
@@ -57,7 +60,9 @@ describe("Corola brand boundary", () => {
   it("does not expose the previous product names", () => {
     for (const relativePath of productSources) {
       const source = readFileSync(join(REPO_ROOT, relativePath), "utf8");
-      expect(source, relativePath).not.toMatch(/\b(?:Anarlog|Hyprnote|Char)\b/);
+      expect(source, relativePath).not.toMatch(
+        /\b(?:Anarlog|Hyprnote|Char)\b|\b[Cc]orola\b/,
+      );
     }
   });
 

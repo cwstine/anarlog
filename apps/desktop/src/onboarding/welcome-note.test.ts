@@ -35,7 +35,7 @@ it("reuses an existing onboarding welcome note", async () => {
   await expect(getOrCreateWelcomeSession()).resolves.toBe("welcome-session");
   expect(mocks.createSession).not.toHaveBeenCalled();
   expect(mocks.execute).toHaveBeenCalledWith(expect.any(String), [
-    "corola-welcome-v1",
+    "minuteswise-welcome-v1",
   ]);
 });
 
@@ -47,9 +47,9 @@ it("creates a local welcome note with normal meeting metadata", async () => {
 
   const [title, , initial] = mocks.createSession.mock.calls[0];
   const event = JSON.parse(initial.event_json);
-  expect(title).toBe("Welcome to Corola");
+  expect(title).toBe("Welcome to MinutesWise");
   expect(event.meeting_link).toBe("");
-  expect(event.tracking_id).toBe("corola-welcome-v1");
+  expect(event.tracking_id).toBe("minuteswise-welcome-v1");
   expect(initial.raw_md).toContain("on this device");
   expect(initial.raw_md).toContain("Record");
   expect(initial.raw_md).toContain("Settings → Transcription");

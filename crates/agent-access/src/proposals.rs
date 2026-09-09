@@ -18,7 +18,7 @@ const STATUS_DECLINED: &str = "declined";
 )]
 #[serde(rename_all = "snake_case")]
 pub struct CreateProposalInput {
-    #[schemars(description = "Corola meeting id")]
+    #[schemars(description = "MinutesWise meeting id")]
     pub meeting_id: String,
     #[schemars(description = "summary_replace or memo_replace")]
     pub kind: String,

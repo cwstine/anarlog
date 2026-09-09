@@ -5,7 +5,7 @@ import { Spinner } from "@anlg/ui/components/ui/spinner";
 
 import { useConfigValues } from "~/shared/config";
 import {
-  isCorolaCloudSttModel,
+  isMinutesWiseCloudSttModel,
   isLocalFileSttModel,
   isOnDeviceSttModel,
 } from "~/stt/capabilities";
@@ -67,7 +67,7 @@ export function useConnectionHealth(): HealthStatus {
     "local_file",
   ].includes(current_stt_provider ?? "");
   const isCloud =
-    isCorolaCloudSttModel(current_stt_provider, current_stt_model) ||
+    isMinutesWiseCloudSttModel(current_stt_provider, current_stt_model) ||
     !isManagedProvider;
   const isDeepgram = current_stt_provider === "deepgram";
 

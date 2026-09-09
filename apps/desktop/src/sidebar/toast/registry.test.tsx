@@ -120,7 +120,7 @@ describe("sidebar toast registry", () => {
 
     expect(toast).toMatchObject({
       id: "desktop-update:1.0.34:available",
-      description: "Corola 1.0.34 is available",
+      description: "MinutesWise 1.0.34 is available",
       lifecycle: { type: "persistent", dismissal: "day" },
       primaryAction: { label: "Download" },
     });
@@ -183,7 +183,7 @@ describe("sidebar toast registry", () => {
 
     expect(toast).toMatchObject({
       id: "desktop-update:1.0.34:downloading",
-      description: "Downloading Corola 1.0.34 (58%)",
+      description: "Downloading MinutesWise 1.0.34 (58%)",
       lifecycle: { type: "persistent", dismissal: "session" },
       loading: true,
     });
@@ -205,7 +205,7 @@ describe("sidebar toast registry", () => {
 
     expect(toast).toMatchObject({
       id: "desktop-update:1.0.34:ready",
-      description: "Corola 1.0.34 is ready to install",
+      description: "MinutesWise 1.0.34 is ready to install",
       lifecycle: { type: "persistent", dismissal: "session" },
       primaryAction: { label: "Restart" },
     });
@@ -230,7 +230,7 @@ describe("sidebar toast registry", () => {
 
     expect(toast).toMatchObject({
       id: "desktop-update:1.0.34:ready",
-      description: "Corola 1.0.34 is ready to install",
+      description: "MinutesWise 1.0.34 is ready to install",
       primaryAction: { label: "Restart" },
     });
 

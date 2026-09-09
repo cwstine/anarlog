@@ -15,7 +15,7 @@ import { ConnectSubscriptionDialog } from "./subscriptions/connect";
 
 import {
   filterProviders,
-  NonCorolaProviderCard,
+  NonMinutesWiseProviderCard,
   ProviderSearch,
   StyledStreamdown,
 } from "~/settings/ai/shared";
@@ -53,7 +53,7 @@ export function ConfigureProviders() {
           const providerId = provider.id;
           const twinId = subscriptionTwinId(providerId);
           return (
-            <NonCorolaProviderCard
+            <NonMinutesWiseProviderCard
               key={provider.id}
               config={provider}
               providerType="llm"

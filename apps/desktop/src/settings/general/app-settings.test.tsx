@@ -39,7 +39,7 @@ describe("AppSettingsView", () => {
     renderAppSettings();
 
     const loginSwitch = screen.getByRole("switch", {
-      name: "Start Corola at login",
+      name: "Start MinutesWise at login",
     });
 
     expect(loginSwitch.parentElement?.className).not.toContain("w-48");
@@ -58,7 +58,9 @@ describe("AppSettingsView", () => {
     expect(
       screen.queryByRole("switch", { name: "Show app in Dock" }),
     ).toBeNull();
-    expect(screen.queryByText("Open Corola from the menu bar.")).toBeNull();
+    expect(
+      screen.queryByText("Open MinutesWise from the menu bar."),
+    ).toBeNull();
     expect(screen.getByRole("switch", { name: "Show tray icon" })).toBeTruthy();
   });
 
@@ -66,7 +68,7 @@ describe("AppSettingsView", () => {
     renderAppSettings({ appStoreBuild: true });
 
     expect(
-      screen.queryByRole("switch", { name: "Start Corola at login" }),
+      screen.queryByRole("switch", { name: "Start MinutesWise at login" }),
     ).toBeNull();
     expect(
       screen.queryByRole("switch", { name: "Automatically install updates" }),

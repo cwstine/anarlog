@@ -78,7 +78,7 @@ export function isSupportedLocalSttModel(
   );
 }
 
-export function isCorolaCloudSttModel(
+export function isMinutesWiseCloudSttModel(
   provider?: string | null,
   model?: string | null,
 ) {

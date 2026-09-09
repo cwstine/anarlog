@@ -1,34 +1,34 @@
 ---
 title: "MCP for agents"
-description: "Connect an MCP client to Corola's local meeting context over stdio."
+description: "Connect an MCP client to MinutesWise's local meeting context over stdio."
 ---
 
 ## Configure local MCP
 
-The Corola CLI includes a local MCP server that communicates over standard input and output. It opens no port and does not send meeting data to Corola infrastructure.
+The MinutesWise CLI includes a local MCP server that communicates over standard input and output. It opens no port and does not send meeting data to MinutesWise infrastructure.
 
 Open the desktop app once so it can create the database. The app does not need to stay open after that.
 
 ```json
 {
   "mcpServers": {
-    "corola": {
-      "command": "corola",
+    "minuteswise": {
+      "command": "minuteswise",
       "args": ["mcp"]
     }
   }
 }
 ```
 
-If `corola` is not on the client's `PATH`, use the executable's absolute path as `command`. On Flatpak, substitute `corola-cli` for `corola`. Restart the client after changing its configuration.
+If `minuteswise` is not on the client's `PATH`, use the executable's absolute path as `command`. On Flatpak, substitute `minuteswise-cli` for `minuteswise`. Restart the client after changing its configuration.
 
 For a custom database path:
 
 ```json
 {
   "mcpServers": {
-    "corola": {
-      "command": "corola",
+    "minuteswise": {
+      "command": "minuteswise",
       "args": ["--db-path", "/path/to/app.db", "mcp"]
     }
   }
@@ -45,6 +45,6 @@ Use `get_recurring_meeting_history` with a known meeting ID when a task depends 
 
 To persist an edit, use local MCP `propose_summary_edit` or `propose_memo_edit`. The tool returns a pending proposal for review in the desktop app. Do not claim the meeting changed. Use `list_proposals` and `get_proposal` to inspect staged work. `decline_proposal` discards a pending proposal; applied or already-declined proposals cannot be declined.
 
-The server also exposes MCP resources (`corola://meetings/...`) for Markdown or plain-text context when the client prefers resources over tools.
+The server also exposes MCP resources (`minuteswise://meetings/...`) for Markdown or plain-text context when the client prefers resources over tools.
 
 See the [MCP reference](/reference/mcp) for exact parameters and resources.

@@ -7,7 +7,7 @@ import { SettingSwitchRow } from "~/settings/setting-row";
 export const privacyMessages = {
   title: msg`Privacy`,
   posthogTitle: msg`Share usage data`,
-  posthogDescription: msg`Help improve Corola with anonymous usage data.`,
+  posthogDescription: msg`Help improve MinutesWise with anonymous usage data.`,
 };
 
 interface SettingItem {
@@ -39,8 +39,10 @@ export function AppSettingsView({
           {!appStoreBuild && (
             <>
               <SettingSwitchRow
-                title={<Trans>Start Corola at login</Trans>}
-                description={<Trans>Have Corola ready when you sign in.</Trans>}
+                title={<Trans>Start MinutesWise at login</Trans>}
+                description={
+                  <Trans>Have MinutesWise ready when you sign in.</Trans>
+                }
                 checked={autostart.value}
                 onChange={autostart.onChange}
               />
@@ -50,7 +52,7 @@ export function AppSettingsView({
             <SettingSwitchRow
               title={<Trans>Show app in Dock</Trans>}
               description={
-                <Trans>Show Corola in the Dock and app switcher.</Trans>
+                <Trans>Show MinutesWise in the Dock and app switcher.</Trans>
               }
               checked={showAppInDock.value}
               onChange={showAppInDock.onChange}
@@ -60,7 +62,7 @@ export function AppSettingsView({
             title={<Trans>Show tray icon</Trans>}
             description={
               isMacos ? (
-                <Trans>Open Corola from the menu bar.</Trans>
+                <Trans>Open MinutesWise from the menu bar.</Trans>
               ) : undefined
             }
             checked={showTrayIcon.value}

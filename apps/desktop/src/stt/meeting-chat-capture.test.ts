@@ -298,7 +298,7 @@ describe("startMeetingChatCapture", () => {
   });
 
   test("excludes the generated disclosure while retaining participant chat", async () => {
-    const disclosure = "Corola disclosure";
+    const disclosure = "MinutesWise disclosure";
     captureMeetingChatMessagesMock.mockResolvedValue(captureResult([]));
     const stop = startMeetingChatCapture({
       sessionId: "session-1",

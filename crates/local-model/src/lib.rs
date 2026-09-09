@@ -58,7 +58,7 @@ impl GgufLlmModel {
     pub fn display_name(&self) -> &'static str {
         match self {
             GgufLlmModel::Llama3p2_3bQ4 => "Llama 3.2 3B Q4",
-            GgufLlmModel::AnarlogLLM => "Corola LLM",
+            GgufLlmModel::AnarlogLLM => "MinutesWise LLM",
             GgufLlmModel::Gemma3_4bQ4 => "Gemma 3 4B Q4",
         }
     }
@@ -274,7 +274,7 @@ impl DownloadableModel for LocalModel {
         match self {
             LocalModel::Soniqo(_) | LocalModel::AppleSpeech(_) => None,
             LocalModel::Whisper(model) => Some(model.model_url().to_string()),
-            // Existing Argmax model installations remain usable, but Corola does not
+            // Existing Argmax model installations remain usable, but MinutesWise does not
             // offer new downloads until those archives have a neutral upstream host.
             LocalModel::Am(_) => None,
             LocalModel::GgufLlm(model) => model.download_url(),
@@ -408,8 +408,8 @@ mod tests {
     }
 
     #[test]
-    fn retained_legacy_model_has_corola_display_name() {
-        assert_eq!(GgufLlmModel::AnarlogLLM.display_name(), "Corola LLM");
+    fn retained_legacy_model_has_minuteswise_display_name() {
+        assert_eq!(GgufLlmModel::AnarlogLLM.display_name(), "MinutesWise LLM");
     }
 
     #[test]

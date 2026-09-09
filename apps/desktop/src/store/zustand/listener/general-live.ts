@@ -206,7 +206,7 @@ const notifyTranscriptionStalled = () => {
     id: "live-transcription-stalled",
     duration: Infinity,
     description:
-      "Corola keeps recording. The missing part of the transcript will be rebuilt from the recording when you stop listening.",
+      "MinutesWise keeps recording. The missing part of the transcript will be rebuilt from the recording when you stop listening.",
   });
 };
 

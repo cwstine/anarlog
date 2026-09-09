@@ -60,11 +60,11 @@ mod tests {
     #[test]
     fn rejects_removed_account_product_paths() {
         for value in [
-            "corola://billing/refresh",
-            "corola://integration/callback?integration_id=example&status=success",
-            "corola://onboarding-demo/complete",
-            "corola://share/open?mode=account&share_id=ba5ca57a-8f88-44e8-ab92-f9e10c89425c",
-            "corola://auth/callback?access_token=access&refresh_token=refresh",
+            "minuteswise://billing/refresh",
+            "minuteswise://integration/callback?integration_id=example&status=success",
+            "minuteswise://onboarding-demo/complete",
+            "minuteswise://share/open?mode=account&share_id=ba5ca57a-8f88-44e8-ab92-f9e10c89425c",
+            "minuteswise://auth/callback?access_token=access&refresh_token=refresh",
         ] {
             assert!(
                 DeepLink::from_str(value).is_err(),
@@ -85,9 +85,10 @@ mod tests {
 
     #[test]
     fn parses_subscription_auth_custom_scheme_deeplink() {
-        let DeepLink::AuthCallback(search) =
-            DeepLink::from_str("corola://auth/callback?code=ac_nf5hq&state=xYc5ZmNlqtWTu3BIbfbVQg")
-                .unwrap();
+        let DeepLink::AuthCallback(search) = DeepLink::from_str(
+            "minuteswise://auth/callback?code=ac_nf5hq&state=xYc5ZmNlqtWTu3BIbfbVQg",
+        )
+        .unwrap();
 
         assert_eq!(search.code, "ac_nf5hq");
         assert_eq!(search.state.as_deref(), Some("xYc5ZmNlqtWTu3BIbfbVQg"));

@@ -183,7 +183,7 @@ export function NotificationSettingsView() {
               title={<Trans>Bounce app icon</Trans>}
               description={
                 <Trans>
-                  Get your attention when Corola finishes work in the
+                  Get your attention when MinutesWise finishes work in the
                   background.
                 </Trans>
               }

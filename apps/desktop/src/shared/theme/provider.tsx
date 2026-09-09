@@ -188,7 +188,9 @@ async function applyDockIcon(
   theme: ThemePreference,
   systemIsDark: boolean,
 ) {
-  const appIdentifier = await getIdentifier().catch(() => "com.corola.desktop");
+  const appIdentifier = await getIdentifier().catch(
+    () => "com.minuteswise.desktop",
+  );
 
   try {
     const result = await iconCommands.setDockIcon(

@@ -141,7 +141,7 @@ fn ui_content(deep_link: &DeepLink) -> (bool, &'static str, &'static str) {
         DeepLink::AuthCallback(_) => (
             true,
             "Connected successfully",
-            "Returning to Corola to finish connecting.",
+            "Returning to MinutesWise to finish connecting.",
         ),
     }
 }
@@ -182,7 +182,7 @@ async fn handle_request<R: tauri::Runtime>(
     shutdown.notify_one();
 
     // Provider authorization codes bounce through the custom scheme so the OS
-    // brings Corola back to the foreground after the loopback callback.
+    // brings MinutesWise back to the foreground after the loopback callback.
     Html(html)
 }
 
@@ -308,16 +308,19 @@ mod tests {
     #[test]
     fn subscription_code_bounces_through_custom_scheme_deeplink() {
         assert_eq!(
-            subscription_auth_deeplink("corola", &subscription_search()).as_deref(),
-            Some("corola://auth/callback?code=ac_nf5hq&state=state-1")
+            subscription_auth_deeplink("minuteswise", &subscription_search()).as_deref(),
+            Some("minuteswise://auth/callback?code=ac_nf5hq&state=state-1")
         );
-        let html = render_html(&DeepLink::AuthCallback(subscription_search()), "corola");
-        assert!(html.contains("corola://auth/callback?code=ac_nf5hq"));
+        let html = render_html(
+            &DeepLink::AuthCallback(subscription_search()),
+            "minuteswise",
+        );
+        assert!(html.contains("minuteswise://auth/callback?code=ac_nf5hq"));
         assert!(html.contains("state=state-1"));
         assert!(html.contains(r#"id="open-app""#));
         assert!(html.contains(r#"document.getElementById("open-app")?.click()"#));
         assert!(html.contains("Connected successfully"));
-        assert!(!html.contains("corola://focus"));
+        assert!(!html.contains("minuteswise://focus"));
     }
 
     #[test]
@@ -325,9 +328,9 @@ mod tests {
         let html = render_html_from_callback(
             "/auth/callback",
             "code=codex-code&state=s1&scope=openid",
-            "corola",
+            "minuteswise",
         );
-        assert!(html.contains("corola://auth/callback?code=codex-code"));
+        assert!(html.contains("minuteswise://auth/callback?code=codex-code"));
         assert!(html.contains("state=s1"));
     }
 }

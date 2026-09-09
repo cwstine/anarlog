@@ -16,7 +16,9 @@ const writeStoredThemePreference = vi.hoisted(() => vi.fn());
 const setDockIcon = vi.hoisted(() =>
   vi.fn(async () => ({ status: "ok", data: null })),
 );
-const getIdentifier = vi.hoisted(() => vi.fn(async () => "com.corola.desktop"));
+const getIdentifier = vi.hoisted(() =>
+  vi.fn(async () => "com.minuteswise.desktop"),
+);
 const nativeTheme = vi.hoisted(() => vi.fn(async () => "light"));
 const setNativeTheme = vi.hoisted(() => vi.fn(async () => undefined));
 const onThemeChanged = vi.hoisted(() =>
@@ -79,7 +81,7 @@ describe("AppThemeProvider", () => {
     writeStoredThemePreference.mockClear();
     setDockIcon.mockClear();
     getIdentifier.mockReset();
-    getIdentifier.mockResolvedValue("com.corola.desktop");
+    getIdentifier.mockResolvedValue("com.minuteswise.desktop");
     nativeTheme.mockReset();
     nativeTheme.mockResolvedValue("light");
     setNativeTheme.mockReset();
@@ -150,7 +152,7 @@ describe("AppThemeProvider", () => {
   });
 
   it("uses the channel-specific default Dock icon", async () => {
-    getIdentifier.mockResolvedValue("com.corola.staging");
+    getIdentifier.mockResolvedValue("com.minuteswise.staging");
     themeState.settingsReady = true;
 
     render(

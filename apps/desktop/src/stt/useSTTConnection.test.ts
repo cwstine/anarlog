@@ -59,7 +59,7 @@ vi.mock("~/shared/config", () => ({
 }));
 
 vi.mock("~/stt/capabilities", () => ({
-  isCorolaCloudSttModel: (provider: string, model: string) =>
+  isMinutesWiseCloudSttModel: (provider: string, model: string) =>
     provider === "anarlog" && model === "cloud",
   isLocalFileSttModel: (provider: string, model: string) =>
     provider === "local_file" && model === "local-file",

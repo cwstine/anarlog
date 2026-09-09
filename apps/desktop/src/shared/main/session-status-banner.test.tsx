@@ -27,7 +27,9 @@ describe("MainSessionStatusBannerHost", () => {
       </SessionStatusBannerProvider>,
     );
 
-    expect(screen.queryByText("Ask for consent when using Corola")).toBeNull();
+    expect(
+      screen.queryByText("Ask for consent when using MinutesWise"),
+    ).toBeNull();
   });
 
   it("positions skip reasons at the bottom of the main surface", () => {

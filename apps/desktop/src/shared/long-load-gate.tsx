@@ -103,7 +103,7 @@ function getStartupDetail(status: StartupStatus | undefined) {
 
 function StartupErrorView({ error }: { error: Error }) {
   const needsUpdate = error.message.includes(
-    "created by a newer version of Corola",
+    "created by a newer version of MinutesWise",
   );
 
   const handleRestart = async () => {
@@ -125,11 +125,13 @@ function StartupErrorView({ error }: { error: Error }) {
     >
       <div className="flex max-w-sm flex-col items-center gap-4 text-center">
         <h1 className="text-foreground text-base font-semibold">
-          {needsUpdate ? "Corola needs an update" : "Corola could not start"}
+          {needsUpdate
+            ? "MinutesWise needs an update"
+            : "MinutesWise could not start"}
         </h1>
         <p className="text-muted-foreground text-sm leading-relaxed">
           {needsUpdate
-            ? "Your data was created by a newer version of Corola, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of Corola."
+            ? "Your data was created by a newer version of MinutesWise, and this older version cannot open it. Your existing data was left unchanged. Please install the latest version of MinutesWise."
             : "Your existing data was left unchanged. Please restart the app. If the problem continues, contact support."}
         </p>
         {needsUpdate ? null : (

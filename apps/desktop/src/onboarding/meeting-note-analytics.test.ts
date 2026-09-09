@@ -28,7 +28,7 @@ describe("meeting note analytics", () => {
   it("classifies the onboarding demo as the welcome note", () => {
     expect(
       getMeetingNoteCompletionEvent({
-        tracking_id: "corola-welcome-v1",
+        tracking_id: "minuteswise-welcome-v1",
       }),
     ).toBe("welcome_meeting_note_completed");
   });
@@ -42,7 +42,7 @@ describe("meeting note analytics", () => {
 
   it("tracks completion after loading the persisted session", async () => {
     mocks.loadSessionContentSnapshot.mockResolvedValue({
-      event: { tracking_id: "corola-welcome-v1" },
+      event: { tracking_id: "minuteswise-welcome-v1" },
     });
 
     await trackMeetingNoteCompletion("session-1");

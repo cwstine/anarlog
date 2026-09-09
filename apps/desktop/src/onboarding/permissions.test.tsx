@@ -69,9 +69,11 @@ describe("PermissionsSection", () => {
   it("collects Accessibility permission on macOS", () => {
     const { container } = render(<PermissionsSection />);
 
-    expect(screen.getByText("Help Corola listen to you")).toBeTruthy();
-    expect(screen.getByText("Help Corola listen to others")).toBeTruthy();
-    expect(screen.getByText("Help Corola read meeting activity")).toBeTruthy();
+    expect(screen.getByText("Help MinutesWise listen to you")).toBeTruthy();
+    expect(screen.getByText("Help MinutesWise listen to others")).toBeTruthy();
+    expect(
+      screen.getByText("Help MinutesWise read meeting activity"),
+    ).toBeTruthy();
     expect(
       screen
         .getByRole("button", { name: "Enable accessibility" })
@@ -109,7 +111,9 @@ describe("PermissionsSection", () => {
 
     render(<PermissionsSection onContinue={onContinue} />);
 
-    expect(screen.queryByText("Help Corola read meeting activity")).toBeNull();
+    expect(
+      screen.queryByText("Help MinutesWise read meeting activity"),
+    ).toBeNull();
     expect(mocks.usePermission).not.toHaveBeenCalledWith("accessibility");
     expect(onContinue).toHaveBeenCalledTimes(1);
   });
@@ -165,7 +169,7 @@ describe("PermissionsSection", () => {
       name: "Open accessibility settings",
     });
     expect(row.getAttribute("title")).toBe(
-      "Opens System Settings and guides you to add Corola to the Accessibility list",
+      "Opens System Settings and guides you to add MinutesWise to the Accessibility list",
     );
 
     fireEvent.click(row);

@@ -287,11 +287,14 @@ describe("enhanceTransform.transformArgs", () => {
       { sessionId: "session-1", enhancedNoteId: "note-1" },
       {
         ...settingsValues,
-        personalization_dictionary_terms: JSON.stringify(["Corola", "Char"]),
+        personalization_dictionary_terms: JSON.stringify([
+          "MinutesWise",
+          "Char",
+        ]),
       },
     );
 
-    expect(result.dictionaryTerms).toEqual(["Corola", "Char"]);
+    expect(result.dictionaryTerms).toEqual(["MinutesWise", "Char"]);
   });
 
   it("falls back to generic enhancement when template loading fails", async () => {

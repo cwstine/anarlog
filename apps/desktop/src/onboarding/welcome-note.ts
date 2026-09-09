@@ -6,15 +6,15 @@ import { WELCOME_NOTE_TRACKING_ID } from "~/onboarding/welcome-note.constants";
 import { createSession } from "~/session/queries";
 import { DEFAULT_USER_ID } from "~/shared/utils";
 
-const PENDING_WELCOME_SESSION_KEY = "corola.pending-welcome-session";
+const PENDING_WELCOME_SESSION_KEY = "minuteswise.pending-welcome-session";
 
-const WELCOME_NOTE = `Welcome to Corola 👋
-
-
-Corola keeps your notes, recordings, and settings on this device.
+const WELCOME_NOTE = `Welcome to MinutesWise 👋
 
 
-Use **Record** in the top-right corner when you want Corola to capture a meeting. To create a transcript and notes, choose a provider in **Settings → Transcription**.
+MinutesWise keeps your notes, recordings, and settings on this device.
+
+
+Use **Record** in the top-right corner when you want MinutesWise to capture a meeting. To create a transcript and notes, choose a provider in **Settings → Transcription**.
 
 
 Your notes remain available locally even when the app is offline.`;
@@ -65,16 +65,16 @@ async function findOrCreateWelcomeSession(): Promise<string> {
   const event: SessionEvent = {
     tracking_id: WELCOME_NOTE_TRACKING_ID,
     calendar_id: "",
-    title: "Welcome to Corola",
+    title: "Welcome to MinutesWise",
     started_at: now,
     ended_at: "",
     is_all_day: false,
     has_recurrence_rules: false,
     meeting_link: "",
-    description: "A local introduction to Corola.",
+    description: "A local introduction to MinutesWise.",
   };
 
-  return createSession("Welcome to Corola", DEFAULT_USER_ID, {
+  return createSession("Welcome to MinutesWise", DEFAULT_USER_ID, {
     event_json: JSON.stringify(event),
     raw_md: JSON.stringify(md2json(WELCOME_NOTE)),
   });

@@ -3,13 +3,13 @@ import { describe, expect, test } from "vitest";
 import { sortProviders } from "./sort-providers";
 
 describe("sortProviders", () => {
-  test("keeps Corola first and Custom last", () => {
+  test("keeps MinutesWise first and Custom last", () => {
     const sorted = sortProviders(
       [
         { id: "custom", displayName: "Custom" },
         { id: "fireworks", displayName: "Fireworks", disabled: true },
         { id: "openai", displayName: "OpenAI" },
-        { id: "anarlog", displayName: "Corola" },
+        { id: "anarlog", displayName: "MinutesWise" },
       ],
       ["fireworks", "openai"],
     );

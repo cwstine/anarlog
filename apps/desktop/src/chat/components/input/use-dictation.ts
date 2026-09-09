@@ -62,7 +62,7 @@ export function useDictation({
       }
       if (captureState.data !== "inactive") {
         sonnerToast.warning(
-          t`Voice input is unavailable while Corola is recording a meeting.`,
+          t`Voice input is unavailable while MinutesWise is recording a meeting.`,
         );
         setPhase("idle");
         return;

@@ -470,7 +470,7 @@ export function useCaptureLifecycle(sessionId: string) {
             });
             if (transcriptWriteError || !details.liveTranscriptionActive) {
               await notifyFailure(
-                "Corola could not finish saving the transcript. The recording was kept so you can try again.",
+                "MinutesWise could not finish saving the transcript. The recording was kept so you can try again.",
                 "post-capture-transcript-incomplete",
               );
             } else {
@@ -504,8 +504,8 @@ export function useCaptureLifecycle(sessionId: string) {
         ) {
           await notifyFailure(
             details.audioPath
-              ? "Corola could not finish saving the transcript. The recording was kept so you can try again."
-              : "Corola could not save part of the live transcript.",
+              ? "MinutesWise could not finish saving the transcript. The recording was kept so you can try again."
+              : "MinutesWise could not save part of the live transcript.",
             details.audioPath
               ? "post-capture-transcript-incomplete"
               : "live-transcript-persist-failed",
@@ -587,7 +587,7 @@ export function useCaptureLifecycle(sessionId: string) {
                 error,
               );
               await notifyFailure(
-                "The transcript was saved, but Corola could not start the summary. Try generating it again.",
+                "The transcript was saved, but MinutesWise could not start the summary. Try generating it again.",
                 "post-capture-summary-failed",
               );
               await requestRecovery();
@@ -605,7 +605,7 @@ export function useCaptureLifecycle(sessionId: string) {
             summaryScheduled = false;
             console.error("[listener] failed to schedule summary", error);
             await notifyFailure(
-              "The transcript was saved, but Corola could not start the summary. Try generating it again.",
+              "The transcript was saved, but MinutesWise could not start the summary. Try generating it again.",
               "post-capture-summary-failed",
             );
           }

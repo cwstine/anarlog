@@ -97,7 +97,7 @@ function isDroppedErrorEvent(event: ErrorEvent): boolean {
   if (
     logger &&
     (logger.startsWith("tauri_plugin_tracing") ||
-      logger === "corola.webview.console" ||
+      logger === "minuteswise.webview.console" ||
       logger === "anarlog.webview.console" ||
       logger === "hyprnote.webview.console")
   ) {
@@ -239,7 +239,7 @@ export function initializeErrorReporting() {
   Sentry.init({
     dsn: env.VITE_SENTRY_DSN,
     release: env.VITE_APP_VERSION
-      ? `corola-desktop@${env.VITE_APP_VERSION}`
+      ? `minuteswise-desktop@${env.VITE_APP_VERSION}`
       : undefined,
     environment: import.meta.env.MODE,
     sendDefaultPii: false,
@@ -251,8 +251,8 @@ export function initializeErrorReporting() {
     initialScope: {
       tags: {
         "service.name": "desktop",
-        "service.namespace": "corola",
-        "corola.surface": "desktop",
+        "service.namespace": "minuteswise",
+        "minuteswise.surface": "desktop",
       },
     },
   });
@@ -368,22 +368,22 @@ export function captureOperationalError(
 
   return Sentry.withScope((scope) => {
     scope.setLevel(level);
-    scope.setTag("corola.operation", operation);
+    scope.setTag("minuteswise.operation", operation);
     scope.setTag("error.type", metadata.type);
     if (metadata.code) scope.setTag("error.code", metadata.code);
     if (metadata.stage) {
-      scope.setTag("corola.error.stage", metadata.stage);
+      scope.setTag("minuteswise.error.stage", metadata.stage);
     }
     if (metadata.status) {
       scope.setTag("http.response.status_code", metadata.status);
     }
     for (const [key, value] of Object.entries(tags ?? {})) {
       if (value !== null) {
-        scope.setTag(`corola.${key}`, value);
+        scope.setTag(`minuteswise.${key}`, value);
       }
     }
     if (context) {
-      scope.setContext("corola.operation", context);
+      scope.setContext("minuteswise.operation", context);
     }
     return Sentry.captureException(exception);
   });

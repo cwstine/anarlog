@@ -116,9 +116,9 @@ export function AppLockGate({ children }: { children: ReactNode }) {
       {locked ? (
         <div className="absolute inset-0">
           <LockScreen
-            title={t`Corola is Locked`}
+            title={t`MinutesWise is Locked`}
             description={hint}
-            action={t`View Corola`}
+            action={t`View MinutesWise`}
             authenticating={authenticating}
             onUnlock={() => {
               promptedRef.current = true;

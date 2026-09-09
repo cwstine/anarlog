@@ -9,7 +9,7 @@ import { useAiProvidersState } from "~/settings/providers";
 import { useSettingsReady } from "~/settings/queries";
 import { useConfigValues } from "~/shared/config";
 import {
-  isCorolaCloudSttModel,
+  isMinutesWiseCloudSttModel,
   isLocalFileSttModel,
   isOnDeviceSttModel,
   isRealtimeLocalModel,
@@ -44,7 +44,7 @@ export const useSTTConnection = () => {
   );
   const isLocalModel = !!localModel || isLocalFile;
 
-  const isCloudModel = isCorolaCloudSttModel(
+  const isCloudModel = isMinutesWiseCloudSttModel(
     current_stt_provider,
     current_stt_model,
   );

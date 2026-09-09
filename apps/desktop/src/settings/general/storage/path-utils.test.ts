@@ -6,7 +6,7 @@ describe("detectCloudStorageService", () => {
   it("detects iCloud Drive paths", () => {
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/Mobile Documents/com~apple~CloudDocs/Corola",
+        "/Users/john/Library/Mobile Documents/com~apple~CloudDocs/MinutesWise",
       ),
     ).toBe("iCloud Drive");
   });
@@ -22,17 +22,17 @@ describe("detectCloudStorageService", () => {
   it("detects file-provider mounts under Library/CloudStorage", () => {
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/CloudStorage/Dropbox/Corola",
+        "/Users/john/Library/CloudStorage/Dropbox/MinutesWise",
       ),
     ).toBe("Dropbox");
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/CloudStorage/OneDrive-Personal/Corola",
+        "/Users/john/Library/CloudStorage/OneDrive-Personal/MinutesWise",
       ),
     ).toBe("OneDrive");
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/CloudStorage/GoogleDrive-john@example.com/My Drive/Corola",
+        "/Users/john/Library/CloudStorage/GoogleDrive-john@example.com/My Drive/MinutesWise",
       ),
     ).toBe("Google Drive");
   });
@@ -40,26 +40,28 @@ describe("detectCloudStorageService", () => {
   it("falls back to the mount name for unknown providers", () => {
     expect(
       detectCloudStorageService(
-        "/Users/john/Library/CloudStorage/pCloud-john@example.com/Corola",
+        "/Users/john/Library/CloudStorage/pCloud-john@example.com/MinutesWise",
       ),
     ).toBe("pCloud");
   });
 
   it("detects legacy sync folders in the home directory", () => {
-    expect(detectCloudStorageService("/Users/john/Dropbox/Corola")).toBe(
+    expect(detectCloudStorageService("/Users/john/Dropbox/MinutesWise")).toBe(
       "Dropbox",
     );
-    expect(detectCloudStorageService("/Users/john/Google Drive/Corola")).toBe(
-      "Google Drive",
-    );
+    expect(
+      detectCloudStorageService("/Users/john/Google Drive/MinutesWise"),
+    ).toBe("Google Drive");
   });
 
   it("detects Windows sync folders", () => {
     expect(
-      detectCloudStorageService("C:\\Users\\john\\OneDrive - Acme\\Corola"),
+      detectCloudStorageService(
+        "C:\\Users\\john\\OneDrive - Acme\\MinutesWise",
+      ),
     ).toBe("OneDrive");
     expect(
-      detectCloudStorageService("C:\\Users\\john\\iCloudDrive\\Corola"),
+      detectCloudStorageService("C:\\Users\\john\\iCloudDrive\\MinutesWise"),
     ).toBe("iCloud Drive");
   });
 
@@ -70,7 +72,7 @@ describe("detectCloudStorageService", () => {
       ),
     ).toBeNull();
     expect(
-      detectCloudStorageService("/Users/john/Documents/Corola"),
+      detectCloudStorageService("/Users/john/Documents/MinutesWise"),
     ).toBeNull();
   });
 });

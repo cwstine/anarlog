@@ -149,7 +149,7 @@ function OnboardingScreenContent({
           transition={{ duration: 2, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
         >
           <img
-            src="/assets/corola-icon.png"
+            src="/assets/minuteswise-icon.png"
             alt=""
             className="absolute bottom-[-34%] left-1/2 size-[min(78vw,74vh)] -translate-x-1/2 opacity-24"
             aria-hidden="true"
@@ -193,7 +193,7 @@ function OnboardingScreenContent({
         ])}
       >
         <h1 className="font-hand text-foreground text-4xl leading-none font-semibold tracking-normal">
-          <Trans>Welcome to Corola</Trans>
+          <Trans>Welcome to MinutesWise</Trans>
         </h1>
       </div>
 
@@ -205,14 +205,14 @@ function OnboardingScreenContent({
             description={
               currentPlatform === "macos" ? (
                 <Trans>
-                  Corola needs microphone and system audio to transcribe your
-                  meetings, plus Accessibility to read meeting controls, visible
-                  chat.
+                  MinutesWise needs microphone and system audio to transcribe
+                  your meetings, plus Accessibility to read meeting controls,
+                  visible chat.
                 </Trans>
               ) : (
                 <Trans>
-                  Corola needs access to your microphone and system audio to
-                  record and transcribe your meetings
+                  MinutesWise needs access to your microphone and system audio
+                  to record and transcribe your meetings
                 </Trans>
               )
             }

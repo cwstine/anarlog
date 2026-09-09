@@ -35,3 +35,5 @@ export const getScheme = async (): Promise<DesktopScheme> => {
 
 // https://www.rfc-editor.org/rfc/rfc4122#section-4.1.7
 export const DEFAULT_USER_ID = "00000000-0000-0000-0000-000000000000";
+
+export const LEGACY_ANALYTICS_FIRST_OPEN_KEY = "corola:analytics:first-opened";

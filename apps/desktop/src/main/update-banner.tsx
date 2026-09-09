@@ -15,7 +15,7 @@ export type DesktopUpdateControl = {
   installUpdate: () => void;
 };
 
-// Corola intentionally ships without an updater until it owns both an update
+// MinutesWise intentionally ships without an updater until it owns both an update
 // endpoint and a signing key. Keeping the neutral control shape lets the toast
 // surface stay decoupled from that future distribution decision.
 const DISABLED_UPDATE_CONTROL: DesktopUpdateControl = {

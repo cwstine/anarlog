@@ -10,14 +10,19 @@ pub struct TrayVersion;
 impl TrayVersion {
     fn get_channel(identifier: &str, app_name: &str) -> &'static str {
         match identifier {
-            "com.corola.desktop" | "com.hyprnote.stable" | "com.hyprnote.Hyprnote" => "stable",
-            "com.corola.staging" | "com.hyprnote.staging" => "staging",
-            "com.corola.dev" | "com.hyprnote.dev" => "dev",
+            "com.minuteswise.desktop"
+            | "com.corola.desktop"
+            | "com.hyprnote.stable"
+            | "com.hyprnote.Hyprnote" => "stable",
+            "com.minuteswise.staging" | "com.corola.staging" | "com.hyprnote.staging" => "staging",
+            "com.minuteswise.dev" | "com.corola.dev" | "com.hyprnote.dev" => "dev",
             _ => match app_name {
-                "Corola" | "Anarlog" | "Char" | "Hyprnote" => "stable",
-                "Corola Staging" | "Anarlog Staging" | "Char Staging" | "Hyprnote Staging" => {
-                    "staging"
-                }
+                "MinutesWise" | "Corola" | "Anarlog" | "Char" | "Hyprnote" => "stable",
+                "MinutesWise Staging"
+                | "Corola Staging"
+                | "Anarlog Staging"
+                | "Char Staging"
+                | "Hyprnote Staging" => "staging",
                 _ => "dev",
             },
         }
@@ -48,6 +53,35 @@ mod tests {
     #[test]
     fn gets_channel_from_identifier() {
         assert_eq!(
+            TrayVersion::get_channel("com.minuteswise.desktop", "MinutesWise"),
+            "stable"
+        );
+        assert_eq!(
+            TrayVersion::get_channel("com.minuteswise.staging", "MinutesWise Staging"),
+            "staging"
+        );
+        assert_eq!(
+            TrayVersion::get_channel("com.minuteswise.dev", "MinutesWise Dev"),
+            "dev"
+        );
+    }
+
+    #[test]
+    fn falls_back_to_product_name_for_unknown_identifier() {
+        assert_eq!(TrayVersion::get_channel("unknown", "MinutesWise"), "stable");
+        assert_eq!(
+            TrayVersion::get_channel("unknown", "MinutesWise Staging"),
+            "staging"
+        );
+        assert_eq!(
+            TrayVersion::get_channel("unknown", "MinutesWise Dev"),
+            "dev"
+        );
+    }
+
+    #[test]
+    fn keeps_corola_identifier_compatibility() {
+        assert_eq!(
             TrayVersion::get_channel("com.corola.desktop", "Corola"),
             "stable"
         );
@@ -59,15 +93,5 @@ mod tests {
             TrayVersion::get_channel("com.corola.dev", "Corola Dev"),
             "dev"
         );
-    }
-
-    #[test]
-    fn falls_back_to_product_name_for_unknown_identifier() {
-        assert_eq!(TrayVersion::get_channel("unknown", "Corola"), "stable");
-        assert_eq!(
-            TrayVersion::get_channel("unknown", "Corola Staging"),
-            "staging"
-        );
-        assert_eq!(TrayVersion::get_channel("unknown", "Corola Dev"), "dev");
     }
 }

@@ -7,10 +7,10 @@ describe("micAppsShowInUse", () => {
     expect(micAppsShowInUse([{ id: "us.zoom.xos", name: "Zoom" }])).toBe(true);
   });
 
-  it("ignores Corola itself", () => {
+  it("ignores MinutesWise itself", () => {
     expect(
       micAppsShowInUse([
-        { id: "com.anarlog.app", name: "Corola" },
+        { id: "com.anarlog.app", name: "MinutesWise" },
         { id: "com.hyprnote.app", name: "Hyprnote" },
       ]),
     ).toBe(false);

@@ -70,7 +70,7 @@ export function ChatBodyEmpty({
                   : "text-foreground",
               ])}
             >
-              Corola AI
+              MinutesWise AI
             </span>
             <BetaChip isDarkAppearance={isDarkAppearance} />
           </div>
@@ -82,7 +82,7 @@ export function ChatBodyEmpty({
                 : "text-muted-foreground",
             ])}
           >
-            {t`Hi, I'm Corola AI. Set up a language model and I'll be ready to help.`}
+            {t`Hi, I'm MinutesWise AI. Set up a language model and I'll be ready to help.`}
           </p>
           <button
             onClick={handleGoToSettings}

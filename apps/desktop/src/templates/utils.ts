@@ -93,7 +93,7 @@ export function getTemplateCreatorLabel({
   creatorName?: string | null;
   format?: "full" | "short";
 }) {
-  const name = isUserTemplate ? creatorName?.trim() || "user" : "Corola";
+  const name = isUserTemplate ? creatorName?.trim() || "user" : "MinutesWise";
   return format === "short" ? `by ${name}` : `Created by ${name}`;
 }
 

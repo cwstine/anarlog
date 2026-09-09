@@ -3760,30 +3760,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "corola-cli"
-version = "0.1.0"
-dependencies = [
- "agent-access",
- "clap",
- "cli-docs",
- "db-app",
- "db-core",
- "dirs 6.0.0",
- "insta",
- "rmcp",
- "schemars 1.2.1",
- "sentry",
- "serde",
- "serde_json",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "url",
- "user-error",
-]
-
-[[package]]
 name = "cpal"
 version = "0.17.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -10701,6 +10677,30 @@ checksum = "1fa76a2c86f704bdb222d66965fb3d63269ce38518b83cb0575fca855ebb6316"
 dependencies = [
  "adler2",
  "simd-adler32",
+]
+
+[[package]]
+name = "minuteswise-cli"
+version = "0.1.0"
+dependencies = [
+ "agent-access",
+ "clap",
+ "cli-docs",
+ "db-app",
+ "db-core",
+ "dirs 6.0.0",
+ "insta",
+ "rmcp",
+ "schemars 1.2.1",
+ "sentry",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "url",
+ "user-error",
 ]
 
 [[package]]
