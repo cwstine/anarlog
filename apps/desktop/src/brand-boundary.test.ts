@@ -13,8 +13,6 @@ const SOURCE_EXTENSIONS = new Set([
 ]);
 const EXCLUDED_PATHS = new Set([
   "apps/desktop/src/shared/utils.ts",
-  "apps/desktop/src/shared/brand-loading-view.tsx",
-  "apps/desktop/src/shared/corola-mark.tsx",
   "apps/cli/src/db.rs",
   "apps/desktop/src-tauri/src/embedded_cli.rs",
   "apps/desktop/src-tauri/src/legacy_credentials.rs",

@@ -182,18 +182,18 @@ chat on 2026-09-09.
 - Produces: a deterministic inline loading mark plus every bundled raster,
   ICNS, ICO, runtime, and installer asset.
 
-- [ ] **Step 1: Write failing mark and asset assertions**
+- [x] **Step 1: Write failing mark and asset assertions**
 
   Require a `minuteswise-mark` SVG with a unique minute-hand/`MW` signature,
   exactly one `minuteswise.png` source image, a 512px public icon, matching
   stable/dev/staging hashes, and no Corola-named first-party runtime asset.
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
   Run the mark, loading-view, and brand-asset tests. Expected: missing
   MinutesWise component and asset paths.
 
-- [ ] **Step 3: Create and install the original visual identity**
+- [x] **Step 3: Create and install the original visual identity**
 
   Use CollectWise's public blue wordmark only as a style reference. Generate a
   square MinutesWise app icon with a centered original `MW`/minute-hand mark,
@@ -202,7 +202,7 @@ chat on 2026-09-09.
   generate all channel assets with `compile-icons.sh`. Implement the matching
   simplified SVG mark for loading states.
 
-- [ ] **Step 4: Verify GREEN and commit**
+- [x] **Step 4: Verify GREEN and commit**
 
   Run component and asset tests, inspect the generated icon matrix, run
   formatting, commit as `feat: add MinutesWise brand assets`, then push.

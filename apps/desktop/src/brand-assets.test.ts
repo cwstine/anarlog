@@ -21,10 +21,10 @@ function sha256(relativePath: string) {
     .digest("hex");
 }
 
-describe("Corola brand assets", () => {
+describe("MinutesWise brand assets", () => {
   it("uses one square master image for every packaged app channel", () => {
     expect(
-      pngDimensions("apps/desktop/src-tauri/icons/src/corola.png"),
+      pngDimensions("apps/desktop/src-tauri/icons/src/minuteswise.png"),
     ).toEqual({ width: 1024, height: 1024 });
 
     const channelHashes = ["stable", "dev", "staging"].map((channel) => {
@@ -47,16 +47,19 @@ describe("Corola brand assets", () => {
     expect(new Set(channelHashes).size).toBe(1);
   });
 
-  it("keeps only Corola source and runtime icon assets", () => {
+  it("keeps only MinutesWise source and runtime icon assets", () => {
     const sourceNames = readdirSync(join(TAURI_ROOT, "icons/src"));
-    expect(sourceNames).toEqual(["corola.png"]);
+    expect(sourceNames).toEqual(["minuteswise.png"]);
 
-    expect(pngDimensions("apps/desktop/public/assets/corola-icon.png")).toEqual(
-      { width: 512, height: 512 },
-    );
-    expect(sha256("apps/desktop/public/assets/corola-icon.png")).toBe(
+    expect(
+      pngDimensions("apps/desktop/public/assets/minuteswise-icon.png"),
+    ).toEqual({ width: 512, height: 512 });
+    expect(sha256("apps/desktop/public/assets/minuteswise-icon.png")).toBe(
       sha256("apps/desktop/src-tauri/icons/stable/icon.png"),
     );
+    expect(
+      existsSync(join(REPO_ROOT, "apps/desktop/public/assets/corola-icon.png")),
+    ).toBe(false);
     expect(
       existsSync(
         join(REPO_ROOT, "apps/desktop/public/assets/anarlog-icon.png"),
@@ -75,7 +78,7 @@ describe("Corola brand assets", () => {
       join(REPO_ROOT, "apps/desktop/src/onboarding/index.tsx"),
       "utf8",
     );
-    expect(onboardingSource).toContain("/assets/corola-icon.png");
+    expect(onboardingSource).toContain("/assets/minuteswise-icon.png");
     expect(onboardingSource).not.toContain("onboarding-video");
 
     const runtimeChannels = readdirSync(join(TAURI_ROOT, "resources"), {
@@ -91,7 +94,7 @@ describe("Corola brand assets", () => {
     expect(runtimeChannels).toEqual(["dev", "stable", "staging"]);
   });
 
-  it("ships Corola DMG backgrounds at the configured resolution", () => {
+  it("ships MinutesWise DMG backgrounds at the configured resolution", () => {
     for (const channel of ["stable", "staging"]) {
       expect(
         pngDimensions(

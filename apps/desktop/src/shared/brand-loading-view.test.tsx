@@ -6,11 +6,14 @@ import { BrandLoadingView } from "./brand-loading-view";
 describe("BrandLoadingView", () => {
   afterEach(cleanup);
 
-  it("shows the anarlog mark while loading", () => {
+  it("shows the MinutesWise mark while loading", () => {
     render(<BrandLoadingView />);
 
     const status = screen.getByRole("status", { name: "Loading" });
     expect(status.querySelectorAll("svg")).toHaveLength(2);
+    expect(
+      status.querySelectorAll('[data-testid="minuteswise-mark"]'),
+    ).toHaveLength(2);
     expect(screen.queryByText(/Updating your data/)).toBeNull();
   });
 
