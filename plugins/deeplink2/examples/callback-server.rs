@@ -13,7 +13,7 @@ use axum::response::Html;
 use axum::routing::get;
 use tauri_plugin_deeplink2::server::render_html_from_callback;
 
-const SCHEME: &str = "corola";
+const SCHEME: &str = "minuteswise";
 
 struct Scenario {
     id: &'static str,

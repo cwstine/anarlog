@@ -41,7 +41,7 @@ pub(crate) fn prepare_binaries() -> Result<()> {
 
     cmd!(
         sh,
-        "{cargo} build --release --target {triple} -p corola-cli"
+        "{cargo} build --release --target {triple} -p minuteswise-cli"
     )
     .run()?;
 
@@ -51,11 +51,11 @@ pub(crate) fn prepare_binaries() -> Result<()> {
         .join("target")
         .join(&triple)
         .join("release")
-        .join(format!("corola{ext}"));
-    let dst = embedded_cli_dir.join(format!("corola-cli-{triple}{ext}"));
+        .join(format!("minuteswise{ext}"));
+    let dst = embedded_cli_dir.join(format!("minuteswise-cli-{triple}{ext}"));
     fs::copy(&src, &dst).with_context(|| format!("copy {} -> {}", src.display(), dst.display()))?;
 
-    println!("prepare-binaries: resources/cli/corola-cli-{triple}{ext}");
+    println!("prepare-binaries: resources/cli/minuteswise-cli-{triple}{ext}");
     Ok(())
 }
 

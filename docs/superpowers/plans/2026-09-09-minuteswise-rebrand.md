@@ -220,7 +220,7 @@ chat on 2026-09-09.
 - Produces: a running MinutesWise desktop build and documented verification
   evidence on the existing draft pull request.
 
-- [ ] **Step 1: Audit the shipped boundary**
+- [x] **Step 1: Audit the shipped boundary**
 
   Search active desktop/CLI/config/docs/skill paths for Corola. Classify every
   remaining hit as a compatibility alias or historical plan; remove any active
