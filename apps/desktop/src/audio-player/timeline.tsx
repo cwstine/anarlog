@@ -123,47 +123,47 @@ export function Timeline({
           </TimelineMeta>
 
           <div className="relative shrink-0" ref={rateMenuRef}>
-              <button
-                onClick={() => setShowRateMenu((prev) => !prev)}
+            <button
+              onClick={() => setShowRateMenu((prev) => !prev)}
+              className={cn([
+                "flex items-center justify-center",
+                "h-6 rounded-md px-1.5",
+                "border-border bg-card border",
+                "hover:bg-accent transition-colors",
+                "text-muted-foreground font-mono text-xs select-none",
+                "shadow-xs",
+              ])}
+            >
+              {playbackRate}x
+            </button>
+            {showRateMenu && (
+              <div
                 className={cn([
-                  "flex items-center justify-center",
-                  "h-6 rounded-md px-1.5",
-                  "border-border bg-card border",
-                  "hover:bg-accent transition-colors",
-                  "text-muted-foreground font-mono text-xs select-none",
-                  "shadow-xs",
+                  "absolute right-0 bottom-full mb-1",
+                  "border-border bg-card rounded-lg border shadow-md",
+                  "py-1",
                 ])}
               >
-                {playbackRate}x
-              </button>
-              {showRateMenu && (
-                <div
-                  className={cn([
-                    "absolute right-0 bottom-full mb-1",
-                    "border-border bg-card rounded-lg border shadow-md",
-                    "py-1",
-                  ])}
-                >
-                  {PLAYBACK_RATES.map((rate) => (
-                    <button
-                      key={rate}
-                      onClick={() => {
-                        setPlaybackRate(rate);
-                        setShowRateMenu(false);
-                      }}
-                      className={cn([
-                        "block w-full px-3 py-1 text-left font-mono text-xs select-none",
-                        "hover:bg-accent transition-colors",
-                        rate === playbackRate
-                          ? "text-foreground font-semibold"
-                          : "text-muted-foreground",
-                      ])}
-                    >
-                      {rate}x
-                    </button>
-                  ))}
-                </div>
-              )}
+                {PLAYBACK_RATES.map((rate) => (
+                  <button
+                    key={rate}
+                    onClick={() => {
+                      setPlaybackRate(rate);
+                      setShowRateMenu(false);
+                    }}
+                    className={cn([
+                      "block w-full px-3 py-1 text-left font-mono text-xs select-none",
+                      "hover:bg-accent transition-colors",
+                      rate === playbackRate
+                        ? "text-foreground font-semibold"
+                        : "text-muted-foreground",
+                    ])}
+                  >
+                    {rate}x
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </>
       }

@@ -34,9 +34,7 @@ import {
   ProviderIconSlot,
   useProviderAvailability,
 } from "~/settings/ai/shared";
-import {
-  getProviderSelectionBlockers,
-} from "~/settings/ai/shared/eligibility";
+import { getProviderSelectionBlockers } from "~/settings/ai/shared/eligibility";
 import { listAnthropicModels } from "~/settings/ai/shared/list-anthropic";
 import { listAppleFoundationModels } from "~/settings/ai/shared/list-apple-foundation";
 import { listAzureAIModels } from "~/settings/ai/shared/list-azure-ai";

@@ -228,41 +228,37 @@ export function AutoFormatForm({
           </div>
 
           <div className="flex flex-col gap-5">
-              <form.Field name="format">
-                {(field) => (
-                  <div className="border-border bg-card overflow-hidden rounded-2xl border">
-                    <PromptEditor
-                      ref={editorRef}
-                      ariaLabel={t`Auto summary format`}
-                      className="min-h-[28rem] px-4 py-3 font-mono text-sm leading-5"
-                      initialValue={field.state.value}
-                      maxLength={16000}
-                      onChange={field.handleChange}
-                      onBlur={field.handleBlur}
-                      tokens={AUTO_FORMAT_TOKENS}
-                    />
-                  </div>
-                )}
-              </form.Field>
+            <form.Field name="format">
+              {(field) => (
+                <div className="border-border bg-card overflow-hidden rounded-2xl border">
+                  <PromptEditor
+                    ref={editorRef}
+                    ariaLabel={t`Auto summary format`}
+                    className="min-h-[28rem] px-4 py-3 font-mono text-sm leading-5"
+                    initialValue={field.state.value}
+                    maxLength={16000}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    tokens={AUTO_FORMAT_TOKENS}
+                  />
+                </div>
+              )}
+            </form.Field>
 
-              <div className="flex items-center justify-end gap-2">
-                <form.Subscribe
-                  selector={(state) =>
-                    [state.canSubmit, state.isDirty] as const
-                  }
-                >
-                  {([canSubmit, isDirty]) => (
-                    <Button
-                      type="submit"
-                      disabled={
-                        !canSubmit || !isDirty || saveMutation.isPending
-                      }
-                    >
-                      <Trans>Save</Trans>
-                    </Button>
-                  )}
-                </form.Subscribe>
-              </div>
+            <div className="flex items-center justify-end gap-2">
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isDirty] as const}
+              >
+                {([canSubmit, isDirty]) => (
+                  <Button
+                    type="submit"
+                    disabled={!canSubmit || !isDirty || saveMutation.isPending}
+                  >
+                    <Trans>Save</Trans>
+                  </Button>
+                )}
+              </form.Subscribe>
+            </div>
           </div>
         </div>
       </div>

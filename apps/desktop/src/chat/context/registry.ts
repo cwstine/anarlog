@@ -105,7 +105,6 @@ const renderers: RendererMap = {
       };
     },
   },
-
 } satisfies RendererMap;
 
 export function renderChip(entity: ContextEntity): ContextChipProps | null {

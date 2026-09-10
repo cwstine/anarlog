@@ -15,7 +15,8 @@ export function useChangelogContent(version: string) {
 
   useEffect(() => {
     if (version === latestVersion && latestContent) {
-      const { content: parsed, date: parsedDate } = processContent(latestContent);
+      const { content: parsed, date: parsedDate } =
+        processContent(latestContent);
       setContent(parsed);
       setDate(parsedDate);
       setLoading(false);

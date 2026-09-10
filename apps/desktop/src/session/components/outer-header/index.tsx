@@ -232,16 +232,11 @@ function HeaderMeetingAction({
       };
     }
 
-    if (
-      canJoinFromHeader &&
-      (!meetingStarted || !meetingMicInUse)
-    ) {
+    if (canJoinFromHeader && (!meetingStarted || !meetingMicInUse)) {
       return {
         label: t`Join & record`,
         title: t`Join meeting and record`,
-        icon: remote ? (
-          getMeetingDisplay(remote.type).icon
-        ) : undefined,
+        icon: remote ? getMeetingDisplay(remote.type).icon : undefined,
         onClick: () => {
           void joinMeeting();
         },
@@ -265,37 +260,37 @@ function HeaderMeetingAction({
   return (
     <div className="relative mr-1 flex min-w-0 shrink-0 items-center">
       <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            data-tauri-drag-region="false"
-            aria-label={action.label}
-            title={action.title}
-            disabled={disabled}
-            onClick={action.onClick}
-            className={cn([
-              "max-w-56 shrink-0 gap-1.5 overflow-hidden border pr-2.5 pl-1.5 text-sm",
-              isPrimaryCta
-                ? "border-border text-foreground bg-transparent shadow-none"
-                : "border-border bg-card text-foreground",
-              disabled && "cursor-default opacity-60",
-            ])}
-          >
-            {action.icon}
-            <span className="truncate">{action.label}</span>
+        type="button"
+        size="sm"
+        variant="outline"
+        data-tauri-drag-region="false"
+        aria-label={action.label}
+        title={action.title}
+        disabled={disabled}
+        onClick={action.onClick}
+        className={cn([
+          "max-w-56 shrink-0 gap-1.5 overflow-hidden border pr-2.5 pl-1.5 text-sm",
+          isPrimaryCta
+            ? "border-border text-foreground bg-transparent shadow-none"
+            : "border-border bg-card text-foreground",
+          disabled && "cursor-default opacity-60",
+        ])}
+      >
+        {action.icon}
+        <span className="truncate">{action.label}</span>
       </Button>
       {showCountdown ? (
-          <div
-            data-header-meeting-countdown
-            className="border-border bg-popover text-popover-foreground pointer-events-none absolute top-full left-1/2 z-20 mt-2 -translate-x-1/2 rounded-md border px-2.5 py-1 font-mono text-xs whitespace-nowrap tabular-nums shadow-sm"
-          >
-            <span
-              data-header-meeting-countdown-tail
-              aria-hidden="true"
-              className="border-border bg-popover absolute -top-1.5 left-1/2 size-3 -translate-x-1/2 rotate-45 border-t border-l"
-            />
-            <span className="relative">{countdown.label}</span>
-          </div>
+        <div
+          data-header-meeting-countdown
+          className="border-border bg-popover text-popover-foreground pointer-events-none absolute top-full left-1/2 z-20 mt-2 -translate-x-1/2 rounded-md border px-2.5 py-1 font-mono text-xs whitespace-nowrap tabular-nums shadow-sm"
+        >
+          <span
+            data-header-meeting-countdown-tail
+            aria-hidden="true"
+            className="border-border bg-popover absolute -top-1.5 left-1/2 size-3 -translate-x-1/2 rotate-45 border-t border-l"
+          />
+          <span className="relative">{countdown.label}</span>
+        </div>
       ) : null}
     </div>
   );

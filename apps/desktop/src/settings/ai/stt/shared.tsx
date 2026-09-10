@@ -24,10 +24,7 @@ import type { ReactNode } from "react";
 
 import type { LocalModel } from "@anlg/plugin-local-stt";
 
-import {
-  ProviderBrandImage,
-  ProviderLobeIcon,
-} from "~/settings/ai/shared";
+import { ProviderBrandImage, ProviderLobeIcon } from "~/settings/ai/shared";
 import { type ProviderRequirement } from "~/settings/ai/shared/eligibility";
 import { sortProviders } from "~/settings/ai/shared/sort-providers";
 import { localSttQueries } from "~/stt/useLocalSttModel";

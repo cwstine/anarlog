@@ -1,7 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-
 import { BatchResponseProcessingError } from "./batch-response-processing-error";
 import {
   canRunBatchTranscription,
@@ -1078,7 +1077,6 @@ describe("useRunBatch", () => {
 
     expect(startTranscriptionMock).not.toHaveBeenCalled();
   });
-
 });
 
 describe("getSessionSpeakerCount", () => {

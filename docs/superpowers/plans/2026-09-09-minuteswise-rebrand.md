@@ -226,7 +226,7 @@ chat on 2026-09-09.
   remaining hit as a compatibility alias or historical plan; remove any active
   branding leak.
 
-- [ ] **Step 2: Run final verification**
+- [x] **Step 2: Run final verification**
 
   Run dprint formatting/check, desktop Vitest/typecheck/oxlint/i18n checks,
   affected Rust tests and Cargo check, configuration parsing, and asset

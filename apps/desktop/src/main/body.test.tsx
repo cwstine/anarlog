@@ -196,7 +196,6 @@ vi.mock("./tab-content", () => ({
   },
 }));
 
-
 vi.mock("~/sidebar/note-filter-menu", () => ({
   SidebarNoteFilterMenu: () => <button type="button">Sort notes</button>,
 }));

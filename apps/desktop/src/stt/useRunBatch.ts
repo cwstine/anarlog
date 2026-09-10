@@ -702,100 +702,99 @@ export const useRunBatch = (sessionId: string) => {
         });
 
       return (async () => {
-          const params: TranscriptionParams = {
-            session_id: sessionId,
-            provider: target.provider,
-            file_path: filePath,
-            model: target.model,
-            base_url: target.baseUrl,
-            api_key: target.apiKey,
-            keywords,
-            languages,
-            num_speakers: options?.numSpeakers ?? inferredNumSpeakers,
-            min_speakers: options?.minSpeakers,
-            max_speakers: options?.maxSpeakers,
-          };
+        const params: TranscriptionParams = {
+          session_id: sessionId,
+          provider: target.provider,
+          file_path: filePath,
+          model: target.model,
+          base_url: target.baseUrl,
+          api_key: target.apiKey,
+          keywords,
+          languages,
+          num_speakers: options?.numSpeakers ?? inferredNumSpeakers,
+          min_speakers: options?.minSpeakers,
+          max_speakers: options?.maxSpeakers,
+        };
 
-          await startTranscription(params, {
-            handlePersist: persist,
-            notifyOnCompletion: options?.notifyOnCompletion,
-          });
+        await startTranscription(params, {
+          handlePersist: persist,
+          notifyOnCompletion: options?.notifyOnCompletion,
+        });
 
-          try {
-            if (!handlePersist) {
-              const promoted = prepareTranscriptPromotion(
-                stagedWords,
-                stagedHints,
-                options?.promotion ?? { scope: "preserve_existing" },
-              );
-              if (
-                options?.promotion?.scope === "current_capture" &&
-                promoted.words.length === 0
-              ) {
-                throw new Error(EMPTY_CURRENT_CAPTURE_TRANSCRIPT_ERROR_MESSAGE);
-              }
-              if (transcriptId) {
-                const completedTranscriptId = transcriptId;
-                if (promoted.words.length > 0) {
-                  const speakerHints = refinedTranscriptSource
-                    ? reconcileRefinedSpeakerClusters(
-                        refinedTranscriptSource,
-                        promoted.words,
-                        promoted.hints,
-                      )
-                    : promoted.hints;
-                  await persistTranscriptWrite(() =>
-                    createTranscript({
-                      id: completedTranscriptId,
-                      sessionId,
-                      ownerUserId: session?.user_id ?? "",
-                      createdAt,
-                      startedAt: promoted.startedAt ?? startedAt,
-                      memo: memoMd,
-                      source: "batch_transcription",
-                      provider: target.provider,
-                      model: target.model,
-                      words: promoted.words,
-                      speakerHints,
-                      replaceSession: promoted.replaceSession,
-                      replaceTranscriptId: promoted.replaceTranscriptId,
-                    }),
-                  );
-                  await maybeExtractVoiceprintCandidates({
-                    enabled: rememberSpeakers,
+        try {
+          if (!handlePersist) {
+            const promoted = prepareTranscriptPromotion(
+              stagedWords,
+              stagedHints,
+              options?.promotion ?? { scope: "preserve_existing" },
+            );
+            if (
+              options?.promotion?.scope === "current_capture" &&
+              promoted.words.length === 0
+            ) {
+              throw new Error(EMPTY_CURRENT_CAPTURE_TRANSCRIPT_ERROR_MESSAGE);
+            }
+            if (transcriptId) {
+              const completedTranscriptId = transcriptId;
+              if (promoted.words.length > 0) {
+                const speakerHints = refinedTranscriptSource
+                  ? reconcileRefinedSpeakerClusters(
+                      refinedTranscriptSource,
+                      promoted.words,
+                      promoted.hints,
+                    )
+                  : promoted.hints;
+                await persistTranscriptWrite(() =>
+                  createTranscript({
+                    id: completedTranscriptId,
                     sessionId,
-                    transcriptId: completedTranscriptId,
-                    audioPath: filePath,
-                  });
-                }
-              }
-              if (!options?.deferAudioFinalization) {
-                try {
-                  await persistTranscriptWrite(() =>
-                    markSessionAudioTranscriptionComplete(sessionId),
-                  );
-                } catch (error) {
-                  console.error(
-                    "[runBatch] failed to mark session audio as processed",
-                    error,
-                  );
-                }
+                    ownerUserId: session?.user_id ?? "",
+                    createdAt,
+                    startedAt: promoted.startedAt ?? startedAt,
+                    memo: memoMd,
+                    source: "batch_transcription",
+                    provider: target.provider,
+                    model: target.model,
+                    words: promoted.words,
+                    speakerHints,
+                    replaceSession: promoted.replaceSession,
+                    replaceTranscriptId: promoted.replaceTranscriptId,
+                  }),
+                );
+                await maybeExtractVoiceprintCandidates({
+                  enabled: rememberSpeakers,
+                  sessionId,
+                  transcriptId: completedTranscriptId,
+                  audioPath: filePath,
+                });
               }
             }
             if (!options?.deferAudioFinalization) {
-              await deleteProcessedAudioForRetention(audioRetention, sessionId);
+              try {
+                await persistTranscriptWrite(() =>
+                  markSessionAudioTranscriptionComplete(sessionId),
+                );
+              } catch (error) {
+                console.error(
+                  "[runBatch] failed to mark session audio as processed",
+                  error,
+                );
+              }
             }
-          } catch (error) {
-            if (
-              error instanceof BatchResponseProcessingError ||
-              (error instanceof Error &&
-                error.message ===
-                  EMPTY_CURRENT_CAPTURE_TRANSCRIPT_ERROR_MESSAGE)
-            ) {
-              throw error;
-            }
-            throw new BatchResponseProcessingError(error);
           }
+          if (!options?.deferAudioFinalization) {
+            await deleteProcessedAudioForRetention(audioRetention, sessionId);
+          }
+        } catch (error) {
+          if (
+            error instanceof BatchResponseProcessingError ||
+            (error instanceof Error &&
+              error.message === EMPTY_CURRENT_CAPTURE_TRANSCRIPT_ERROR_MESSAGE)
+          ) {
+            throw error;
+          }
+          throw new BatchResponseProcessingError(error);
+        }
       })();
     },
     [

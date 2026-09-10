@@ -32,7 +32,6 @@ describe("ErrorMessage", () => {
 
     expect(screen.getByText("cloudsync_activity_drain_timeout")).toBeTruthy();
   });
-
 });
 
 describe("getChatErrorText", () => {

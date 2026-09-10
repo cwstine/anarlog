@@ -61,9 +61,7 @@ import {
 
 import { useNotifications } from "~/contexts/notifications";
 import { providerRowId, ProviderIconSlot } from "~/settings/ai/shared";
-import {
-  getProviderSelectionBlockers,
-} from "~/settings/ai/shared/eligibility";
+import { getProviderSelectionBlockers } from "~/settings/ai/shared/eligibility";
 import { PersistAiSelection } from "~/settings/ai/shared/persist-selection";
 import {
   getConfiguredProviderIds,

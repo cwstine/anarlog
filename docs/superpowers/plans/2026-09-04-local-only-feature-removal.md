@@ -26,6 +26,7 @@
 ### Task 1: Remove account, team, sync, and plan UI from navigation and onboarding
 
 **Files:**
+
 - Modify: `apps/desktop/src/sidebar/settings.test.tsx`
 - Modify: `apps/desktop/src/sidebar/settings.tsx`
 - Modify: `apps/desktop/src/settings/index.test.tsx`
@@ -41,6 +42,7 @@
 - Modify: `apps/desktop/src/settings/general/index.ts`
 
 **Interfaces:**
+
 - Consumes: existing `SettingsTab`, `normalizeSettingsTab`, `OnboardingStep`, `getInitialStep`, `getNextStep`, and `getPrevStep` APIs.
 - Produces: a settings/navigation model with no `account`, `team`, or `sync` tab and an onboarding sequence with no `login` step or account-backed calendar handoff.
 
@@ -67,7 +69,10 @@ Update `settings/index.test.tsx` to render an obsolete account-tab snapshot and 
 it("normalizes removed settings tabs to General", () => {
   render(
     <TabContentSettings
-      tab={createSettingsTab({ active: true, state: { tab: "account" as never } })}
+      tab={createSettingsTab({
+        active: true,
+        state: { tab: "account" as never },
+      })}
     />,
   );
   expect(screen.queryByText("Account settings")).toBeNull();
@@ -103,6 +108,7 @@ Create `onboarding/config.test.ts`:
 
 ```ts
 import { describe, expect, it } from "vitest";
+
 import { getInitialStep, getNextStep } from "./config";
 
 describe("local-only onboarding sequence", () => {
@@ -158,6 +164,7 @@ git commit -m "refactor: remove account team and sync product navigation"
 ### Task 2: Unlock local features and remove hosted Anarlog AI
 
 **Files:**
+
 - Create: `apps/desktop/src/audio-player/timeline.test.tsx`
 - Modify: `apps/desktop/src/audio-player/provider.tsx`
 - Modify: `apps/desktop/src/audio-player/timeline.tsx`
@@ -184,6 +191,7 @@ git commit -m "refactor: remove account team and sync product navigation"
 - Modify: `apps/desktop/src/settings/queries.ts`
 
 **Interfaces:**
+
 - Consumes: stored provider IDs and existing direct provider definitions.
 - Produces: provider resolution that accepts local/direct-BYOK configuration without auth or plan state, and maps legacy `anarlog/cloud` selections to the unconfigured provider state.
 
@@ -257,6 +265,7 @@ git commit -m "refactor: make local AI and desktop features account independent"
 ### Task 3: Remove collaborative teams and note sharing
 
 **Files:**
+
 - Modify: `apps/desktop/src/session/hooks/useDeleteSession.test.tsx`
 - Modify: `apps/desktop/src/session/hooks/useDeleteSession.ts`
 - Modify: `apps/desktop/src/session/components/outer-header/index.tsx`
@@ -286,6 +295,7 @@ git commit -m "refactor: make local AI and desktop features account independent"
 - Delete: `apps/desktop/src/settings/general/default-share-access.tsx`
 
 **Interfaces:**
+
 - Consumes: local `softDeleteSession`, `finalizeSessionDeletion`, undo-delete store, local session tabs, and ordinary note editor state.
 - Produces: local-only note deletion and tab/editor models with no shared-session variants.
 
@@ -368,6 +378,7 @@ git commit -m "refactor: remove team workspaces and note sharing"
 ### Task 4: Remove Cloud API, attachment backup, and account-backed integrations
 
 **Files:**
+
 - Create: `apps/desktop/src/main/lifecycle.test.tsx`
 - Modify: `apps/desktop/src/main/lifecycle.tsx`
 - Modify: `apps/desktop/src/shared/main-app-layout.test.tsx`
@@ -397,6 +408,7 @@ git commit -m "refactor: remove team workspaces and note sharing"
 - Delete: `apps/desktop/src/settings/developers/cloud-api.tsx`
 
 **Interfaces:**
+
 - Consumes: local main lifecycle, Apple Calendar, file-based import, local webhook actions, and local developer tools.
 - Produces: lifecycle and settings compositions with no account-backed network service mounted or selectable.
 
@@ -454,6 +466,7 @@ git commit -m "refactor: remove account backed desktop services"
 ### Task 5: Remove React auth, billing, and sync infrastructure
 
 **Files:**
+
 - Modify: `apps/desktop/src/shared/main-app-layout.test.tsx`
 - Modify: `apps/desktop/src/shared/main-app-layout.tsx`
 - Modify: `apps/desktop/src/main/lifecycle.tsx`
@@ -483,6 +496,7 @@ git commit -m "refactor: remove account backed desktop services"
 - Delete: `apps/desktop/src/settings/general/e2ee-setup.tsx`
 
 **Interfaces:**
+
 - Consumes: local root layout, local database identity, retained settings store, and local lock behavior.
 - Produces: a desktop frontend with no auth/billing context and no Supabase or attachment-sync JavaScript dependency.
 
@@ -571,6 +585,7 @@ git commit -m "refactor: remove desktop auth billing and sync frontend"
 ### Task 6: Stop the native desktop from loading CloudSync or auth plugins
 
 **Files:**
+
 - Modify: `apps/desktop/src-tauri/src/db.rs`
 - Modify: `apps/desktop/src-tauri/src/lib.rs`
 - Modify: `apps/desktop/src-tauri/Cargo.toml`
@@ -586,6 +601,7 @@ git commit -m "refactor: remove desktop auth billing and sync frontend"
 - Modify: `Cargo.lock`
 
 **Interfaces:**
+
 - Consumes: normal `Db::open`/SQLite behavior and `tauri_plugin_db::init(db)`.
 - Produces: a local-only feature path in which the desktop dependency tree does not compile, bundle, initialize, or load `anlg-cloudsync`, while non-desktop workspace consumers may retain the default CloudSync feature.
 
@@ -657,12 +673,14 @@ git commit -m "refactor: remove CloudSync from the desktop runtime"
 ### Task 7: Verify the local-only dependency boundary
 
 **Files:**
+
 - Modify: `apps/desktop/src/env.ts`
 - Create: `apps/desktop/src/env.test.ts`
 - Modify: `apps/desktop/package.json`
 - Modify: `docs/superpowers/plans/2026-09-04-local-only-feature-removal.md`
 
 **Interfaces:**
+
 - Consumes: the finished local-only desktop source tree and package manifest.
 - Produces: observable environment tests plus repeatable frontend/native dependency-audit commands.
 
@@ -672,6 +690,7 @@ Create `env.test.ts` and import the actual `env` object without defining account
 
 ```ts
 import { describe, expect, it } from "vitest";
+
 import { env } from "./env";
 
 describe("desktop environment", () => {
