@@ -52,6 +52,7 @@ describe("MinutesWise brand boundary", () => {
     ...collectSourceFiles("plugins/local-api/src"),
     ...collectSourceFiles("plugins/git/src"),
     ...collectSourceFiles("plugins/local-llm/assets"),
+    "apps/desktop/package.json",
     "docs/agents/mcp.mdx",
     "docs/installation.mdx",
     "docs/reference/cli.mdx",
